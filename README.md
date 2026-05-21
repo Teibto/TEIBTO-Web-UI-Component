@@ -2,6 +2,16 @@
 
 Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitelet custom HTML pages.
 
+<div align="center">
+
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Component_Showcase-0D1171?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/specimen.html)
+&nbsp;&nbsp;
+[![API Reference](https://img.shields.io/badge/📖_API_Reference-Component_Docs-8B35C8?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/help.html)
+
+</div>
+
+---
+
 - **27 components** covering layout, navigation, forms, data display, and feedback
 - **No build step** in development — Lit loads from CDN as ES modules
 - **Design tokens** via CSS custom properties (`--tbt-*`) — full dark mode support
