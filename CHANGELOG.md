@@ -5,6 +5,28 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.18.0] — 2026-05-22
+
+### Added
+- `tbt-line-items` v1.0.0 — self-contained inline-editable line items table with automatic totals
+  - Inline `<input>` / `<select>` in each table cell — no modal required
+  - Event delegation on `<tbody>`: single `input`, `change`, `click` listeners handle all rows
+  - Hybrid Lit + manual DOM: Lit manages outer structure and reactive summary; tbody is managed via `innerHTML` / `insertAdjacentHTML` to prevent cursor loss during editing
+  - Reactive summary section (subtotal / VAT / grand total) — only re-renders when `_totals` state changes, never the tbody
+  - `rows` getter/setter — normalises incoming data, computes initial totals
+  - `addRow()` method — appends blank row and focuses Item input; uses `insertAdjacentHTML` to avoid touching existing rows
+  - `getTotal()` method — returns `{ subtotal, vat, total }` synchronously
+  - `tbt-change` event — fires on every edit, add, or delete with `{ rows, subtotal, vat, total }`
+  - Props: `unitOptions`, `accountOptions`, `currency`, `vat-rate`, `show-summary`, `readonly`, `loading`
+  - Loading skeleton state (3 animated rows)
+  - Read-only mode — plain-text cells, delete buttons hidden
+  - Empty state with `tbt-svg name="empty"` when no rows
+- `demo/demo.html` — updated to use `<tbt-line-items>` component
+  - Replaced ~100 lines of custom table + totals code with the component API (~20 lines)
+  - Removed page-level CSS for table, inline inputs, and delete button (moved into component shadow DOM)
+
+---
+
 ## [1.17.0] — 2026-05-22
 
 ### Added

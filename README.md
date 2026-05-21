@@ -14,7 +14,7 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
 
 ---
 
-- **29 components** — layout, navigation, forms, data display, feedback, and illustrations
+- **30 components** — layout, navigation, forms, data display, feedback, and illustrations
 - **No build step** in development — Lit 3 loads from CDN as ES modules
 - **Design tokens** via `--tbt-*` CSS custom properties — automatic dark mode
 - **Mobile-first** — sidebar drawer, responsive table card view, touch-friendly inputs
@@ -45,8 +45,8 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teibto · Page Name</title>
-  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.17.0/tbt-theme.css">
-  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.17.0/index.js"></script>
+  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.18.0/tbt-theme.css">
+  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.18.0/index.js"></script>
 </head>
 <body>
   <tbt-app-shell>
@@ -68,7 +68,7 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
 ```
 tbt-ds/
 ├── components/
-│   ├── index.js                # Barrel — imports all 29 tbt-* components
+│   ├── index.js                # Barrel — imports all 30 tbt-* components
 │   ├── tbt-icons-css.js        # Shared Tabler CSS injector for shadow DOM
 │   │
 │   ├── tbt-app-shell.js        # Page wrapper (menubar + sidebar + content)
@@ -99,7 +99,8 @@ tbt-ds/
 │   ├── tbt-table.js            # Data table (sort, pagination, responsive card view)
 │   ├── tbt-summary.js          # Document totals block
 │   ├── tbt-approval-flow.js    # Approval chain (horizontal / vertical)
-│   └── tbt-audit-log.js        # Activity timeline with field-level diffs
+│   ├── tbt-audit-log.js        # Activity timeline with field-level diffs
+│   └── tbt-line-items.js       # Inline-editable line items table + auto totals
 │
 ├── theme/
 │   └── tbt-theme.css           # All design tokens — single source of truth
@@ -107,7 +108,7 @@ tbt-ds/
 ├── demo/
 │   ├── demo.html               # Interactive Purchase Order page (fully editable form)
 │   ├── icon-svg.html           # Icon gallery + SVG illustration browser
-│   └── specimen.html           # Component showcase (all 29 components)
+│   └── specimen.html           # Component showcase (all 30 components)
 │
 ├── CHANGELOG.md
 └── package.json
@@ -677,6 +678,48 @@ Action types: `created` `updated` `approved` `rejected` `submitted` `cancelled` 
 
 ---
 
+#### `tbt-line-items`
+
+Self-contained inline-editable line items table with automatic totals. Combines the table, inline inputs, and subtotal/VAT/grand total summary into one component.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `rows` | Array (get/set) | `[]` | Row objects `{ id?, item, desc, qty, unit, price, account }` |
+| `unitOptions` | Array | Pcs/Box/Set/Roll | `[{ value, label }]` for Unit column |
+| `accountOptions` | Array | `[]` | `[{ value, label }]` for Account column |
+| `currency` | String | `฿` | Currency prefix |
+| `vat-rate` | Number | `0.07` | VAT rate 0–1 |
+| `show-summary` | Boolean | `true` | Show subtotal/VAT/grand total below table |
+| `readonly` | Boolean | `false` | View-only mode — plain text, no editing |
+| `loading` | Boolean | `false` | Skeleton placeholder state |
+
+Methods: `addRow()` · `getTotal()` → `{ subtotal, vat, total }`  
+Event: `tbt-change` → `{ rows, subtotal, vat, total }` — fires on every edit, add, or delete
+
+```html
+<tbt-section title="Line items">
+  <tbt-button slot="actions" variant="primary" icon="add" size="sm" id="add-btn">Add line</tbt-button>
+  <tbt-line-items id="li" currency="฿" vat-rate="0.07"></tbt-line-items>
+</tbt-section>
+
+<script type="module">
+  const li = document.getElementById('li');
+  li.accountOptions = [
+    { value:'5100', label:'5100 - Office supplies' },
+    { value:'5200', label:'5200 - IT equipment' },
+  ];
+  li.rows = [
+    { item:'Laptop', desc:'Dell 14" i7', qty:5, unit:'Pcs', price:35000, account:'5200' },
+  ];
+  document.getElementById('add-btn').addEventListener('click', () => li.addRow());
+  li.addEventListener('tbt-change', e => {
+    console.log(e.detail.rows, e.detail.total);
+  });
+</script>
+```
+
+---
+
 ## Design tokens
 
 All tokens live in `theme/tbt-theme.css`. Components use only `var(--tbt-*)` — never hardcode values.
@@ -801,27 +844,32 @@ async function save(payload) {
 
 ### Inline editable table (line items)
 
-See `demo/demo.html` for a complete working example. Pattern:
+Use `tbt-line-items` for the standard ERP document line items pattern — no custom table code needed. See `demo/demo.html` for a full working example.
 
-```javascript
-// Build editable row HTML (rendered via tbt-table col.html = true)
-function buildRow(r) {
-  return {
-    ...r,
-    _actions: `
-      <button data-id="${r.id}" data-act="edit" style="...">Edit</button>
-      <button data-id="${r.id}" data-act="del"  style="...">Del</button>`,
-  };
-}
+```html
+<tbt-section title="Line items">
+  <tbt-button slot="actions" variant="primary" icon="add" size="sm" id="add-btn">Add line</tbt-button>
+  <tbt-line-items id="li" currency="฿" vat-rate="0.07"></tbt-line-items>
+</tbt-section>
 
-// Event delegation for action buttons
-document.getElementById('table').addEventListener('click', e => {
-  const btn = e.target.closest('button[data-id]');
-  if (!btn) return;
-  const id = +btn.dataset.id;
-  if (btn.dataset.act === 'edit') openEdit(id);
-  if (btn.dataset.act === 'del')  deleteLine(id);
-});
+<script type="module">
+  const li = document.getElementById('li');
+  li.accountOptions = ACCOUNTS;  // [{ value, label }]
+  li.rows = window.__DATA__.lines;
+  document.getElementById('add-btn').addEventListener('click', () => li.addRow());
+
+  // Read totals on every change
+  li.addEventListener('tbt-change', e => {
+    console.log(e.detail.rows, e.detail.total);
+  });
+
+  // Read current state on save
+  async function save() {
+    const { rows } = li;  // getter returns snapshot
+    const { total } = li.getTotal();
+    await postToRESTlet({ lines: rows, total });
+  }
+</script>
 ```
 
 ---
@@ -831,7 +879,7 @@ document.getElementById('table').addEventListener('click', e => {
 ### File Cabinet structure
 
 ```
-/SuiteScripts/Teibto/ds/v1.17.0/
+/SuiteScripts/Teibto/ds/v1.18.0/
   tbt-theme.css
   index.js
   tbt-icons-css.js
@@ -848,8 +896,8 @@ document.getElementById('table').addEventListener('click', e => {
 ### Standard page `<head>`
 
 ```html
-<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.17.0/tbt-theme.css">
-<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.17.0/index.js"></script>
+<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.18.0/tbt-theme.css">
+<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.18.0/index.js"></script>
 ```
 
 > Always pin to an exact version. Never use `/latest/`.
@@ -859,7 +907,7 @@ document.getElementById('table').addEventListener('click', e => {
 ```bash
 cd tbt-ds/tbt-ds               # SDF project folder
 suitecloud account:setup        # first-time auth (opens browser)
-suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.17.0/*"
+suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.18.0/*"
 ```
 
 ---

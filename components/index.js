@@ -43,3 +43,4 @@ export * from './tbt-section.js';
 export * from './tbt-svg.js';
 export * from './tbt-table.js';
 export * from './tbt-summary.js';
+export * from './tbt-line-items.js';
