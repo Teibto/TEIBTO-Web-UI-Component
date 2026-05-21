@@ -9,6 +9,18 @@
   <script type="module" src="../components/index.js"></script>
   <style>
     body { margin: 0; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--tbt-space-4);
+    }
+    @media (max-width: 900px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 580px) { .form-grid { grid-template-columns: 1fr; } }
+    .line-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--tbt-space-4);
+    }
     .page-footer {
       display: flex; gap: var(--tbt-space-3); flex-wrap: wrap;
       margin-top: var(--tbt-space-6);
@@ -57,15 +69,11 @@
   <!-- ── Content ── -->
   <main slot="content">
 
-    <!-- Alert -->
-    <tbt-alert id="save-alert" variant="success" dismissible style="display:none;margin-bottom:var(--tbt-space-4)">
-      Document saved successfully.
-    </tbt-alert>
-    <tbt-alert id="approve-alert" variant="success" dismissible style="display:none;margin-bottom:var(--tbt-space-4)">
-      Document submitted for approval.
-    </tbt-alert>
+    <!-- Alerts -->
+    <tbt-alert id="save-alert"    variant="success" dismissible style="display:none;margin-bottom:var(--tbt-space-4)">Document saved successfully.</tbt-alert>
+    <tbt-alert id="approve-alert" variant="success" dismissible style="display:none;margin-bottom:var(--tbt-space-4)">Document submitted for approval.</tbt-alert>
 
-    <!-- Header -->
+    <!-- Page header -->
     <tbt-section>
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--tbt-space-3)">
         <div>
@@ -80,18 +88,18 @@
       </div>
     </tbt-section>
 
-    <!-- Document info -->
+    <!-- Document info — editable form -->
     <tbt-section title="Document info">
-      <tbt-field-grid columns="4">
-        <tbt-field label="Document no." value="PO-2569-0042" required></tbt-field>
-        <tbt-field label="Vendor"       value="บจก. เทสโต้ ซัพพลาย จำกัด"></tbt-field>
-        <tbt-field label="Date"         value="20 May 2026"></tbt-field>
-        <tbt-field label="Due date"     value="19 Jun 2026"></tbt-field>
-        <tbt-field label="Subsidiary"   value="Teibto Co., Ltd."></tbt-field>
-        <tbt-field label="Department"   value="Operations"></tbt-field>
-        <tbt-field label="Currency"     value="THB"></tbt-field>
-        <tbt-field label="Memo"         value="Office supplies Q2/2026"></tbt-field>
-      </tbt-field-grid>
+      <div class="form-grid">
+        <tbt-input label="Document no." name="tranid"     value="PO-2569-0042" readonly></tbt-input>
+        <tbt-dropdown id="dd-vendor"    label="Vendor"    name="vendor"    required></tbt-dropdown>
+        <tbt-datepicker label="Date"    name="po_date"    value="2026-05-20" required></tbt-datepicker>
+        <tbt-datepicker label="Due date" name="due_date"  value="2026-06-19"></tbt-datepicker>
+        <tbt-dropdown id="dd-subsidiary" label="Subsidiary" name="subsidiary"></tbt-dropdown>
+        <tbt-dropdown id="dd-department" label="Department" name="department"></tbt-dropdown>
+        <tbt-dropdown id="dd-currency"   label="Currency"   name="currency"></tbt-dropdown>
+        <tbt-input label="Memo" name="memo" value="Office supplies Q2/2026"></tbt-input>
+      </div>
     </tbt-section>
 
     <!-- Line items -->
@@ -105,10 +113,9 @@
       <div style="display:flex;justify-content:flex-end">
         <div style="width:320px">
           <tbt-summary>
-            <tbt-summary-item label="Subtotal"  value="฿100,000.00"></tbt-summary-item>
-            <tbt-summary-item label="Discount"  value="−฿5,000.00"></tbt-summary-item>
-            <tbt-summary-item label="VAT 7%"    value="฿6,650.00"></tbt-summary-item>
-            <tbt-summary-item label="Grand total" value="฿101,650.00" highlight></tbt-summary-item>
+            <tbt-summary-item id="tot-subtotal" label="Subtotal"    value="฿0"></tbt-summary-item>
+            <tbt-summary-item id="tot-vat"      label="VAT 7%"      value="฿0"></tbt-summary-item>
+            <tbt-summary-item id="tot-grand"    label="Grand total" value="฿0" highlight></tbt-summary-item>
           </tbt-summary>
         </div>
       </div>
@@ -138,42 +145,37 @@
 
     <!-- Footer actions -->
     <div class="page-footer">
-      <tbt-button variant="primary"   icon="save"    id="save-btn">Save</tbt-button>
-      <tbt-button variant="secondary" icon="submit"  id="submit-btn">Submit for approval</tbt-button>
-      <tbt-button variant="secondary" icon="print"   id="print-btn">Print</tbt-button>
-      <tbt-button variant="secondary" icon="email"   id="email-btn">Email</tbt-button>
-      <tbt-button variant="danger"    icon="delete"  id="delete-btn">Delete</tbt-button>
+      <tbt-button variant="primary"   icon="save"   id="save-btn">Save</tbt-button>
+      <tbt-button variant="secondary" icon="submit" id="submit-btn">Submit for approval</tbt-button>
+      <tbt-button variant="secondary" icon="print"  id="print-btn">Print</tbt-button>
+      <tbt-button variant="secondary" icon="email"  id="email-btn">Email</tbt-button>
+      <tbt-button variant="danger"    icon="delete" id="delete-btn">Delete</tbt-button>
     </div>
 
   </main>
 </tbt-app-shell>
 
 <!-- ── Modals ── -->
+
 <tbt-modal id="delete-modal" title="Delete document" variant="danger">
   <p style="font-family:var(--tbt-font);color:var(--tbt-text-secondary);margin:0">
     Are you sure you want to delete <strong>PO-2569-0042</strong>? This action cannot be undone.
   </p>
   <div slot="footer" style="display:flex;gap:var(--tbt-space-3)">
-    <tbt-button variant="danger"     id="confirm-delete-btn">Delete</tbt-button>
-    <tbt-button variant="secondary"  id="cancel-delete-btn">Cancel</tbt-button>
+    <tbt-button variant="danger"    id="confirm-delete-btn">Delete</tbt-button>
+    <tbt-button variant="secondary" id="cancel-delete-btn">Cancel</tbt-button>
   </div>
 </tbt-modal>
 
-<tbt-modal id="add-line-modal" title="Add line item">
-  <tbt-form id="line-form">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--tbt-space-4)">
-      <tbt-input    label="Item"        name="item"     required placeholder="Item name"></tbt-input>
-      <tbt-input    label="Description" name="desc"     placeholder="Description"></tbt-input>
-      <tbt-input    label="Qty"         name="qty"      type="number" value="1" required></tbt-input>
-      <tbt-input    label="Unit price"  name="price"    type="number" placeholder="0.00" required></tbt-input>
-      <tbt-dropdown label="Unit"        name="unit"
-        .options=${[{value:'pcs',label:'Pcs'},{value:'box',label:'Box'},{value:'set',label:'Set'}]}>
-      </tbt-dropdown>
-      <tbt-dropdown label="Account"     name="account"
-        .options=${[{value:'5100',label:'5100 - Office supplies'},{value:'5200',label:'5200 - IT equipment'},{value:'5300',label:'5300 - Maintenance'}]}>
-      </tbt-dropdown>
-    </div>
-  </tbt-form>
+<tbt-modal id="line-modal" title="Add line item">
+  <div class="line-form-grid">
+    <tbt-input    label="Item"        name="lf-item"    required placeholder="Item name"></tbt-input>
+    <tbt-input    label="Description" name="lf-desc"    placeholder="Description"></tbt-input>
+    <tbt-input    label="Qty"         name="lf-qty"     type="number" value="1" required></tbt-input>
+    <tbt-input    label="Unit price"  name="lf-price"   type="number" placeholder="0.00" required></tbt-input>
+    <tbt-dropdown label="Unit"        id="lf-unit"      name="lf-unit"></tbt-dropdown>
+    <tbt-dropdown label="Account"     id="lf-account"   name="lf-account"></tbt-dropdown>
+  </div>
   <div slot="footer" style="display:flex;gap:var(--tbt-space-3)">
     <tbt-button variant="primary"    id="confirm-line-btn">Add line</tbt-button>
     <tbt-button variant="secondary"  id="cancel-line-btn">Cancel</tbt-button>
@@ -181,9 +183,7 @@
 </tbt-modal>
 
 <tbt-modal id="submit-modal" title="Submit for approval" variant="confirm">
-  <p style="font-family:var(--tbt-font);color:var(--tbt-text-secondary);margin:0">
-    Submit <strong>PO-2569-0042</strong> (฿101,650.00) for manager approval?
-  </p>
+  <p id="submit-modal-body" style="font-family:var(--tbt-font);color:var(--tbt-text-secondary);margin:0"></p>
   <div slot="footer" style="display:flex;gap:var(--tbt-space-3)">
     <tbt-button variant="primary"    id="confirm-submit-btn">Submit</tbt-button>
     <tbt-button variant="secondary"  id="cancel-submit-btn">Cancel</tbt-button>
@@ -205,31 +205,197 @@
 <!-- ── Scripts ── -->
 <script type="module">
 
-/* ── Data ── */
-let lines = [
-  { id:1, item:'Printer Paper A4', desc:'Box of 500 sheets', qty:10, unit:'Box',   price:280,   amount:'฿2,800.00',  account:'5100 - Office supplies' },
-  { id:2, item:'Ballpoint Pen',    desc:'Blue ink, 12-pack', qty:5,  unit:'Box',   price:120,   amount:'฿600.00',    account:'5100 - Office supplies' },
-  { id:3, item:'Laptop Stand',     desc:'Adjustable aluminium', qty:3, unit:'Pcs', price:1200,  amount:'฿3,600.00',  account:'5200 - IT equipment' },
-  { id:4, item:'USB-C Hub',        desc:'7-port hub',        qty:3,  unit:'Pcs',   price:890,   amount:'฿2,670.00',  account:'5200 - IT equipment' },
-  { id:5, item:'Stapler',          desc:'Heavy duty',        qty:4,  unit:'Pcs',   price:350,   amount:'฿1,400.00',  account:'5100 - Office supplies' },
+/* ── Reference data ── */
+const VENDORS = [
+  { value:'V001', label:'บจก. เทสโต้ ซัพพลาย จำกัด' },
+  { value:'V002', label:'บจก. โปรเทค โซลูชั่น จำกัด' },
+  { value:'V003', label:'บจก. ออฟฟิศเมต จำกัด (มหาชน)' },
+  { value:'V004', label:'บจก. ซีเอ็นเอ็กซ์ เทรดดิ้ง จำกัด' },
+];
+const SUBSIDIARIES = [
+  { value:'S01', label:'Teibto Co., Ltd.' },
+  { value:'S02', label:'Teibto Digital Co., Ltd.' },
+];
+const DEPARTMENTS = [
+  { value:'D01', label:'Operations' },
+  { value:'D02', label:'Information Technology' },
+  { value:'D03', label:'Finance & Accounting' },
+  { value:'D04', label:'Human Resources' },
+];
+const CURRENCIES = [
+  { value:'THB', label:'THB — Thai Baht' },
+  { value:'USD', label:'USD — US Dollar' },
+  { value:'EUR', label:'EUR — Euro' },
+];
+const ACCOUNTS = [
+  { value:'5100', label:'5100 - Office supplies' },
+  { value:'5200', label:'5200 - IT equipment' },
+  { value:'5300', label:'5300 - Maintenance' },
+  { value:'5400', label:'5400 - Other expenses' },
+];
+const UNITS = [
+  { value:'Pcs', label:'Pcs' },
+  { value:'Box', label:'Box' },
+  { value:'Set', label:'Set' },
+  { value:'Roll', label:'Roll' },
 ];
 
-const cols = [
-  { key:'item',    label:'Item',        sortable:true, mobileTitle:true },
-  { key:'desc',    label:'Description', sortable:false },
-  { key:'qty',     label:'Qty',         align:'right', sortable:true },
-  { key:'unit',    label:'Unit' },
-  { key:'price',   label:'Unit price',  align:'right', sortable:true },
-  { key:'amount',  label:'Amount',      align:'right', sortable:true },
-  { key:'account', label:'Account' },
+/* ── Initialize header dropdowns ── */
+const ddVendor     = document.getElementById('dd-vendor');
+const ddSubsidiary = document.getElementById('dd-subsidiary');
+const ddDepartment = document.getElementById('dd-department');
+const ddCurrency   = document.getElementById('dd-currency');
+ddVendor.options     = VENDORS;      ddVendor.value     = 'V001';
+ddSubsidiary.options = SUBSIDIARIES; ddSubsidiary.value = 'S01';
+ddDepartment.options = DEPARTMENTS;  ddDepartment.value = 'D02';
+ddCurrency.options   = CURRENCIES;   ddCurrency.value   = 'THB';
+
+/* ── Initialize line form dropdowns ── */
+const lfUnit    = document.getElementById('lf-unit');
+const lfAccount = document.getElementById('lf-account');
+lfUnit.options    = UNITS;    lfUnit.value    = 'Pcs';
+lfAccount.options = ACCOUNTS; lfAccount.value = '5100';
+
+/* ── Line data ── */
+let lines = [
+  { id:1, item:'Dell Laptop 14"',    desc:'i7 16GB 512GB SSD',     qty:5,  unit:'Pcs', price:35000, account:'5200' },
+  { id:2, item:'Monitor 27" 4K',     desc:'LG UltraFine 27UN850',  qty:5,  unit:'Pcs', price:8500,  account:'5200' },
+  { id:3, item:'Office Chair',       desc:'Ergonomic mesh back',   qty:10, unit:'Pcs', price:6800,  account:'5100' },
+  { id:4, item:'Printer Paper A4',   desc:'Box of 500 sheets',     qty:50, unit:'Box', price:280,   account:'5100' },
+  { id:5, item:'USB-C Hub 7-port',   desc:'Multi-port adapter',    qty:20, unit:'Pcs', price:890,   account:'5200' },
 ];
+let nextId = 6;
+let editingId = null;
+
+/* ── Table columns ── */
+const cols = [
+  { key:'item',     label:'Item',       sortable:true, mobileTitle:true },
+  { key:'desc',     label:'Description' },
+  { key:'qty',      label:'Qty',        align:'right', sortable:true },
+  { key:'unit',     label:'Unit' },
+  { key:'price',    label:'Unit price', align:'right' },
+  { key:'amount',   label:'Amount',     align:'right', sortable:true },
+  { key:'_acct',    label:'Account' },
+  { key:'_actions', label:'',           html:true,     align:'right' },
+];
+
+/* ── Helpers ── */
+function fmt(n) {
+  return '฿' + n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function acctLabel(val) {
+  return ACCOUNTS.find(a => a.value === val)?.label ?? val;
+}
+function buildRow(r) {
+  return {
+    ...r,
+    price:    fmt(r.price),
+    amount:   fmt(r.qty * r.price),
+    _acct:    acctLabel(r.account),
+    _actions: `<span style="display:inline-flex;gap:4px">
+      <button data-id="${r.id}" data-act="edit"
+        style="padding:2px 10px;border:1px solid var(--tbt-border);background:transparent;
+               border-radius:var(--tbt-radius-sm);cursor:pointer;color:var(--tbt-primary);
+               font-family:var(--tbt-font);font-size:var(--tbt-size-sm)">Edit</button>
+      <button data-id="${r.id}" data-act="del"
+        style="padding:2px 10px;border:1px solid var(--tbt-border);background:transparent;
+               border-radius:var(--tbt-radius-sm);cursor:pointer;color:var(--tbt-danger);
+               font-family:var(--tbt-font);font-size:var(--tbt-size-sm)">Del</button>
+    </span>`,
+  };
+}
 
 function refreshTable() {
   const t = document.getElementById('line-table');
   t.columns = cols;
-  t.rows    = lines;
+  t.rows    = lines.map(buildRow);
 }
+
+function refreshTotals() {
+  const subtotal = lines.reduce((s, r) => s + r.qty * r.price, 0);
+  const vat      = subtotal * 0.07;
+  const grand    = subtotal + vat;
+  document.getElementById('tot-subtotal').value = fmt(subtotal);
+  document.getElementById('tot-vat').value      = fmt(vat);
+  document.getElementById('tot-grand').value    = fmt(grand);
+  /* keep submit modal body in sync */
+  document.getElementById('submit-modal-body').innerHTML =
+    `Submit <strong>PO-2569-0042</strong> (${fmt(grand)}) for manager approval?`;
+}
+
 refreshTable();
+refreshTotals();
+
+/* ── Table action buttons (event delegation) ── */
+document.getElementById('line-table').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-id]');
+  if (!btn) return;
+  const id = +btn.dataset.id;
+  if (btn.dataset.act === 'edit') {
+    openEditLine(id);
+  } else if (btn.dataset.act === 'del') {
+    lines = lines.filter(r => r.id !== id);
+    refreshTable();
+    refreshTotals();
+  }
+});
+
+/* ── Add / Edit line modal ── */
+const lineModal = document.getElementById('line-modal');
+
+function getField(name) { return document.querySelector(`[name="${name}"]`); }
+
+function openAddLine() {
+  editingId = null;
+  lineModal.title = 'Add line item';
+  document.getElementById('confirm-line-btn').textContent = 'Add line';
+  getField('lf-item').value  = '';
+  getField('lf-desc').value  = '';
+  getField('lf-qty').value   = '1';
+  getField('lf-price').value = '';
+  lfUnit.value    = 'Pcs';
+  lfAccount.value = '5100';
+  lineModal.open = true;
+}
+
+function openEditLine(id) {
+  const row = lines.find(r => r.id === id);
+  if (!row) return;
+  editingId = id;
+  lineModal.title = 'Edit line item';
+  document.getElementById('confirm-line-btn').textContent = 'Save changes';
+  getField('lf-item').value  = row.item;
+  getField('lf-desc').value  = row.desc;
+  getField('lf-qty').value   = String(row.qty);
+  getField('lf-price').value = String(row.price);
+  lfUnit.value    = row.unit;
+  lfAccount.value = row.account;
+  lineModal.open = true;
+}
+
+document.getElementById('add-line-btn').addEventListener('click', openAddLine);
+document.getElementById('cancel-line-btn').addEventListener('click', () => { lineModal.open = false; });
+
+document.getElementById('confirm-line-btn').addEventListener('click', () => {
+  const item  = getField('lf-item').value.trim();
+  const desc  = getField('lf-desc').value.trim();
+  const qty   = parseFloat(getField('lf-qty').value)   || 1;
+  const price = parseFloat(getField('lf-price').value) || 0;
+  const unit  = lfUnit.value    || 'Pcs';
+  const acct  = lfAccount.value || '5100';
+  if (!item || !price) return;
+
+  if (editingId !== null) {
+    const idx = lines.findIndex(r => r.id === editingId);
+    if (idx !== -1) lines[idx] = { id: editingId, item, desc, qty, unit, price, account: acct };
+  } else {
+    lines.push({ id: nextId++, item, desc, qty, unit, price, account: acct });
+  }
+
+  refreshTable();
+  refreshTotals();
+  lineModal.open = false;
+});
 
 /* ── Approval flow ── */
 document.getElementById('approval-flow').steps = [
@@ -241,12 +407,12 @@ document.getElementById('approval-flow').steps = [
 
 /* ── Audit log ── */
 document.getElementById('audit-log').entries = [
-  { id:'4', timestamp:new Date(Date.now()-1*3600000).toISOString(),  user:'System',       action:'submitted', label:'Submitted for approval' },
-  { id:'3', timestamp:new Date(Date.now()-2*3600000).toISOString(),  user:'Wichit Wongta', action:'updated',  label:'Amount updated',
-    changes:[{field:'Grand total', from:'฿98,000.00', to:'฿101,650.00'}] },
-  { id:'2', timestamp:new Date(Date.now()-3*3600000).toISOString(),  user:'Wichit Wongta', action:'updated',  label:'Line items updated',
+  { id:'4', timestamp:new Date(Date.now()-1*3600000).toISOString(), user:'System',        action:'submitted', label:'Submitted for approval' },
+  { id:'3', timestamp:new Date(Date.now()-2*3600000).toISOString(), user:'Wichit Wongta', action:'updated',   label:'Amount updated',
+    changes:[{field:'Grand total', from:'฿340,000.00', to:'฿362,131.50'}] },
+  { id:'2', timestamp:new Date(Date.now()-3*3600000).toISOString(), user:'Wichit Wongta', action:'updated',   label:'Line items updated',
     changes:[{field:'Lines', from:'4 items', to:'5 items'}] },
-  { id:'1', timestamp:new Date(Date.now()-5*3600000).toISOString(),  user:'Wichit Wongta', action:'created',  label:'Document created' },
+  { id:'1', timestamp:new Date(Date.now()-5*3600000).toISOString(), user:'Wichit Wongta', action:'created',   label:'Document created' },
 ];
 
 /* ── Save ── */
@@ -292,51 +458,20 @@ document.getElementById('confirm-delete-btn').addEventListener('click', () => {
   document.getElementById('doc-status').textContent = 'Deleted';
 });
 
-/* ── Add line modal ── */
-document.getElementById('add-line-btn').addEventListener('click', () => {
-  document.getElementById('add-line-modal').open = true;
-});
-document.getElementById('cancel-line-btn').addEventListener('click', () => {
-  document.getElementById('add-line-modal').open = false;
-});
-document.getElementById('confirm-line-btn').addEventListener('click', () => {
-  const form = document.getElementById('line-form');
-  const inputs = form.querySelectorAll('tbt-input');
-  const dd = form.querySelectorAll('tbt-dropdown');
-  const item  = inputs[0].value;
-  const desc  = inputs[1].value;
-  const qty   = parseFloat(inputs[2].value) || 1;
-  const price = parseFloat(inputs[3].value) || 0;
-  const unit  = dd[0].value || 'Pcs';
-  const acct  = dd[1].value || '5100 - Office supplies';
-  if (!item || !price) return;
-  const amount = qty * price;
-  lines.push({
-    id: lines.length + 1,
-    item, desc, qty, unit,
-    price: price.toLocaleString('th-TH', { minimumFractionDigits: 2 }),
-    amount: `฿${amount.toLocaleString('th-TH', { minimumFractionDigits: 2 })}`,
-    account: acct,
-  });
-  refreshTable();
-  document.getElementById('add-line-modal').open = false;
-  inputs.forEach(i => i.value = '');
-});
-
-/* ── Print (browser print) ── */
+/* ── Print ── */
 document.getElementById('print-btn').addEventListener('click', () => window.print());
 
 /* ── Theme toggle ── */
-const btn  = document.getElementById('theme-toggle');
-const icon = document.getElementById('theme-icon');
+const toggleBtn  = document.getElementById('theme-toggle');
+const themeIcon  = document.getElementById('theme-icon');
 function applyTheme(t) {
   document.documentElement.dataset.theme = t;
-  icon.className = t === 'dark' ? 'ti ti-moon' : 'ti ti-sun';
+  themeIcon.className = t === 'dark' ? 'ti ti-moon' : 'ti ti-sun';
   localStorage.setItem('tbt-theme', t);
 }
 applyTheme(localStorage.getItem('tbt-theme') ||
   (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-btn.addEventListener('click', () =>
+toggleBtn.addEventListener('click', () =>
   applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
 
 </script>
