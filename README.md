@@ -14,10 +14,11 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
 
 ---
 
-- **27 components** covering layout, navigation, forms, data display, and feedback
-- **No build step** in development — Lit loads from CDN as ES modules
-- **Design tokens** via CSS custom properties (`--tbt-*`) — full dark mode support
+- **29 components** — layout, navigation, forms, data display, feedback, and illustrations
+- **No build step** in development — Lit 3 loads from CDN as ES modules
+- **Design tokens** via `--tbt-*` CSS custom properties — automatic dark mode
 - **Mobile-first** — sidebar drawer, responsive table card view, touch-friendly inputs
+- **80+ ERP icon aliases** — semantic names like `save`, `approve`, `invoice`, `payment`
 
 ---
 
@@ -67,23 +68,24 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
 ```
 tbt-ds/
 ├── components/
-│   ├── index.js                # Barrel — imports all tbt-* components
+│   ├── index.js                # Barrel — imports all 29 tbt-* components
 │   ├── tbt-icons-css.js        # Shared Tabler CSS injector for shadow DOM
 │   │
 │   ├── tbt-app-shell.js        # Page wrapper (menubar + sidebar + content)
-│   ├── tbt-menubar.js          # Top navigation bar + hamburger (mobile)
+│   ├── tbt-menubar.js          # Top nav bar + hamburger (mobile ≤ 768px)
 │   ├── tbt-sidebar.js          # Collapsible left sidebar + sidebar-item
 │   ├── tbt-subtab.js           # Tab navigation + tab panel
 │   │
-│   ├── tbt-button.js           # Action button (5 variants)
+│   ├── tbt-button.js           # Action button (primary / secondary / danger / ghost / accent)
 │   ├── tbt-modal.js            # Dialog modal (default / confirm / danger)
 │   │
-│   ├── tbt-icon.js             # Tabler icon wrapper (80+ ERP aliases)
+│   ├── tbt-icon.js             # Tabler icon wrapper — 80+ ERP semantic aliases
 │   ├── tbt-badge.js            # Status badge (6 variants)
 │   ├── tbt-alert.js            # Inline alert (4 variants, dismissible)
+│   ├── tbt-svg.js              # SVG illustration (7 built-ins + src fetch + inline slot)
 │   │
 │   ├── tbt-form.js             # Form wrapper with shadow-DOM data collection
-│   ├── tbt-input.js            # Text / number / email input
+│   ├── tbt-input.js            # Text / number / email / password input
 │   ├── tbt-dropdown.js         # Select dropdown
 │   ├── tbt-multiselect.js      # Multi-select with chips
 │   ├── tbt-datepicker.js       # Date picker with calendar popup
@@ -95,17 +97,17 @@ tbt-ds/
 │   ├── tbt-field-grid.js       # Responsive grid of tbt-field
 │   ├── tbt-section.js          # Content card with optional title + actions slot
 │   ├── tbt-table.js            # Data table (sort, pagination, responsive card view)
-│   ├── tbt-summary.js          # Document totals block (subtotal / VAT / grand total)
+│   ├── tbt-summary.js          # Document totals block
 │   ├── tbt-approval-flow.js    # Approval chain (horizontal / vertical)
-│   ├── tbt-audit-log.js        # Activity timeline
-│   └── tbt-svg.js              # SVG illustration (7 built-ins + src fetch + slot)
+│   └── tbt-audit-log.js        # Activity timeline with field-level diffs
 │
 ├── theme/
-│   └── tbt-theme.css           # ALL design tokens — the only source of truth for colors/spacing
+│   └── tbt-theme.css           # All design tokens — single source of truth
 │
 ├── demo/
-│   ├── specimen.html           # Interactive component showcase
-│   └── help.html               # Component API reference
+│   ├── demo.html               # Interactive Purchase Order page (fully editable form)
+│   ├── icon-svg.html           # Icon gallery + SVG illustration browser
+│   └── specimen.html           # Component showcase (all 29 components)
 │
 ├── CHANGELOG.md
 └── package.json
@@ -135,7 +137,6 @@ tbt-ds/
 
   <main slot="content">
 
-    <!-- Header section -->
     <tbt-section title="Invoice · INV-0001">
       <tbt-field-grid columns="4">
         <tbt-field label="Document no." value="INV-0001"></tbt-field>
@@ -147,35 +148,37 @@ tbt-ds/
       </tbt-field-grid>
     </tbt-section>
 
-    <!-- Line items -->
     <tbt-section title="Line items">
-      <tbt-table
-        .columns=${[
-          { key: 'item',   label: 'Item',   sortable: true },
-          { key: 'qty',    label: 'Qty',    align: 'right' },
-          { key: 'price',  label: 'Price',  align: 'right' },
-          { key: 'amount', label: 'Amount', align: 'right' }
-        ]}
-        .rows=${lines}
-        paginate
-        page-size="50">
-      </tbt-table>
+      <tbt-button slot="actions" variant="primary" icon="add" size="sm">Add line</tbt-button>
+      <tbt-table id="line-table" paginate page-size="50"></tbt-table>
     </tbt-section>
 
-    <!-- Totals -->
     <tbt-section>
-      <tbt-summary subtotal="100000" vat="7000"></tbt-summary>
+      <tbt-summary>
+        <tbt-summary-item label="Subtotal"    value="฿100,000.00"></tbt-summary-item>
+        <tbt-summary-item label="VAT 7%"      value="฿7,000.00"></tbt-summary-item>
+        <tbt-summary-item label="Grand total" value="฿107,000.00" highlight></tbt-summary-item>
+      </tbt-summary>
     </tbt-section>
 
-    <!-- Footer actions -->
-    <footer style="display:flex;gap:var(--tbt-space-3);margin-top:var(--tbt-space-5)">
-      <tbt-button variant="primary"    icon="save">Save</tbt-button>
-      <tbt-button variant="secondary"  icon="print">Print</tbt-button>
-      <tbt-button variant="secondary">Cancel</tbt-button>
-    </footer>
+    <div style="display:flex;gap:var(--tbt-space-3);margin-top:var(--tbt-space-5)">
+      <tbt-button variant="primary"   icon="save">Save</tbt-button>
+      <tbt-button variant="secondary" icon="print">Print</tbt-button>
+      <tbt-button variant="danger"    icon="delete">Delete</tbt-button>
+    </div>
 
   </main>
 </tbt-app-shell>
+
+<script type="module">
+  document.getElementById('line-table').columns = [
+    { key: 'item',   label: 'Item',   sortable: true, mobileTitle: true },
+    { key: 'qty',    label: 'Qty',    align: 'right' },
+    { key: 'price',  label: 'Price',  align: 'right' },
+    { key: 'amount', label: 'Amount', align: 'right', sortable: true },
+  ];
+  document.getElementById('line-table').rows = [/* data array */];
+</script>
 ```
 
 ### List / search page
@@ -183,11 +186,17 @@ tbt-ds/
 ```html
 <tbt-section title="Invoice list">
   <div slot="actions" style="display:flex;gap:var(--tbt-space-3)">
-    <tbt-search placeholder="Search..." @tbt-search=${e => search(e.detail.value)}></tbt-search>
+    <tbt-search id="search" placeholder="Search documents…" debounce="300"></tbt-search>
     <tbt-button variant="primary" icon="add">New</tbt-button>
   </div>
-  <tbt-table .columns=${cols} .rows=${rows} paginate page-size="50"></tbt-table>
+  <tbt-table id="table" paginate page-size="50" responsive></tbt-table>
 </tbt-section>
+
+<script type="module">
+  document.getElementById('search').addEventListener('tbt-search', e => {
+    // filter rows...
+  });
+</script>
 ```
 
 ---
@@ -197,70 +206,70 @@ tbt-ds/
 ### Layout
 
 #### `tbt-app-shell`
-Page wrapper. Provides sticky menubar, optional collapsible sidebar, and scrollable content area. On mobile (≤ 768px) the sidebar becomes a slide-in drawer.
-
-| Attribute | Type | Default | Description |
-|---|---|---|---|
-| `no-sidebar` | Boolean | — | Hides the sidebar slot entirely |
+Page wrapper. Provides sticky menubar, collapsible sidebar, and scrollable content area. On mobile (≤ 768px) the sidebar becomes a slide-in drawer triggered by the hamburger button.
 
 **Slots:** `menubar` · `sidebar` · `content`
 
 ---
 
 #### `tbt-menubar`
-Top navigation bar. Switches to hamburger mode on ≤ 768px.
+Top navigation bar. Automatically switches to hamburger mode on ≤ 768px.
 
-| Attribute | Type | Description |
+| Prop | Type | Description |
 |---|---|---|
 | `logo` | String | Logo image URL |
-| `title` | String | Brand title text |
+| `title` | String | Brand name |
 
-**Slots:** default (nav items) · `end` (right-side actions)
-**Events:** `tbt-menu-toggle` — fired when hamburger is clicked
+**Slots:** default (nav items) · `end` (right-side actions like user/notifications)  
+**Events:** `tbt-menu-toggle`
 
 Children: `tbt-menu-item`, `tbt-menu-group`
 
 ```html
-<tbt-menubar logo="/assets/logo.png" title="Teibto ERP">
-  <tbt-menu-item href="/dashboard" label="หน้าหลัก" active></tbt-menu-item>
-  <tbt-menu-group label="ขาย" icon="shopping-bag">
+<tbt-menubar title="Teibto ERP">
+  <tbt-menu-item href="/dashboard" label="หน้าหลัก"></tbt-menu-item>
+  <tbt-menu-group label="ขาย" icon="sales-order">
     <tbt-menu-item href="/quotation" label="ใบเสนอราคา"></tbt-menu-item>
   </tbt-menu-group>
-  <tbt-button slot="end" variant="ghost" icon="logout">Logout</tbt-button>
+  <div slot="end" style="display:flex;gap:8px">
+    <tbt-icon name="notification" size="lg" color="secondary"></tbt-icon>
+    <tbt-icon name="user"         size="lg" color="secondary"></tbt-icon>
+  </div>
 </tbt-menubar>
 ```
 
 ---
 
 #### `tbt-sidebar` / `tbt-sidebar-item`
-Collapsible left navigation panel.
+Collapsible left navigation panel. On mobile, hidden by default and opened as a drawer via hamburger.
 
-| Attribute | Type | Description |
+| Prop | Type | Description |
 |---|---|---|
 | `collapsible` | Boolean | Show collapse toggle button |
-| `collapsed` | Boolean | Collapsed state (icon-only) |
+| `collapsed` | Boolean | Collapsed state (icons only) |
 
-`tbt-sidebar-item` props: `icon` · `label` · `href` · `active`
+`tbt-sidebar-item`: `icon` (ERP alias) · `label` · `href` · `active`
 
 ```html
 <tbt-sidebar collapsible>
-  <tbt-sidebar-item icon="home"    label="Dashboard" href="/dashboard"></tbt-sidebar-item>
-  <tbt-sidebar-item icon="invoice" label="Invoice"   href="/invoice" active></tbt-sidebar-item>
+  <tbt-sidebar-item icon="home"           label="Dashboard"      href="/dash"></tbt-sidebar-item>
+  <tbt-sidebar-item icon="purchase-order" label="Purchase order" href="/po" active></tbt-sidebar-item>
+  <tbt-sidebar-item icon="settings"       label="Settings"       href="/settings"></tbt-sidebar-item>
 </tbt-sidebar>
 ```
 
 ---
 
 #### `tbt-subtab` / `tbt-tab`
-Tab navigation within a page.
+In-page tab navigation.
 
 ```html
 <tbt-subtab>
-  <tbt-tab label="General info" active>
-    <tbt-field-grid columns="3">...</tbt-field-grid>
+  <tbt-tab label="General info">
+    <tbt-field-grid columns="4">...</tbt-field-grid>
   </tbt-tab>
-  <tbt-tab label="Line items">
-    <tbt-table ...></tbt-table>
+  <tbt-tab label="Audit log">
+    <tbt-audit-log ...></tbt-audit-log>
   </tbt-tab>
 </tbt-subtab>
 ```
@@ -281,10 +290,10 @@ Tab navigation within a page.
 
 ```html
 <tbt-button variant="primary"   icon="save">Save</tbt-button>
-<tbt-button variant="danger"    icon="delete">Delete</tbt-button>
 <tbt-button variant="secondary" icon="print">Print</tbt-button>
+<tbt-button variant="danger"    icon="delete">Delete</tbt-button>
 <tbt-button variant="ghost"     icon="external">View</tbt-button>
-<tbt-button variant="accent">Accent gradient</tbt-button>
+<tbt-button variant="accent">Gradient</tbt-button>
 <tbt-button variant="primary" loading>Saving…</tbt-button>
 ```
 
@@ -296,31 +305,34 @@ Tab navigation within a page.
 |---|---|---|
 | `variant` | `default` `confirm` `danger` | `default` |
 | `title` | String | — |
-| `open` | Boolean (reflect) | — |
+| `open` | Boolean | — |
 
-**Slots:** default (body) · `footer`
+**Slots:** default (body) · `footer`  
 **Events:** `tbt-close`
 
 ```html
-<tbt-modal title="Confirm delete" variant="danger" id="del-modal">
+<tbt-modal id="del-modal" title="Delete document" variant="danger">
   <p>This action cannot be undone.</p>
-  <div slot="footer">
-    <tbt-button variant="danger"    @click=${confirm}>Delete</tbt-button>
-    <tbt-button variant="secondary" @click=${close}>Cancel</tbt-button>
+  <div slot="footer" style="display:flex;gap:12px">
+    <tbt-button variant="danger"    id="confirm-del">Delete</tbt-button>
+    <tbt-button variant="secondary" id="cancel-del">Cancel</tbt-button>
   </div>
 </tbt-modal>
 
-<script>
+<script type="module">
   document.getElementById('del-modal').open = true;
+  document.getElementById('cancel-del').addEventListener('click', () => {
+    document.getElementById('del-modal').open = false;
+  });
 </script>
 ```
 
 ---
 
-### Feedback
+### Icons & Illustrations
 
 #### `tbt-icon`
-Tabler icon wrapper with 80+ ERP semantic aliases.
+Tabler Icons wrapper with 80+ ERP semantic aliases. Browse all aliases interactively at **[icon-svg.html](https://kingcomen.github.io/tbt-ds/demo/icon-svg.html)**.
 
 | Prop | Values | Default |
 |---|---|---|
@@ -328,31 +340,75 @@ Tabler icon wrapper with 80+ ERP semantic aliases.
 | `size` | `xs` `sm` `md` `lg` `xl` `2xl` | `md` |
 | `color` | `inherit` `primary` `secondary` `muted` `success` `warning` `danger` `info` | `inherit` |
 | `spin` | Boolean | — |
-| `label` | String | — (decorative) |
+| `label` | String | — (decorative by default) |
 
-**Common ERP aliases:**
+**ERP alias groups:**
 
-| Alias | Icon | Alias | Icon |
-|---|---|---|---|
-| `save` | device-floppy | `approve` | circle-check |
-| `edit` | pencil | `reject` | circle-x |
-| `delete` | trash | `submit` | send |
-| `add` | plus | `cancel` | ban |
-| `print` | printer | `pending` | clock |
-| `email` | mail | `draft` | file-text |
-| `invoice` | file-invoice | `payment` | credit-card |
-| `search` | search | `filter` | filter |
-| `history` | history | `loader` | loader-2 (+ spin) |
+| Group | Examples |
+|---|---|
+| Document actions | `save` `print` `email` `attach` `export` `import` `download` `upload` |
+| CRUD | `add` `edit` `delete` `copy` `view` `search` `filter` `refresh` `more` |
+| Approval / Workflow | `approve` `reject` `submit` `cancel` `pending` `draft` `review` `sign` |
+| Navigation | `back` `forward` `home` `menu` `close` `expand` `collapse` |
+| User & Auth | `user` `users` `logout` `settings` `profile` `role` `permission` |
+| Document types | `invoice` `receipt` `quotation` `purchase-order` `sales-order` `payment` `report` |
+| Finance | `money` `bank` `tax` `discount` `price` `total` |
+| Inventory | `product` `warehouse` `stock` `barcode` |
+| Communication | `comment` `note` `notification` `alert` `info` `warning` `success` `error` |
+| Time | `calendar` `date` `time` `history` `schedule` `deadline` |
+| People & Org | `company` `branch` `employee` `department` |
+| Misc | `chart` `dashboard` `loader` `check` `star` `tag` `category` |
 
 ```html
-<tbt-icon name="save" size="lg" color="primary"></tbt-icon>
-<tbt-icon name="approve" color="success"></tbt-icon>
-<tbt-icon name="loader" spin color="primary"></tbt-icon>
+<!-- Semantic ERP aliases (recommended) -->
+<tbt-icon name="save"    size="lg" color="primary"></tbt-icon>
+<tbt-icon name="approve" size="lg" color="success"></tbt-icon>
+<tbt-icon name="reject"  size="lg" color="danger"></tbt-icon>
+<tbt-icon name="loader"  size="lg" color="primary" spin></tbt-icon>
+<tbt-icon name="invoice" size="xl"></tbt-icon>
+
 <!-- Raw Tabler name also works -->
 <tbt-icon name="device-floppy"></tbt-icon>
+
+<!-- Accessible (meaningful icon) -->
+<tbt-icon name="user" label="User profile" size="lg"></tbt-icon>
+```
+
+Size reference: `xs`=11px · `sm`=14px · `md`=16px · `lg`=20px · `xl`=28px · `2xl`=36px
+
+---
+
+#### `tbt-svg`
+SVG illustration component for empty states, success/error pages, and decorative graphics.
+
+| Prop | Type | Description |
+|---|---|---|
+| `name` | String | Built-in illustration name |
+| `src` | String | External SVG URL (fetched + sanitized) |
+| `size` | Number | Width and height in px (default 80) |
+| `width` / `height` | Number | Independent dimension overrides |
+| `label` | String | Accessible label (`role="img"`); omit for decorative |
+
+Built-in names: `empty` · `search` · `success` · `error` · `warning` · `draft` · `no-access`
+
+```html
+<!-- Built-in illustrations -->
+<tbt-svg name="empty"   size="100"></tbt-svg>
+<tbt-svg name="success" size="80"></tbt-svg>
+<tbt-svg name="error"   size="80"></tbt-svg>
+
+<!-- External SVG -->
+<tbt-svg src="/assets/illustration.svg" size="120"></tbt-svg>
+
+<!-- Inline SVG via slot -->
+<tbt-svg label="Custom icon" size="64">
+  <svg viewBox="0 0 24 24">...</svg>
+</tbt-svg>
 ```
 
 ---
+
+### Feedback
 
 #### `tbt-badge`
 
@@ -367,45 +423,43 @@ Tabler icon wrapper with 80+ ERP semantic aliases.
 
 ```html
 <tbt-badge variant="success">Approved</tbt-badge>
-<tbt-badge variant="warning">Pending</tbt-badge>
+<tbt-badge variant="warning">Pending approval</tbt-badge>
 <tbt-badge variant="danger">Rejected</tbt-badge>
+<tbt-badge variant="info">In review</tbt-badge>
 ```
 
 ---
 
 #### `tbt-alert`
 
-| `variant` | `dismissible` |
-|---|---|
-| `success` `warning` `danger` `info` | Boolean |
-
 ```html
-<tbt-alert variant="warning" dismissible>
-  Document has unsaved changes.
-</tbt-alert>
+<tbt-alert variant="success" dismissible>Document saved successfully.</tbt-alert>
+<tbt-alert variant="warning" dismissible>Document has unsaved changes.</tbt-alert>
+<tbt-alert variant="danger"  dismissible>Save failed — please try again.</tbt-alert>
+<tbt-alert variant="info">This document is awaiting approval.</tbt-alert>
 ```
 
 ---
 
 ### Form inputs
 
-All form inputs support: `label` · `name` · `required` · `disabled` · `error` · `helper`
+All form inputs share: `label` · `name` · `required` · `disabled` · `readonly` · `error` · `helper`
 
-Use `tbt-form` to wrap inputs and collect values from shadow DOM automatically.
+Use `tbt-form` to collect values from shadow DOM inputs automatically.
 
 #### `tbt-form`
-Wraps form inputs. Fires `tbt-submit` with `{ data: { fieldName: value } }`.
+Fires `tbt-submit` with `{ data: { fieldName: value } }` when a `tbt-button[type="submit"]` is clicked.
 
 ```html
 <tbt-form id="my-form">
-  <tbt-input    label="Document no." name="tranid" required></tbt-input>
-  <tbt-dropdown label="Status"       name="status"
+  <tbt-input    label="Vendor"  name="vendor"  required></tbt-input>
+  <tbt-dropdown label="Status"  name="status"
     .options=${[{value:'A',label:'Approved'},{value:'P',label:'Pending'}]}>
   </tbt-dropdown>
   <tbt-button type="submit" variant="primary">Save</tbt-button>
 </tbt-form>
 
-<script>
+<script type="module">
   document.getElementById('my-form')
     .addEventListener('tbt-submit', e => console.log(e.detail.data));
 </script>
@@ -416,21 +470,30 @@ Wraps form inputs. Fires `tbt-submit` with `{ data: { fieldName: value } }`.
 #### `tbt-input`
 
 ```html
-<tbt-input label="Amount" name="amount" type="number" required></tbt-input>
-<tbt-input label="Email"  name="email"  type="email" error="Invalid format"></tbt-input>
+<tbt-input label="Document no."  name="tranid" value="PO-0001" readonly></tbt-input>
+<tbt-input label="Amount"        name="amount" type="number" required></tbt-input>
+<tbt-input label="Email"         name="email"  type="email" error="Invalid format"></tbt-input>
+<tbt-input label="Password"      name="pass"   type="password"></tbt-input>
 ```
 
 ---
 
 #### `tbt-dropdown`
 
+Options are set as a JavaScript property (Array of `{ value, label }`).
+
 ```html
-<tbt-dropdown
-  label="Subsidiary"
-  name="subsidiary"
-  .options=${[{value:'1',label:'Teibto HQ'},{value:'2',label:'Teibto Branch'}]}
-  @tbt-change=${e => console.log(e.detail.value)}>
-</tbt-dropdown>
+<tbt-dropdown id="dd-vendor" label="Vendor" name="vendor" required></tbt-dropdown>
+
+<script type="module">
+  const dd = document.getElementById('dd-vendor');
+  dd.options = [
+    { value: 'V001', label: 'บจก. ABC จำกัด' },
+    { value: 'V002', label: 'บจก. XYZ จำกัด' },
+  ];
+  dd.value = 'V001';
+  dd.addEventListener('tbt-change', e => console.log(e.detail.value));
+</script>
 ```
 
 ---
@@ -438,13 +501,14 @@ Wraps form inputs. Fires `tbt-submit` with `{ data: { fieldName: value } }`.
 #### `tbt-multiselect`
 
 ```html
-<tbt-multiselect
-  label="Tags"
-  name="tags"
-  .options=${opts}
-  .value=${['1','2']}
-  @tbt-change=${e => console.log(e.detail.values)}>
-</tbt-multiselect>
+<tbt-multiselect id="dd-tags" label="Tags" name="tags"></tbt-multiselect>
+
+<script type="module">
+  const ms = document.getElementById('dd-tags');
+  ms.options = [{ value:'1', label:'Urgent' }, { value:'2', label:'Recurring' }];
+  ms.value   = ['1'];
+  ms.addEventListener('tbt-change', e => console.log(e.detail.values));
+</script>
 ```
 
 ---
@@ -452,71 +516,75 @@ Wraps form inputs. Fires `tbt-submit` with `{ data: { fieldName: value } }`.
 #### `tbt-datepicker`
 
 ```html
-<tbt-datepicker
-  label="Due date"
-  name="duedate"
-  value="2026-05-22"
-  @tbt-change=${e => console.log(e.detail.value)}>
-</tbt-datepicker>
+<tbt-datepicker label="Document date" name="date"    value="2026-05-22" required></tbt-datepicker>
+<tbt-datepicker label="Due date"      name="duedate" value="2026-06-22"></tbt-datepicker>
 ```
+
+Event: `tbt-change` → `e.detail.value` (ISO date string `YYYY-MM-DD`)
 
 ---
 
 #### `tbt-search`
 
 ```html
-<tbt-search
-  placeholder="Search documents..."
-  debounce="300"
-  @tbt-search=${e => search(e.detail.value)}>
-</tbt-search>
+<tbt-search placeholder="Search documents…" debounce="300"></tbt-search>
 ```
+
+Event: `tbt-search` → `e.detail.value`
 
 ---
 
 #### `tbt-checkbox` / `tbt-toggle`
 
 ```html
-<tbt-checkbox name="active" label="Active" checked></tbt-checkbox>
-<tbt-checkbox name="notify" label="Send notification" indeterminate></tbt-checkbox>
+<tbt-checkbox name="active"  label="Active"              checked></tbt-checkbox>
+<tbt-checkbox name="notify"  label="Send notification"   indeterminate></tbt-checkbox>
 
-<tbt-toggle name="autopay" label="Auto-pay" label-on="On" label-off="Off"></tbt-toggle>
+<tbt-toggle name="autopay" label="Auto-pay"
+  label-on="Enabled" label-off="Disabled"></tbt-toggle>
 ```
+
+Both expose a `value` (Boolean) property and fire `tbt-change`.
 
 ---
 
 ### Display
 
 #### `tbt-field` / `tbt-field-grid`
+Read-only label + value pairs. Use for view mode; switch to `tbt-input`/`tbt-dropdown` for edit mode.
 
 ```html
-<tbt-field-grid columns="3">
-  <tbt-field label="Document no." value="INV-0001"></tbt-field>
-  <tbt-field label="Customer"     value="บริษัท ABC"></tbt-field>
+<tbt-field-grid columns="4">
+  <tbt-field label="Document no." value="PO-0001"></tbt-field>
+  <tbt-field label="Vendor"       value="บจก. ABC จำกัด"></tbt-field>
+  <tbt-field label="Date"         value="22 May 2026"></tbt-field>
   <tbt-field label="Status">
     <tbt-badge variant="success">Approved</tbt-badge>
   </tbt-field>
 </tbt-field-grid>
 ```
 
-`tbt-field-grid` props: `columns` (1–6, default 2) — responsive, collapses to 1 on mobile
+`columns`: 1–6, default 2 — collapses to 1 on mobile automatically.
 
 ---
 
 #### `tbt-section`
 
 ```html
-<!-- With title -->
+<!-- Simple card -->
 <tbt-section title="Document info">
   <tbt-field-grid columns="4">...</tbt-field-grid>
 </tbt-section>
 
-<!-- With actions slot -->
+<!-- With action button in top-right -->
 <tbt-section title="Line items">
-  <div slot="actions">
-    <tbt-button variant="primary" icon="add">Add line</tbt-button>
-  </div>
+  <tbt-button slot="actions" variant="primary" icon="add" size="sm">Add line</tbt-button>
   <tbt-table ...></tbt-table>
+</tbt-section>
+
+<!-- No title (plain card) -->
+<tbt-section>
+  <tbt-summary>...</tbt-summary>
 </tbt-section>
 ```
 
@@ -526,24 +594,26 @@ Wraps form inputs. Fires `tbt-submit` with `{ data: { fieldName: value } }`.
 
 | Prop | Type | Description |
 |---|---|---|
-| `columns` | Array | Column definitions (see below) |
+| `columns` | Array | Column definitions |
 | `rows` | Array | Data rows |
 | `paginate` | Boolean | Enable pagination |
 | `page-size` | Number | Rows per page (default 20) |
-| `loading` | Boolean | Show skeleton |
+| `loading` | Boolean | Skeleton state |
 | `responsive` | Boolean | Card view on narrow containers |
-| `max-height` | String | Scrollable height (e.g. `400px`) |
+| `max-height` | String | Scrollable height e.g. `400px` |
 
 Column definition:
+
 ```javascript
 {
   key:         'amount',
   label:       'Amount',
   sortable:    true,
-  align:       'right',          // left | center | right
-  html:        true,             // render value as HTML
-  href:        row => `/inv/${row.id}`, // render as link
-  mobileTitle: true              // used as card header in responsive mode
+  align:       'right',                 // left | center | right
+  html:        true,                    // render value as raw HTML string
+  href:        row => `/inv/${row.id}`, // render as <a> link
+  mobileTitle: true,                    // card header in responsive mode
+  resizable:   false,                   // disable column drag-resize
 }
 ```
 
@@ -552,34 +622,34 @@ Column definition:
 #### `tbt-summary`
 
 ```html
-<!-- Auto mode (props) -->
-<tbt-summary subtotal="100000" vat="7000" currency="฿"></tbt-summary>
-
-<!-- Manual mode (slot) -->
 <tbt-summary>
-  <tbt-summary-item label="Subtotal"     value="฿100,000.00"></tbt-summary-item>
-  <tbt-summary-item label="Discount 5%"  value="−฿5,000.00"></tbt-summary-item>
-  <tbt-summary-item label="VAT 7%"       value="฿6,650.00"></tbt-summary-item>
-  <tbt-summary-item label="Grand total"  value="฿101,650.00" highlight></tbt-summary-item>
+  <tbt-summary-item label="Subtotal"    value="฿100,000.00"></tbt-summary-item>
+  <tbt-summary-item label="Discount 5%" value="−฿5,000.00"></tbt-summary-item>
+  <tbt-summary-item label="VAT 7%"      value="฿6,650.00"></tbt-summary-item>
+  <tbt-summary-item label="Grand total" value="฿101,650.00" highlight></tbt-summary-item>
 </tbt-summary>
 ```
+
+Dynamic update: `document.getElementById('tot').value = '฿120,000.00'`
 
 ---
 
 #### `tbt-approval-flow`
 
 ```html
-<tbt-approval-flow
-  orientation="horizontal"
-  .steps=${[
-    { id:'1', label:'Request',  status:'approved', approver:'Wichit', timestamp:'2026-05-20T09:00:00Z' },
-    { id:'2', label:'Manager',  status:'current',  approver:'Somchai' },
-    { id:'3', label:'Director', status:'pending' }
-  ]}>
-</tbt-approval-flow>
+<tbt-approval-flow orientation="horizontal" id="flow"></tbt-approval-flow>
+
+<script type="module">
+  document.getElementById('flow').steps = [
+    { id:'1', label:'Request',  approver:'Wichit',  status:'approved',
+      timestamp:'2026-05-20T09:00:00Z', comment:'Verified budget' },
+    { id:'2', label:'Manager',  approver:'Somchai',  status:'current' },
+    { id:'3', label:'Director', approver:'Apinya',   status:'pending' },
+  ];
+</script>
 ```
 
-`orientation`: `horizontal` (default) · `vertical`
+`orientation`: `horizontal` (compact row) · `vertical` (detailed with comments)  
 Step `status`: `pending` · `current` · `approved` · `rejected` · `skipped`
 
 ---
@@ -587,62 +657,60 @@ Step `status`: `pending` · `current` · `approved` · `rejected` · `skipped`
 #### `tbt-audit-log`
 
 ```html
-<tbt-audit-log
-  .entries=${[
-    { id:'1', timestamp:'2026-05-22T10:00:00Z', user:'Wichit', action:'approved',
+<tbt-audit-log id="log" max-height="400px"></tbt-audit-log>
+
+<script type="module">
+  document.getElementById('log').entries = [
+    { id:'3', timestamp:'2026-05-22T10:00:00Z', user:'Somchai', action:'approved',
       label:'Document approved' },
-    { id:'2', timestamp:'2026-05-22T09:00:00Z', user:'Wichit', action:'updated',
+    { id:'2', timestamp:'2026-05-22T09:00:00Z', user:'Wichit',  action:'updated',
       label:'Amount updated',
-      changes:[{ field:'Amount', from:'100,000', to:'107,000' }] }
-  ]}>
-</tbt-audit-log>
+      changes:[{ field:'Grand total', from:'฿98,000', to:'฿107,000' }] },
+    { id:'1', timestamp:'2026-05-22T08:00:00Z', user:'Wichit',  action:'created',
+      label:'Document created' },
+  ];
+</script>
 ```
 
-Props: `compact` (Boolean) · `max-height` (String)
+Props: `compact` (Boolean) · `max-height` (String)  
 Action types: `created` `updated` `approved` `rejected` `submitted` `cancelled` `deleted` `printed` `emailed` `attached` `viewed`
-
----
-
-#### `tbt-svg`
-
-```html
-<!-- Built-in illustration -->
-<tbt-svg name="empty" size="100"></tbt-svg>
-<tbt-svg name="success" size="80"></tbt-svg>
-
-<!-- External SVG -->
-<tbt-svg src="/assets/my-illustration.svg" size="120"></tbt-svg>
-
-<!-- Inline SVG -->
-<tbt-svg label="Custom icon">
-  <svg viewBox="0 0 24 24">...</svg>
-</tbt-svg>
-```
-
-Built-in names: `empty` · `search` · `success` · `error` · `warning` · `draft` · `no-access`
 
 ---
 
 ## Design tokens
 
-All tokens are CSS custom properties in `theme/tbt-theme.css`. Use `var(--tbt-*)` only — never hardcode values.
+All tokens live in `theme/tbt-theme.css`. Components use only `var(--tbt-*)` — never hardcode values.
 
-### Brand colors
+### Brand
 
 ```css
---tbt-primary:       #0D1171   /* Navy blue */
---tbt-primary-light: #1E2B99
---tbt-primary-bg:    #EEF0FF   /* Tinted background */
---tbt-accent-gradient: linear-gradient(135deg, #8B35C8 0%, #59BBF6 100%)
+--tbt-primary:         #0D1171   /* Navy blue */
+--tbt-primary-light:   #1E2B99
+--tbt-primary-bg:      #EEF0FF
+--tbt-accent-gradient: linear-gradient(135deg, #8B35C8, #59BBF6)
 ```
 
 ### Semantic colors
 
 ```css
---tbt-success: #10B981    --tbt-success-bg: #ECFDF5
---tbt-warning: #F59E0B    --tbt-warning-bg: #FEF3C7
---tbt-danger:  #EF4444    --tbt-danger-bg:  #FEE2E2
---tbt-info:    #3B82F6    --tbt-info-bg:    #DBEAFE
+--tbt-success: #10B981    --tbt-success-bg: #ECFDF5    --tbt-success-text: #065F46
+--tbt-warning: #F59E0B    --tbt-warning-bg: #FEF3C7    --tbt-warning-text: #92400E
+--tbt-danger:  #EF4444    --tbt-danger-bg:  #FEE2E2    --tbt-danger-text:  #991B1B
+--tbt-info:    #3B82F6    --tbt-info-bg:    #DBEAFE    --tbt-info-text:    #1E40AF
+```
+
+### Surface & text
+
+```css
+--tbt-bg-page:          #F5F7FA
+--tbt-bg-card:          #FFFFFF
+--tbt-bg-hover:         #F0F2FF
+--tbt-bg-active:        #E2E6FF
+--tbt-border:           #E2E8F0
+--tbt-border-strong:    #CBD5E1
+--tbt-text-primary:     #0F172A
+--tbt-text-secondary:   #64748B
+--tbt-text-muted:       #94A3B8
 ```
 
 ### Spacing (4 px scale)
@@ -657,22 +725,38 @@ All tokens are CSS custom properties in `theme/tbt-theme.css`. Use `var(--tbt-*)
 
 ```css
 --tbt-font:      'Inter', 'IBM Plex Sans Thai', system-ui, sans-serif
---tbt-size-xs:   11px   --tbt-size-sm:   12px   --tbt-size-base: 14px
---tbt-size-md:   16px   --tbt-size-lg:   20px   --tbt-size-xl:   28px
---tbt-size-2xl:  36px
+--tbt-font-mono: 'JetBrains Mono', 'Courier New', monospace
+
+--tbt-size-xs: 11px   --tbt-size-sm: 12px    --tbt-size-base: 14px
+--tbt-size-md: 16px   --tbt-size-lg: 20px    --tbt-size-xl:   28px   --tbt-size-2xl: 36px
+
+--tbt-weight-normal: 400   --tbt-weight-medium: 500
+--tbt-weight-semibold: 600 --tbt-weight-bold: 700
+```
+
+### Radius & shadow
+
+```css
+--tbt-radius-sm: 6px    --tbt-radius-md: 8px
+--tbt-radius-lg: 12px   --tbt-radius-pill: 9999px
+
+--tbt-shadow-sm:    0 1px 2px rgb(13 17 113 / 0.06)
+--tbt-shadow-md:    0 4px 12px rgb(13 17 113 / 0.08)
+--tbt-shadow-focus: 0 0 0 3px rgb(139 53 200 / 0.20)
 ```
 
 ---
 
 ## Composition patterns
 
-### Pass data from Suitelet server → page
+### Pass data: Suitelet → page
 
 ```javascript
-// sl_invoice.js (server-side)
-const data = { tranId: 'INV-0001', lines: [...] };
+// sl_po.js (server-side)
+const data = { tranId: 'PO-0001', vendor: 'บจก. ABC', lines: [...] };
 context.response.write(
-  template.replace('</body>', `<script>window.__DATA__ = ${JSON.stringify(data)};</script></body>`)
+  template.replace('</body>',
+    `<script>window.__DATA__ = ${JSON.stringify(data)};</script></body>`)
 );
 ```
 
@@ -680,16 +764,17 @@ context.response.write(
 // Page script (client-side)
 const data = window.__DATA__;
 document.querySelector('tbt-table').rows = data.lines;
+document.getElementById('dd-vendor').value = data.vendor;
 ```
 
-### Send data back to server (RESTlet)
+### Send data to server (RESTlet)
 
 ```javascript
 async function save(payload) {
   const res = await fetch('/app/site/hosting/restlet.nl?script=xxx&deploy=1', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
   return res.json();
 }
@@ -698,10 +783,12 @@ async function save(payload) {
 ### Empty state with illustration
 
 ```html
-<div style="text-align:center;padding:var(--tbt-space-12) var(--tbt-space-6)">
+<div style="text-align:center;padding:var(--tbt-space-12)">
   <tbt-svg name="empty" size="100"></tbt-svg>
   <div style="margin-top:var(--tbt-space-3);font-family:var(--tbt-font)">
-    <div style="font-weight:var(--tbt-weight-medium)">No documents yet</div>
+    <div style="font-weight:var(--tbt-weight-medium);color:var(--tbt-text-primary)">
+      No documents yet
+    </div>
     <div style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary);margin-top:4px">
       Create your first document to get started.
     </div>
@@ -712,6 +799,31 @@ async function save(payload) {
 </div>
 ```
 
+### Inline editable table (line items)
+
+See `demo/demo.html` for a complete working example. Pattern:
+
+```javascript
+// Build editable row HTML (rendered via tbt-table col.html = true)
+function buildRow(r) {
+  return {
+    ...r,
+    _actions: `
+      <button data-id="${r.id}" data-act="edit" style="...">Edit</button>
+      <button data-id="${r.id}" data-act="del"  style="...">Del</button>`,
+  };
+}
+
+// Event delegation for action buttons
+document.getElementById('table').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-id]');
+  if (!btn) return;
+  const id = +btn.dataset.id;
+  if (btn.dataset.act === 'edit') openEdit(id);
+  if (btn.dataset.act === 'del')  deleteLine(id);
+});
+```
+
 ---
 
 ## NetSuite deployment
@@ -720,14 +832,14 @@ async function save(payload) {
 
 ```
 /SuiteScripts/Teibto/ds/v1.17.0/
-  tbt-theme.css       ← design tokens
-  index.js            ← loads all components
-  tbt-*.js            ← individual component files
-  tbt-icons-css.js    ← shared Tabler CSS injector
+  tbt-theme.css
+  index.js
+  tbt-icons-css.js
+  tbt-*.js              (one file per component)
 
 /SuiteScripts/Teibto/{module}/
-  sl_{module}_{action}.js     ← Suitelet server script
-  sl_{module}_{action}.html   ← HTML template (loaded from File Cabinet)
+  sl_{module}_{action}.js     ← Suitelet script
+  sl_{module}_{action}.html   ← HTML template (served from File Cabinet)
 
 /SuiteScripts/Teibto/assets/
   teibtologo.png
@@ -737,16 +849,16 @@ async function save(payload) {
 
 ```html
 <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.17.0/tbt-theme.css">
-<script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.17.0/index.js"></script>
+<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.17.0/index.js"></script>
 ```
 
-> Always pin to an exact version path. Never use `/latest/`.
+> Always pin to an exact version. Never use `/latest/`.
 
 ### Upload with SuiteCloud CLI
 
 ```bash
-cd tbt-ds/tbt-ds           # SDF project folder
-suitecloud account:setup   # first-time auth (opens browser)
+cd tbt-ds/tbt-ds               # SDF project folder
+suitecloud account:setup        # first-time auth (opens browser)
 suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.17.0/*"
 ```
 
@@ -756,34 +868,36 @@ suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.17.0/*"
 
 | Rule | Reason |
 |---|---|
-| No hex color literals in `components/**/*.js` | All colors must come from `var(--tbt-*)` tokens so dark mode and theming work |
-| No `<style>` blocks on consumer pages | Styles belong in components |
-| No `style="..."` for visual properties | Use token overrides via CSS custom properties only |
-| No raw HTML primitives when a `tbt-*` component exists | Consistency and accessibility |
+| No hex colors in `components/**/*.js` | Tokens enable dark mode and consistent theming |
+| No `<style>` blocks on consumer pages | Styles belong inside components |
+| No visual `style="..."` attributes | Use `var(--tbt-*)` token overrides instead |
+| No raw HTML primitives when `tbt-*` exists | Consistency, accessibility, and shadow DOM isolation |
 | Sentence case for all UI labels | "Document info" not "Document Info" |
 | Code in English; comments may be Thai | Searchable codebase |
-| Version-pin production File Cabinet paths | Prevents breaking changes from affecting live pages |
+| Version-pin all File Cabinet paths | Prevents live pages from breaking on DS updates |
 
 ---
 
 ## Development
 
 ```bash
-# Dev server (http://localhost:8081)
-npm run serve
-
-# Open the component showcase
-open http://localhost:8081/demo/specimen.html
-
-# Open the API reference
-open http://localhost:8081/demo/help.html
+cd tbt-ds
+npm run serve   # Dev server → http://localhost:8080
 ```
 
-No build step needed in development — components import Lit 3 directly from CDN.
+Demo pages:
 
-For production, bundle with:
+| Page | URL | Purpose |
+|---|---|---|
+| Interactive demo | `/demo/demo.html` | Full Purchase Order page — editable form, inline line items, approval flow |
+| Icons & SVG | `/demo/icon-svg.html` | All 80+ icon aliases + SVG illustrations with live search and copy |
+| Component showcase | `/demo/specimen.html` | All 29 components in one page |
+
+No build step needed in development — components import Lit 3 from CDN.
+
+For production:
 ```bash
-npm run build   # outputs tbt-ds.min.js
+npm run build   # Bundles to tbt-ds.min.js for File Cabinet upload
 ```
 
 ---
@@ -796,10 +910,8 @@ npm run build   # outputs tbt-ds.min.js
 | New component, new prop | MINOR `1.x.0` |
 | Removed/renamed prop, breaking change | MAJOR `x.0.0` + migration guide |
 
-Update `package.json`, `CHANGELOG.md`, and the File Cabinet path on every version bump.
+Update `package.json`, `CHANGELOG.md`, and File Cabinet path on every version bump.
 
 ---
 
-## Author
-
-**Wichit Wongta** — Teibto Co., Ltd.
+**Author:** Wichit Wongta — Teibto Co., Ltd.
