@@ -1,0 +1,284 @@
+/**
+ * Teibto Design System — Theme Tokens
+ * @version 1.0.0
+ * @author Wichit Wongta
+ *
+ * All visual decisions for TBT-DS live here.
+ * Components consume these tokens via var(--tbt-*).
+ * Never hardcode colors, sizes, or radii in components.
+ */
+
+:root,
+:host {
+  /* ============================================================
+   * Brand — Navy Blue (primary letters) + Gradient (O logo)
+   * ============================================================ */
+  --tbt-primary:       #0D1171;
+  --tbt-primary-dark:  #080C55;
+  --tbt-primary-light: #1E2B99;
+  --tbt-primary-bg:    #EEF0FF;
+  --tbt-primary-text:  #0D1171;
+
+  --tbt-accent-purple:   #8B35C8;
+  --tbt-accent-blue:     #59BBF6;
+  --tbt-accent-gradient: linear-gradient(135deg, #8B35C8 0%, #59BBF6 100%);
+
+  /* ============================================================
+   * Surface
+   * ============================================================ */
+  --tbt-bg-page:        #F5F7FA;
+  --tbt-bg-card:        #FFFFFF;
+  --tbt-bg-hover:       #F0F2FF;
+  --tbt-bg-active:      #E2E6FF;
+  --tbt-border:         #E2E8F0;
+  --tbt-border-strong:  #CBD5E1;
+
+  /* ============================================================
+   * Text
+   * ============================================================ */
+  --tbt-text-primary:   #0F172A;
+  --tbt-text-secondary: #64748B;
+  --tbt-text-muted:     #94A3B8;
+  --tbt-text-required:  #EF4444;
+  --tbt-text-link:      #0D1171;
+
+  /* ============================================================
+   * Semantic
+   * ============================================================ */
+  --tbt-success:      #10B981;
+  --tbt-success-bg:   #ECFDF5;
+  --tbt-success-text: #065F46;
+
+  --tbt-warning:      #F59E0B;
+  --tbt-warning-bg:   #FEF3C7;
+  --tbt-warning-text: #92400E;
+
+  --tbt-danger:       #EF4444;
+  --tbt-danger-bg:    #FEE2E2;
+  --tbt-danger-text:  #991B1B;
+
+  --tbt-info:         #3B82F6;
+  --tbt-info-bg:      #DBEAFE;
+  --tbt-info-text:    #1E40AF;
+
+  --tbt-neutral-bg:   #F1F5F9;
+  --tbt-neutral-text: #475569;
+
+  /* ============================================================
+   * Typography
+   * ============================================================ */
+  --tbt-font:      'Inter', 'IBM Plex Sans Thai', system-ui, -apple-system, sans-serif;
+  --tbt-font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  --tbt-size-xs:   11px;
+  --tbt-size-sm:   12px;
+  --tbt-size-base: 14px;
+  --tbt-size-md:   16px;
+  --tbt-size-lg:   20px;
+  --tbt-size-xl:   28px;
+  --tbt-size-2xl:  36px;
+
+  --tbt-weight-normal:   400;
+  --tbt-weight-medium:   500;
+  --tbt-weight-semibold: 600;
+  --tbt-weight-bold:     700;
+
+  --tbt-leading-tight:  1.25;
+  --tbt-leading-normal: 1.5;
+  --tbt-leading-loose:  1.75;
+
+  /* ============================================================
+   * Spacing (4px scale)
+   * ============================================================ */
+  --tbt-space-1:  4px;
+  --tbt-space-2:  8px;
+  --tbt-space-3:  12px;
+  --tbt-space-4:  16px;
+  --tbt-space-5:  20px;
+  --tbt-space-6:  24px;
+  --tbt-space-8:  32px;
+  --tbt-space-10: 40px;
+  --tbt-space-12: 48px;
+  --tbt-space-16: 64px;
+
+  /* ============================================================
+   * Radius
+   * ============================================================ */
+  --tbt-radius-sm:   6px;
+  --tbt-radius-md:   8px;
+  --tbt-radius-lg:   12px;
+  --tbt-radius-xl:   16px;
+  --tbt-radius-pill: 9999px;
+
+  /* ============================================================
+   * Shadow
+   * ============================================================ */
+  --tbt-shadow-sm:    0 1px 2px rgb(13 17 113 / 0.06);
+  --tbt-shadow-md:    0 4px 12px rgb(13 17 113 / 0.08);
+  --tbt-shadow-lg:    0 8px 24px rgb(13 17 113 / 0.10);
+  --tbt-shadow-focus: 0 0 0 3px rgb(139 53 200 / 0.20);
+
+  /* ============================================================
+   * Transition
+   * ============================================================ */
+  --tbt-transition-fast: 100ms ease;
+  --tbt-transition-base: 150ms ease;
+  --tbt-transition-slow: 250ms ease;
+
+  /* ============================================================
+   * Z-index scale
+   * ============================================================ */
+  --tbt-z-dropdown: 100;
+  --tbt-z-sticky:   200;
+  --tbt-z-modal-backdrop: 900;
+  --tbt-z-modal:    1000;
+  --tbt-z-toast:    1100;
+  --tbt-z-tooltip:  1200;
+
+  font-family: var(--tbt-font);
+  font-size: var(--tbt-size-base);
+  color: var(--tbt-text-primary);
+}
+
+/* ============================================================
+ * Dark mode
+ * ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root,
+  :host {
+    /* Brand — lighten primary so buttons/tabs stay visible on dark surfaces.
+       Menubar keeps its dark-navy feel; interactive elements become periwinkle. */
+    --tbt-primary:       #6B7FD4;
+    --tbt-primary-dark:  #5568C4;
+    --tbt-primary-light: #8898E0;
+    --tbt-primary-bg:    rgba(107, 127, 212, 0.15);
+    --tbt-primary-text:  #A5B4FC;
+
+    /* Surfaces */
+    --tbt-bg-page:       #0D1121;
+    --tbt-bg-card:       #151B30;
+    --tbt-bg-hover:      #1E2640;
+    --tbt-bg-active:     #263050;
+    --tbt-border:        #263050;
+    --tbt-border-strong: #334070;
+
+    /* Text */
+    --tbt-text-primary:   #E2E8F0;
+    --tbt-text-secondary: #94A3B8;
+    --tbt-text-muted:     #546280;
+    --tbt-text-link:      #A5B4FC;
+
+    /* Semantic — translucent so they work on any dark surface */
+    --tbt-success-bg:    rgba(16, 185, 129, 0.14);
+    --tbt-success-text:  #6EE7B7;
+    --tbt-warning-bg:    rgba(245, 158, 11, 0.14);
+    --tbt-warning-text:  #FCD34D;
+    --tbt-danger-bg:     rgba(239, 68, 68, 0.14);
+    --tbt-danger-text:   #FCA5A5;
+    --tbt-info-bg:       rgba(59, 130, 246, 0.14);
+    --tbt-info-text:     #93C5FD;
+    --tbt-neutral-bg:    rgba(71, 85, 105, 0.30);
+    --tbt-neutral-text:  #CBD5E1;
+
+    /* Shadows — use neutral black (not navy) on dark backgrounds */
+    --tbt-shadow-sm:    0 1px 3px rgb(0 0 0 / 0.25);
+    --tbt-shadow-md:    0 4px 12px rgb(0 0 0 / 0.35);
+    --tbt-shadow-lg:    0 8px 24px rgb(0 0 0 / 0.45);
+    --tbt-shadow-focus: 0 0 0 3px rgb(139 53 200 / 0.35);
+  }
+}
+
+/* ============================================================
+ * Manual theme override via data-theme attribute on <html>
+ * Takes precedence over system preference (higher specificity).
+ * Set document.documentElement.dataset.theme = 'dark' | 'light'
+ * ============================================================ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --tbt-primary:       #6B7FD4;
+  --tbt-primary-dark:  #5568C4;
+  --tbt-primary-light: #8898E0;
+  --tbt-primary-bg:    rgba(107, 127, 212, 0.15);
+  --tbt-primary-text:  #A5B4FC;
+  --tbt-bg-page:       #0D1121;
+  --tbt-bg-card:       #151B30;
+  --tbt-bg-hover:      #1E2640;
+  --tbt-bg-active:     #263050;
+  --tbt-border:        #263050;
+  --tbt-border-strong: #334070;
+  --tbt-text-primary:   #E2E8F0;
+  --tbt-text-secondary: #94A3B8;
+  --tbt-text-muted:     #546280;
+  --tbt-text-link:      #A5B4FC;
+  --tbt-success-bg:    rgba(16, 185, 129, 0.14);
+  --tbt-success-text:  #6EE7B7;
+  --tbt-warning-bg:    rgba(245, 158, 11, 0.14);
+  --tbt-warning-text:  #FCD34D;
+  --tbt-danger-bg:     rgba(239, 68, 68, 0.14);
+  --tbt-danger-text:   #FCA5A5;
+  --tbt-info-bg:       rgba(59, 130, 246, 0.14);
+  --tbt-info-text:     #93C5FD;
+  --tbt-neutral-bg:    rgba(71, 85, 105, 0.30);
+  --tbt-neutral-text:  #CBD5E1;
+  --tbt-shadow-sm:    0 1px 3px rgb(0 0 0 / 0.25);
+  --tbt-shadow-md:    0 4px 12px rgb(0 0 0 / 0.35);
+  --tbt-shadow-lg:    0 8px 24px rgb(0 0 0 / 0.45);
+  --tbt-shadow-focus: 0 0 0 3px rgb(139 53 200 / 0.35);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --tbt-primary:       #0D1171;
+  --tbt-primary-dark:  #080C55;
+  --tbt-primary-light: #1E2B99;
+  --tbt-primary-bg:    #EEF0FF;
+  --tbt-primary-text:  #0D1171;
+  --tbt-bg-page:       #F5F7FA;
+  --tbt-bg-card:       #FFFFFF;
+  --tbt-bg-hover:      #F0F2FF;
+  --tbt-bg-active:     #E2E6FF;
+  --tbt-border:        #E2E8F0;
+  --tbt-border-strong: #CBD5E1;
+  --tbt-text-primary:   #0F172A;
+  --tbt-text-secondary: #64748B;
+  --tbt-text-muted:     #94A3B8;
+  --tbt-text-link:      #0D1171;
+  --tbt-success-bg:   #ECFDF5;  --tbt-success-text: #065F46;
+  --tbt-warning-bg:   #FEF3C7;  --tbt-warning-text: #92400E;
+  --tbt-danger-bg:    #FEE2E2;  --tbt-danger-text:  #991B1B;
+  --tbt-info-bg:      #DBEAFE;  --tbt-info-text:    #1E40AF;
+  --tbt-neutral-bg:   #F1F5F9;  --tbt-neutral-text: #475569;
+  --tbt-shadow-sm:    0 1px 2px rgb(13 17 113 / 0.06);
+  --tbt-shadow-md:    0 4px 12px rgb(13 17 113 / 0.08);
+  --tbt-shadow-lg:    0 8px 24px rgb(13 17 113 / 0.10);
+  --tbt-shadow-focus: 0 0 0 3px rgb(139 53 200 / 0.20);
+}
+
+/* ============================================================
+ * Page reset (apply to <body> in consumer pages)
+ * ============================================================ */
+body.tbt-page {
+  margin: 0;
+  background: var(--tbt-bg-page);
+  font-family: var(--tbt-font);
+  font-size: var(--tbt-size-base);
+  color: var(--tbt-text-primary);
+  line-height: var(--tbt-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+ * Utility: visually hidden (accessibility)
+ * ============================================================ */
+.tbt-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

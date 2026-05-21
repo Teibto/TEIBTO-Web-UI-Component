@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TBT-DS — Specimen</title>
+  <script>const _t=localStorage.getItem('tbt-theme');if(_t)document.documentElement.dataset.theme=_t;</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="../theme/tbt-theme.css">
+  <script type="module" src="../components/index.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: var(--tbt-bg-page);
+      font-family: var(--tbt-font);
+      color: var(--tbt-text-primary);
+      padding: var(--tbt-space-6);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .ds-header { margin-bottom: var(--tbt-space-8); }
+    .ds-header h1 {
+      font-size: var(--tbt-size-xl); font-weight: var(--tbt-weight-bold);
+      margin: 0 0 var(--tbt-space-1) 0;
+      background: var(--tbt-accent-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .ds-header .sub { color: var(--tbt-text-secondary); font-size: var(--tbt-size-base); }
+    h2 {
+      font-size: var(--tbt-size-lg); font-weight: var(--tbt-weight-medium);
+      margin-top: var(--tbt-space-10); margin-bottom: var(--tbt-space-4);
+      padding-bottom: var(--tbt-space-2); border-bottom: 2px solid var(--tbt-primary-bg);
+      color: var(--tbt-primary);
+    }
+    .demo-row { display: flex; gap: var(--tbt-space-3); flex-wrap: wrap; margin-bottom: var(--tbt-space-4); align-items: flex-start; }
+    .demo-label { font-size: var(--tbt-size-sm); color: var(--tbt-text-secondary); margin-bottom: var(--tbt-space-2); }
+    pre {
+      background: var(--tbt-bg-card); border: 1px solid var(--tbt-border); border-radius: var(--tbt-radius-md);
+      padding: var(--tbt-space-3) var(--tbt-space-4); font-family: var(--tbt-font-mono);
+      font-size: var(--tbt-size-sm); color: var(--tbt-text-primary); overflow-x: auto; line-height: 1.6;
+    }
+    .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--tbt-space-2); margin-bottom: var(--tbt-space-4); }
+    .swatch { display: flex; align-items: center; gap: var(--tbt-space-2); padding: var(--tbt-space-2) var(--tbt-space-3);
+      background: var(--tbt-bg-card); border: 1px solid var(--tbt-border); border-radius: var(--tbt-radius-md); font-size: var(--tbt-size-sm); }
+    .swatch-dot { width: 24px; height: 24px; border-radius: var(--tbt-radius-sm); border: 1px solid var(--tbt-border); flex-shrink: 0; }
+    .swatch-name { color: var(--tbt-text-primary); font-weight: var(--tbt-weight-medium); }
+    .swatch-val  { color: var(--tbt-text-muted); font-size: var(--tbt-size-xs); }
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--tbt-space-4); margin-bottom: var(--tbt-space-4); }
+    .theme-toggle {
+      position: fixed; top: var(--tbt-space-4); right: var(--tbt-space-4);
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--tbt-border); background: var(--tbt-bg-card);
+      color: var(--tbt-text-secondary); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+      box-shadow: var(--tbt-shadow-md); z-index: 999;
+      transition: background var(--tbt-transition-fast), color var(--tbt-transition-fast), transform var(--tbt-transition-fast);
+    }
+    .theme-toggle:hover { background: var(--tbt-bg-hover); color: var(--tbt-primary); transform: scale(1.08); }
+  </style>
+</head>
+<body>
+
+<button class="theme-toggle" id="theme-toggle" title="Toggle theme"><i id="theme-icon" class="ti ti-sun"></i></button>
+
+<div class="ds-header">
+  <h1>TBT-DS Specimen</h1>
+  <div class="sub">Teibto Design System — Component Showcase v1.0.0 · 19 components</div>
+</div>
+
+<!-- ─── COLORS ─────────────────────────────────────── -->
+<h2>Colors</h2>
+<div class="swatch-grid">
+  <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-primary)"></div><div><div class="swatch-name">primary</div><div class="swatch-val">#0D1171</div></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-primary-light)"></div><div><div class="swatch-name">primary-light</div><div class="swatch-val">#1E2B99</div></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-accent-purple)"></div><div><div class="swatch-name">accent-purple</div><div class="swatch-val">#8B35C8</div></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-accent-blue)"></div><div><div class="swatch-name">accent-blue</div><div class="swatch-val">#59BBF6</div></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-success)"></div><div><div class="swatch-name">success</div><div class="swatch-val">#10B981</div></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-warning)"></div><div><div class="swatch-name">warning</div><div class="swatch-val">#F59E0B</div></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-danger)"></div><div><div class="swatch-name">danger</div><div class="swatch-val">#EF4444</div></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-info)"></div><div><div class="swatch-name">info</div><div class="swatch-val">#3B82F6</div></div></div>
+</div>
+<div class="swatch" style="background:var(--tbt-accent-gradient);color:#fff;padding:12px 20px;border-radius:var(--tbt-radius-md)">
+  accent-gradient: linear-gradient(135deg, #8B35C8 → #59BBF6)
+</div>
+
+<!-- ─── ICON ──────────────────────────────────────── -->
+<h2>tbt-icon</h2>
+<style>
+  .icon-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:var(--tbt-space-2); margin-bottom:var(--tbt-space-5); }
+  .icon-cell { display:flex; flex-direction:column; align-items:center; gap:6px;
+    padding:var(--tbt-space-3) var(--tbt-space-2);
+    background:var(--tbt-bg-card); border:1px solid var(--tbt-border); border-radius:var(--tbt-radius-md);
+    font-size:var(--tbt-size-xs); color:var(--tbt-text-secondary); text-align:center; }
+  .icon-cell .alias { font-weight:var(--tbt-weight-medium); color:var(--tbt-text-primary); }
+  .icon-cell .tabler { color:var(--tbt-text-muted); font-size:10px; }
+  .icon-group-label { font-size:var(--tbt-size-sm); font-weight:var(--tbt-weight-medium); color:var(--tbt-primary); margin:var(--tbt-space-4) 0 var(--tbt-space-2); }
+</style>
+
+<div class="demo-label">Sizes · Colors</div>
+<div class="demo-row" style="align-items:center;gap:var(--tbt-space-4)">
+  <tbt-icon name="save" size="xs"></tbt-icon>
+  <tbt-icon name="save" size="sm"></tbt-icon>
+  <tbt-icon name="save" size="md"></tbt-icon>
+  <tbt-icon name="save" size="lg"></tbt-icon>
+  <tbt-icon name="save" size="xl"></tbt-icon>
+  <tbt-icon name="save" size="2xl"></tbt-icon>
+  <span style="font-size:var(--tbt-size-xs);color:var(--tbt-text-muted)">xs sm md lg xl 2xl</span>
+</div>
+<div class="demo-row" style="align-items:center;gap:var(--tbt-space-4)">
+  <tbt-icon name="info"     size="lg" color="info"></tbt-icon>
+  <tbt-icon name="success"  size="lg" color="success"></tbt-icon>
+  <tbt-icon name="warning"  size="lg" color="warning"></tbt-icon>
+  <tbt-icon name="error"    size="lg" color="danger"></tbt-icon>
+  <tbt-icon name="loader"   size="lg" color="primary" spin></tbt-icon>
+  <span style="font-size:var(--tbt-size-xs);color:var(--tbt-text-muted)">info · success · warning · danger · spin</span>
+</div>
+
+<div class="icon-group-label">Document actions</div>
+<div class="icon-grid">
+  <div class="icon-cell"><tbt-icon name="save" size="lg" color="primary"></tbt-icon><span class="alias">save</span><span class="tabler">device-floppy</span></div>
+  <div class="icon-cell"><tbt-icon name="print" size="lg"></tbt-icon><span class="alias">print</span><span class="tabler">printer</span></div>
+  <div class="icon-cell"><tbt-icon name="email" size="lg"></tbt-icon><span class="alias">email</span><span class="tabler">mail</span></div>
+  <div class="icon-cell"><tbt-icon name="attach" size="lg"></tbt-icon><span class="alias">attach</span><span class="tabler">paperclip</span></div>
+  <div class="icon-cell"><tbt-icon name="export" size="lg"></tbt-icon><span class="alias">export</span><span class="tabler">file-export</span></div>
+  <div class="icon-cell"><tbt-icon name="import" size="lg"></tbt-icon><span class="alias">import</span><span class="tabler">file-import</span></div>
+  <div class="icon-cell"><tbt-icon name="download" size="lg"></tbt-icon><span class="alias">download</span><span class="tabler">download</span></div>
+  <div class="icon-cell"><tbt-icon name="upload" size="lg"></tbt-icon><span class="alias">upload</span><span class="tabler">upload</span></div>
+  <div class="icon-cell"><tbt-icon name="share" size="lg"></tbt-icon><span class="alias">share</span><span class="tabler">share</span></div>
+</div>
+
+<div class="icon-group-label">CRUD</div>
+<div class="icon-grid">
+  <div class="icon-cell"><tbt-icon name="add" size="lg" color="success"></tbt-icon><span class="alias">add / new</span><span class="tabler">plus</span></div>
+  <div class="icon-cell"><tbt-icon name="edit" size="lg" color="info"></tbt-icon><span class="alias">edit</span><span class="tabler">pencil</span></div>
+  <div class="icon-cell"><tbt-icon name="delete" size="lg" color="danger"></tbt-icon><span class="alias">delete</span><span class="tabler">trash</span></div>
+  <div class="icon-cell"><tbt-icon name="copy" size="lg"></tbt-icon><span class="alias">copy / duplicate</span><span class="tabler">copy</span></div>
+  <div class="icon-cell"><tbt-icon name="view" size="lg"></tbt-icon><span class="alias">view</span><span class="tabler">eye</span></div>
+  <div class="icon-cell"><tbt-icon name="search" size="lg"></tbt-icon><span class="alias">search</span><span class="tabler">search</span></div>
+  <div class="icon-cell"><tbt-icon name="filter" size="lg"></tbt-icon><span class="alias">filter</span><span class="tabler">filter</span></div>
+  <div class="icon-cell"><tbt-icon name="sort" size="lg"></tbt-icon><span class="alias">sort</span><span class="tabler">arrows-sort</span></div>
+  <div class="icon-cell"><tbt-icon name="refresh" size="lg"></tbt-icon><span class="alias">refresh</span><span class="tabler">refresh</span></div>
+  <div class="icon-cell"><tbt-icon name="clear" size="lg"></tbt-icon><span class="alias">clear</span><span class="tabler">eraser</span></div>
+  <div class="icon-cell"><tbt-icon name="more" size="lg"></tbt-icon><span class="alias">more</span><span class="tabler">dots</span></div>
+  <div class="icon-cell"><tbt-icon name="more-vertical" size="lg"></tbt-icon><span class="alias">more-vertical</span><span class="tabler">dots-vertical</span></div>
+</div>
+
+<div class="icon-group-label">Approval / Workflow</div>
+<div class="icon-grid">
+  <div class="icon-cell"><tbt-icon name="approve" size="lg" color="success"></tbt-icon><span class="alias">approve</span><span class="tabler">circle-check</span></div>
+  <div class="icon-cell"><tbt-icon name="reject" size="lg" color="danger"></tbt-icon><span class="alias">reject</span><span class="tabler">circle-x</span></div>
+  <div class="icon-cell"><tbt-icon name="submit" size="lg" color="primary"></tbt-icon><span class="alias">submit</span><span class="tabler">send</span></div>
+  <div class="icon-cell"><tbt-icon name="cancel" size="lg" color="warning"></tbt-icon><span class="alias">cancel / void</span><span class="tabler">ban</span></div>
+  <div class="icon-cell"><tbt-icon name="pending" size="lg" color="warning"></tbt-icon><span class="alias">pending</span><span class="tabler">clock</span></div>
+  <div class="icon-cell"><tbt-icon name="draft" size="lg" color="secondary"></tbt-icon><span class="alias">draft</span><span class="tabler">file-text</span></div>
+  <div class="icon-cell"><tbt-icon name="review" size="lg" color="info"></tbt-icon><span class="alias">review</span><span class="tabler">eye-check</span></div>
+  <div class="icon-cell"><tbt-icon name="lock" size="lg"></tbt-icon><span class="alias">lock</span><span class="tabler">lock</span></div>
+  <div class="icon-cell"><tbt-icon name="unlock" size="lg"></tbt-icon><span class="alias">unlock</span><span class="tabler">lock-open</span></div>
+  <div class="icon-cell"><tbt-icon name="sign" size="lg" color="primary"></tbt-icon><span class="alias">sign</span><span class="tabler">signature</span></div>
+</div>
+
+<div class="icon-group-label">Document types</div>
+<div class="icon-grid">
+  <div class="icon-cell"><tbt-icon name="invoice" size="lg"></tbt-icon><span class="alias">invoice</span><span class="tabler">file-invoice</span></div>
+  <div class="icon-cell"><tbt-icon name="receipt" size="lg"></tbt-icon><span class="alias">receipt</span><span class="tabler">receipt</span></div>
+  <div class="icon-cell"><tbt-icon name="quotation" size="lg"></tbt-icon><span class="alias">quotation</span><span class="tabler">file-description</span></div>
+  <div class="icon-cell"><tbt-icon name="purchase-order" size="lg"></tbt-icon><span class="alias">purchase-order</span><span class="tabler">shopping-cart</span></div>
+  <div class="icon-cell"><tbt-icon name="sales-order" size="lg"></tbt-icon><span class="alias">sales-order</span><span class="tabler">shopping-bag</span></div>
+  <div class="icon-cell"><tbt-icon name="payment" size="lg" color="success"></tbt-icon><span class="alias">payment</span><span class="tabler">credit-card</span></div>
+  <div class="icon-cell"><tbt-icon name="expense" size="lg"></tbt-icon><span class="alias">expense</span><span class="tabler">report-money</span></div>
+  <div class="icon-cell"><tbt-icon name="report" size="lg"></tbt-icon><span class="alias">report</span><span class="tabler">report</span></div>
+  <div class="icon-cell"><tbt-icon name="contract" size="lg"></tbt-icon><span class="alias">contract</span><span class="tabler">file-certificate</span></div>
+</div>
+
+<div class="icon-group-label">Finance & Inventory</div>
+<div class="icon-grid">
+  <div class="icon-cell"><tbt-icon name="money" size="lg" color="success"></tbt-icon><span class="alias">money</span><span class="tabler">currency-baht</span></div>
+  <div class="icon-cell"><tbt-icon name="bank" size="lg"></tbt-icon><span class="alias">bank</span><span class="tabler">building-bank</span></div>
+  <div class="icon-cell"><tbt-icon name="tax" size="lg"></tbt-icon><span class="alias">tax</span><span class="tabler">receipt-tax</span></div>
+  <div class="icon-cell"><tbt-icon name="discount" size="lg" color="danger"></tbt-icon><span class="alias">discount</span><span class="tabler">tag-minus</span></div>
+  <div class="icon-cell"><tbt-icon name="total" size="lg" color="primary"></tbt-icon><span class="alias">total</span><span class="tabler">sigma</span></div>
+  <div class="icon-cell"><tbt-icon name="product" size="lg"></tbt-icon><span class="alias">product</span><span class="tabler">box</span></div>
+  <div class="icon-cell"><tbt-icon name="warehouse" size="lg"></tbt-icon><span class="alias">warehouse</span><span class="tabler">building-warehouse</span></div>
+  <div class="icon-cell"><tbt-icon name="stock" size="lg"></tbt-icon><span class="alias">stock</span><span class="tabler">packages</span></div>
+  <div class="icon-cell"><tbt-icon name="barcode" size="lg"></tbt-icon><span class="alias">barcode</span><span class="tabler">barcode</span></div>
+</div>
+
+<div class="icon-group-label">People & Organization</div>
+<div class="icon-grid">
+  <div class="icon-cell"><tbt-icon name="user" size="lg"></tbt-icon><span class="alias">user</span><span class="tabler">user</span></div>
+  <div class="icon-cell"><tbt-icon name="users" size="lg"></tbt-icon><span class="alias">users</span><span class="tabler">users</span></div>
+  <div class="icon-cell"><tbt-icon name="employee" size="lg"></tbt-icon><span class="alias">employee</span><span class="tabler">id-badge-2</span></div>
+  <div class="icon-cell"><tbt-icon name="department" size="lg"></tbt-icon><span class="alias">department</span><span class="tabler">sitemap</span></div>
+  <div class="icon-cell"><tbt-icon name="company" size="lg"></tbt-icon><span class="alias">company</span><span class="tabler">building</span></div>
+  <div class="icon-cell"><tbt-icon name="branch" size="lg"></tbt-icon><span class="alias">branch</span><span class="tabler">building-skyscraper</span></div>
+  <div class="icon-cell"><tbt-icon name="role" size="lg"></tbt-icon><span class="alias">role</span><span class="tabler">shield</span></div>
+  <div class="icon-cell"><tbt-icon name="permission" size="lg" color="success"></tbt-icon><span class="alias">permission</span><span class="tabler">shield-check</span></div>
+</div>
+
+<div class="icon-group-label">Time, Notification & Misc</div>
+<div class="icon-grid">
+  <div class="icon-cell"><tbt-icon name="calendar" size="lg"></tbt-icon><span class="alias">calendar</span><span class="tabler">calendar</span></div>
+  <div class="icon-cell"><tbt-icon name="date" size="lg"></tbt-icon><span class="alias">date</span><span class="tabler">calendar-event</span></div>
+  <div class="icon-cell"><tbt-icon name="schedule" size="lg"></tbt-icon><span class="alias">schedule</span><span class="tabler">calendar-time</span></div>
+  <div class="icon-cell"><tbt-icon name="history" size="lg"></tbt-icon><span class="alias">history</span><span class="tabler">history</span></div>
+  <div class="icon-cell"><tbt-icon name="notification" size="lg"></tbt-icon><span class="alias">notification</span><span class="tabler">bell</span></div>
+  <div class="icon-cell"><tbt-icon name="comment" size="lg"></tbt-icon><span class="alias">comment</span><span class="tabler">message</span></div>
+  <div class="icon-cell"><tbt-icon name="note" size="lg"></tbt-icon><span class="alias">note</span><span class="tabler">note</span></div>
+  <div class="icon-cell"><tbt-icon name="dashboard" size="lg" color="primary"></tbt-icon><span class="alias">dashboard</span><span class="tabler">layout-dashboard</span></div>
+  <div class="icon-cell"><tbt-icon name="chart" size="lg" color="info"></tbt-icon><span class="alias">chart</span><span class="tabler">chart-bar</span></div>
+  <div class="icon-cell"><tbt-icon name="settings" size="lg"></tbt-icon><span class="alias">settings</span><span class="tabler">settings</span></div>
+  <div class="icon-cell"><tbt-icon name="home" size="lg"></tbt-icon><span class="alias">home</span><span class="tabler">home</span></div>
+  <div class="icon-cell"><tbt-icon name="map" size="lg"></tbt-icon><span class="alias">map</span><span class="tabler">map-pin</span></div>
+  <div class="icon-cell"><tbt-icon name="phone" size="lg"></tbt-icon><span class="alias">phone</span><span class="tabler">phone</span></div>
+  <div class="icon-cell"><tbt-icon name="loader" size="lg" color="primary" spin></tbt-icon><span class="alias">loader / spin</span><span class="tabler">loader-2</span></div>
+</div>
+
+<pre>&lt;tbt-icon name="save"&gt;&lt;/tbt-icon&gt;
+&lt;tbt-icon name="approve" color="success" size="lg"&gt;&lt;/tbt-icon&gt;
+&lt;tbt-icon name="loader" spin color="primary"&gt;&lt;/tbt-icon&gt;
+&lt;!-- raw Tabler names also work --&gt;
+&lt;tbt-icon name="device-floppy"&gt;&lt;/tbt-icon&gt;</pre>
+
+<!-- ─── BUTTON ─────────────────────────────────────── -->
+<h2>tbt-button</h2>
+<div class="demo-label">Variants</div>
+<div class="demo-row">
+  <tbt-button variant="primary">Primary</tbt-button>
+  <tbt-button variant="secondary">Secondary</tbt-button>
+  <tbt-button variant="danger">Danger</tbt-button>
+  <tbt-button variant="ghost">Ghost</tbt-button>
+  <tbt-button variant="accent">Accent</tbt-button>
+</div>
+<div class="demo-label">With icon · Sizes · States</div>
+<div class="demo-row">
+  <tbt-button variant="primary" icon="device-floppy">Save</tbt-button>
+  <tbt-button variant="secondary" icon="x">Cancel</tbt-button>
+  <tbt-button variant="danger" icon="trash">Delete</tbt-button>
+  <tbt-button variant="ghost" icon="printer">Print</tbt-button>
+</div>
+<div class="demo-row">
+  <tbt-button variant="primary" size="sm">Small</tbt-button>
+  <tbt-button variant="primary" size="md">Medium</tbt-button>
+  <tbt-button variant="primary" size="lg">Large</tbt-button>
+  <tbt-button variant="primary" loading>Saving…</tbt-button>
+  <tbt-button variant="primary" disabled>Disabled</tbt-button>
+</div>
+
+<!-- ─── BADGE ─────────────────────────────────────── -->
+<h2>tbt-badge</h2>
+<div class="demo-row">
+  <tbt-badge variant="success">Approved</tbt-badge>
+  <tbt-badge variant="warning">Pending</tbt-badge>
+  <tbt-badge variant="danger">Rejected</tbt-badge>
+  <tbt-badge variant="info">In review</tbt-badge>
+  <tbt-badge variant="neutral">Draft</tbt-badge>
+  <tbt-badge variant="primary">Active</tbt-badge>
+</div>
+
+<!-- ─── ALERT ─────────────────────────────────────── -->
+<h2>tbt-alert</h2>
+<div style="display:flex;flex-direction:column;gap:var(--tbt-space-3)">
+  <tbt-alert variant="success">Document saved successfully. Record PO-2569-0042 has been approved.</tbt-alert>
+  <tbt-alert variant="warning" title="Attention required">Payment terms have not been set. Please fill in before submitting.</tbt-alert>
+  <tbt-alert variant="danger" title="Validation error">Vendor and document date are required fields.</tbt-alert>
+  <tbt-alert variant="info">This Suitelet connects to RESTlet <code>customscript_tbt_po_rl</code> — deploy that script first.</tbt-alert>
+  <tbt-alert variant="warning" dismissible>Your session will expire in 5 minutes. Please save your work.</tbt-alert>
+</div>
+
+<!-- ─── INPUT ─────────────────────────────────────── -->
+<h2>tbt-input</h2>
+<div class="form-grid">
+  <tbt-input label="Document No." placeholder="PO-YYYY-XXXX" required></tbt-input>
+  <tbt-input label="Amount" type="number" min="0" step="0.01" placeholder="0.00"></tbt-input>
+  <tbt-input label="Email" type="email" value="wichit@teibto.com"></tbt-input>
+  <tbt-input label="Password" type="password" value="secret"></tbt-input>
+  <tbt-input label="With error" error="Vendor name is required" required></tbt-input>
+  <tbt-input label="With helper" helper="Format: YYYY-MM-DD (ISO 8601)"></tbt-input>
+  <tbt-input label="Read only" value="Wichit Wongta" readonly></tbt-input>
+  <tbt-input label="Disabled" value="Cannot edit" disabled></tbt-input>
+</div>
+
+<!-- ─── DROPDOWN ─────────────────────────────────────── -->
+<h2>tbt-dropdown</h2>
+<div class="form-grid">
+  <tbt-dropdown id="dd1" label="สถานะ" placeholder="เลือกสถานะ..."></tbt-dropdown>
+  <tbt-dropdown id="dd2" label="Currency" value="THB"></tbt-dropdown>
+  <tbt-dropdown id="dd3" label="With error" error="Department is required" required></tbt-dropdown>
+  <tbt-dropdown id="dd4" label="Disabled" disabled></tbt-dropdown>
+</div>
+<script type="module">
+  const statuses = [
+    {value:'A', label:'Approved'}, {value:'P', label:'Pending'},
+    {value:'R', label:'Rejected'}, {value:'D', label:'Draft'}
+  ];
+  const currencies = [{value:'THB', label:'THB — Thai Baht'}, {value:'USD', label:'USD — US Dollar'}, {value:'EUR', label:'EUR — Euro'}];
+  const depts = [{value:'1', label:'Operations'}, {value:'2', label:'Finance'}, {value:'3', label:'Sales'}];
+  document.getElementById('dd1').options = statuses;
+  document.getElementById('dd2').options = currencies;
+  document.getElementById('dd3').options = depts;
+  document.getElementById('dd4').options = statuses;
+</script>
+
+<!-- ─── MULTISELECT ─────────────────────────────────── -->
+<h2>tbt-multiselect</h2>
+<div class="form-grid">
+  <tbt-multiselect id="ms1" label="Subsidiary" placeholder="Select subsidiaries..."></tbt-multiselect>
+  <tbt-multiselect id="ms2" label="Department (pre-selected)" placeholder="Select..."></tbt-multiselect>
+</div>
+<div id="ms-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">Select subsidiaries above…</div>
+<script type="module">
+  const subs = [
+    {value:'1', label:'Teibto Co., Ltd.'},
+    {value:'2', label:'Teibto Logistics'},
+    {value:'3', label:'Teibto Retail'},
+    {value:'4', label:'Teibto Digital'}
+  ];
+  document.getElementById('ms1').options = subs;
+  document.getElementById('ms1').addEventListener('tbt-change', e => {
+    document.getElementById('ms-output').textContent = `Selected: ${e.detail.labels.join(', ') || '(none)'}`;
+  });
+  const ms2 = document.getElementById('ms2');
+  ms2.options = [{value:'ops', label:'Operations'},{value:'fin', label:'Finance'},{value:'mkt', label:'Marketing'}];
+  ms2.value = ['ops', 'fin'];
+</script>
+
+<!-- ─── DATEPICKER ─────────────────────────────────── -->
+<h2>tbt-datepicker</h2>
+<div class="form-grid">
+  <tbt-datepicker id="dp1" label="Document date" required></tbt-datepicker>
+  <tbt-datepicker label="Due date" min="2026-01-01" max="2026-12-31" helper="Must be within 2026"></tbt-datepicker>
+  <tbt-datepicker label="With error" error="Date is required" required></tbt-datepicker>
+  <tbt-datepicker label="Disabled" value="2026-05-21" disabled></tbt-datepicker>
+</div>
+<div id="dp-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">Pick a date above…</div>
+<script type="module">
+  document.getElementById('dp1').addEventListener('tbt-change', e => {
+    document.getElementById('dp-output').textContent = `tbt-change → value: "${e.detail.value}"`;
+  });
+</script>
+
+<!-- ─── SEARCH ─────────────────────────────────────── -->
+<h2>tbt-search</h2>
+<div class="demo-row">
+  <tbt-search placeholder="ค้นหาเอกสาร..." id="demo-search"></tbt-search>
+  <tbt-search placeholder="Disabled" disabled></tbt-search>
+</div>
+<div id="search-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">Type above…</div>
+<script>
+  document.getElementById('demo-search').addEventListener('tbt-search', e => {
+    document.getElementById('search-output').textContent = `tbt-search → "${e.detail.value}"`;
+  });
+</script>
+
+<!-- ─── FORM ─────────────────────────────────────── -->
+<h2>tbt-form</h2>
+<tbt-form id="demo-form">
+  <tbt-field-grid columns="2">
+    <tbt-input label="Vendor name" required placeholder="Enter vendor..."></tbt-input>
+    <tbt-datepicker label="Document date" required></tbt-datepicker>
+    <tbt-dropdown id="form-dd" label="Currency" required></tbt-dropdown>
+    <tbt-input label="Reference No." placeholder="Ref-..."></tbt-input>
+  </tbt-field-grid>
+  <div slot="footer">
+    <tbt-button variant="primary" icon="device-floppy">Save</tbt-button>
+    <tbt-button variant="secondary">Cancel</tbt-button>
+  </div>
+</tbt-form>
+<div id="form-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary);margin-top:var(--tbt-space-2)"></div>
+<script type="module">
+  document.getElementById('form-dd').options = [{value:'THB',label:'THB'},{value:'USD',label:'USD'}];
+  document.getElementById('demo-form').addEventListener('tbt-submit', e => {
+    document.getElementById('form-output').textContent = 'tbt-submit fired!';
+  });
+</script>
+
+<!-- ─── CHECKBOX + TOGGLE ───────────────────────────── -->
+<h2>tbt-checkbox</h2>
+<div style="display:flex;flex-direction:column;gap:var(--tbt-space-3);padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-checkbox label="Default (unchecked)"></tbt-checkbox>
+  <tbt-checkbox label="Checked" checked></tbt-checkbox>
+  <tbt-checkbox label="Indeterminate" id="cb-indeterminate"></tbt-checkbox>
+  <tbt-checkbox label="Required field" required></tbt-checkbox>
+  <tbt-checkbox label="With helper text" helper="This setting affects all subsidiaries"></tbt-checkbox>
+  <tbt-checkbox label="With error" error="You must accept the terms"></tbt-checkbox>
+  <tbt-checkbox label="Disabled unchecked" disabled></tbt-checkbox>
+  <tbt-checkbox label="Disabled checked" disabled checked></tbt-checkbox>
+</div>
+<script type="module">
+  document.getElementById('cb-indeterminate').indeterminate = true;
+</script>
+
+<h2>tbt-toggle</h2>
+<div style="display:flex;flex-direction:column;gap:var(--tbt-space-4);padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-toggle label="Default (off)"></tbt-toggle>
+  <tbt-toggle label="On" checked></tbt-toggle>
+  <tbt-toggle label="With status labels" label-on="Active" label-off="Inactive" checked></tbt-toggle>
+  <tbt-toggle label="Auto-approve" label-on="Enabled" label-off="Disabled"></tbt-toggle>
+  <tbt-toggle label="Disabled off" disabled></tbt-toggle>
+  <tbt-toggle label="Disabled on" disabled checked></tbt-toggle>
+</div>
+
+<!-- ─── FIELD + FIELD-GRID ─────────────────────────── -->
+<h2>tbt-field + tbt-field-grid</h2>
+<tbt-field-grid columns="4" style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5)">
+  <tbt-field label="Document No." value="PO-2569-0042" required></tbt-field>
+  <tbt-field label="Vendor" value="บจก. เทสโต้ ซัพพลาย"></tbt-field>
+  <tbt-field label="Date" value="21 May 2026"></tbt-field>
+  <tbt-field label="Status"><tbt-badge variant="warning">Pending approval</tbt-badge></tbt-field>
+  <tbt-field label="Amount" value="฿107,000.00"></tbt-field>
+  <tbt-field label="Subsidiary" value="Teibto Co., Ltd." required></tbt-field>
+  <tbt-field label="Department" value="Operations"></tbt-field>
+  <tbt-field label="Note" muted></tbt-field>
+</tbt-field-grid>
+
+<!-- ─── SECTION ─────────────────────────────────────── -->
+<h2>tbt-section</h2>
+<tbt-section title="Purchase order info" icon="file-invoice">
+  <tbt-button slot="actions" variant="primary" icon="pencil" size="sm">Edit</tbt-button>
+  <tbt-field-grid columns="3">
+    <tbt-field label="Document No." value="PO-2569-0042" required></tbt-field>
+    <tbt-field label="Vendor" value="บจก. เทสโต้ ซัพพลาย" required></tbt-field>
+    <tbt-field label="Status"><tbt-badge variant="warning">Pending approval</tbt-badge></tbt-field>
+  </tbt-field-grid>
+</tbt-section>
+<tbt-section title="Collapsed section" collapsed>
+  <p style="color:var(--tbt-text-secondary);margin:0">Click header to expand.</p>
+</tbt-section>
+
+<!-- ─── SUBTAB ─────────────────────────────────────── -->
+<h2>tbt-subtab</h2>
+<tbt-subtab active="general">
+  <tbt-tab name="general" label="ข้อมูลทั่วไป">
+    <tbt-field-grid columns="3">
+      <tbt-field label="Document No." value="PO-2569-0042"></tbt-field>
+      <tbt-field label="Vendor" value="บจก. เทสโต้ ซัพพลาย"></tbt-field>
+      <tbt-field label="Date" value="21 May 2026"></tbt-field>
+    </tbt-field-grid>
+  </tbt-tab>
+  <tbt-tab name="items" label="รายการสินค้า">
+    <p style="color:var(--tbt-text-secondary);font-size:var(--tbt-size-sm);margin:0">Line items table here</p>
+  </tbt-tab>
+  <tbt-tab name="accounting" label="บัญชี">
+    <p style="color:var(--tbt-text-secondary);font-size:var(--tbt-size-sm);margin:0">Accounting entries here</p>
+  </tbt-tab>
+  <tbt-tab name="audit" label="Audit log">
+    <tbt-audit-log id="subtab-audit"></tbt-audit-log>
+  </tbt-tab>
+</tbt-subtab>
+
+<!-- ─── TABLE ─────────────────────────────────────── -->
+<h2>tbt-table</h2>
+<div class="demo-label">Scrollable (max-height="320px") — no pagination</div>
+<tbt-table id="demo-table" max-height="320px" empty-message="ไม่พบเอกสาร"></tbt-table>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">Pagination — no scroll height</div>
+<tbt-table id="demo-table-paginate" paginate page-size="5" empty-message="ไม่พบเอกสาร"></tbt-table>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">Responsive — ลองย่อหน้าต่างให้แคบกว่า 600px จะเปลี่ยนเป็น card view</div>
+<tbt-table id="demo-table-responsive" responsive paginate page-size="5" empty-message="ไม่พบเอกสาร"></tbt-table>
+<script type="module">
+  const cols = [
+    { key: 'tranid',  label: 'Document No.', sortable: true, mobileTitle: true,
+      href: row => `/app/site/hosting/scriptlet.nl?script=customscript_sl_po_view&deploy=1&id=${row.id}` },
+    { key: 'vendor',  label: 'Vendor',       sortable: true,
+      href: row => `/app/site/hosting/scriptlet.nl?script=customscript_sl_vendor_view&deploy=1&id=${row.vendorId}` },
+    { key: 'date',    label: 'Date',         sortable: true },
+    { key: 'amount',  label: 'Amount',       align: 'right', sortable: true },
+    { key: 'status',  label: 'Status',       html: true }
+  ];
+  const vendors = [
+    {name:'บจก. เทสโต้ ซัพพลาย', id:201},
+    {name:'หจก. เจเอ็มที',        id:202},
+    {name:'บจก. ไทยพัฒนา',        id:203},
+    {name:'บจก. อาร์เอ็ม',        id:204},
+    {name:'หจก. ดีซัพพลาย',       id:205},
+  ];
+  const statuses = [
+    {label:'Approved',v:'success'},{label:'Pending',v:'warning'},
+    {label:'Rejected',v:'danger'},{label:'Pending approval',v:'info'},{label:'Draft',v:'neutral'}
+  ];
+  const rows = Array.from({length:23}, (_,i) => {
+    const s = statuses[i % statuses.length];
+    const v = vendors[i % vendors.length];
+    return {
+      id:       1000 + i + 1,
+      tranid:   `PO-2569-${String(i+1).padStart(4,'0')}`,
+      vendor:   v.name,
+      vendorId: v.id,
+      date:     `2026-05-${String((i%28)+1).padStart(2,'0')}`,
+      amount:   `฿${((i+1)*12345).toLocaleString('th-TH',{minimumFractionDigits:2})}`,
+      status:   `<tbt-badge variant="${s.v}">${s.label}</tbt-badge>`
+    };
+  });
+
+  const t1 = document.getElementById('demo-table');
+  t1.columns = cols;
+  t1.rows = rows;
+
+  const t2 = document.getElementById('demo-table-paginate');
+  t2.columns = cols;
+  t2.rows = rows;
+
+  const t3 = document.getElementById('demo-table-responsive');
+  t3.columns = cols;
+  t3.rows = rows;
+</script>
+
+<!-- ─── SUMMARY ─────────────────────────────────────── -->
+<h2>tbt-summary</h2>
+<div class="demo-label">Auto (props) — full width</div>
+<tbt-summary subtotal="100000" vat="7000"></tbt-summary>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">Slot items (custom rows) — constrained to 320px</div>
+<div style="max-width:320px">
+  <tbt-summary>
+    <tbt-summary-item label="Subtotal (pre-VAT)" value="฿100,000.00"></tbt-summary-item>
+    <tbt-summary-item label="Discount 5%" value="(฿5,000.00)"></tbt-summary-item>
+    <tbt-summary-item label="VAT 7%" value="฿6,650.00"></tbt-summary-item>
+    <tbt-summary-item label="Grand total" value="฿101,650.00" highlight></tbt-summary-item>
+  </tbt-summary>
+</div>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">Narrow (240px) — mobile stress test</div>
+<div style="max-width:240px">
+  <tbt-summary subtotal="1234567" vat="86420"></tbt-summary>
+</div>
+
+<!-- ─── MODAL ─────────────────────────────────────── -->
+<h2>tbt-modal</h2>
+<div class="demo-row">
+  <tbt-button variant="primary" id="open-default">Open default modal</tbt-button>
+  <tbt-button variant="secondary" id="open-confirm">Open confirm modal</tbt-button>
+  <tbt-button variant="danger" id="open-danger">Open danger modal</tbt-button>
+</div>
+
+<tbt-modal id="modal-default" title="Document details">
+  This is a default modal with standard Confirm / Cancel actions.
+  It's useful for showing detail or asking a simple question.
+</tbt-modal>
+
+<tbt-modal id="modal-confirm" title="Approve purchase order?" variant="confirm">
+  Approve PO-2569-0042 for ฿107,000.00 from บจก. เทสโต้ ซัพพลาย?
+  This will send a notification to the finance team.
+</tbt-modal>
+
+<tbt-modal id="modal-danger" title="Delete record?" variant="danger">
+  Are you sure you want to delete PO-2569-0042? This action cannot be undone.
+</tbt-modal>
+
+<div id="modal-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary);margin-top:var(--tbt-space-2)"></div>
+
+<script>
+  ['default','confirm','danger'].forEach(v => {
+    const btn = document.getElementById(`open-${v}`);
+    const modal = document.getElementById(`modal-${v}`);
+    btn.addEventListener('click', () => modal.open = true);
+    modal.addEventListener('tbt-confirm', () => {
+      document.getElementById('modal-output').textContent = `✓ tbt-confirm fired (${v} modal)`;
+      modal.open = false;
+    });
+    modal.addEventListener('tbt-cancel', () => {
+      document.getElementById('modal-output').textContent = `✗ tbt-cancel fired (${v} modal)`;
+    });
+  });
+</script>
+
+<!-- ─── MENUBAR ─────────────────────────────────────── -->
+<h2>tbt-menubar</h2>
+<div style="border-radius:var(--tbt-radius-lg);overflow:hidden;box-shadow:var(--tbt-shadow-md)">
+  <tbt-menubar title="Teibto ERP">
+    <tbt-menu-item label="หน้าหลัก" icon="home" active></tbt-menu-item>
+    <tbt-menu-group label="ขาย" icon="receipt">
+      <tbt-menu-item label="ใบเสนอราคา" icon="file-description" href="#"></tbt-menu-item>
+      <tbt-menu-item label="Sales order" icon="shopping-cart" href="#"></tbt-menu-item>
+      <tbt-menu-item label="Invoice" icon="file-invoice" href="#"></tbt-menu-item>
+    </tbt-menu-group>
+    <tbt-menu-group label="จัดซื้อ" icon="truck">
+      <tbt-menu-item label="Purchase order" icon="clipboard-list" href="#"></tbt-menu-item>
+      <tbt-menu-item label="Goods receipt" icon="package" href="#"></tbt-menu-item>
+    </tbt-menu-group>
+    <tbt-menu-item label="คลังสินค้า" icon="building-warehouse" href="#"></tbt-menu-item>
+    <tbt-button slot="end" variant="ghost" icon="user" size="sm">Wichit</tbt-button>
+  </tbt-menubar>
+</div>
+
+<!-- ─── SIDEBAR ─────────────────────────────────────── -->
+<h2>tbt-sidebar</h2>
+<div style="display:flex;height:280px;border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden;box-shadow:var(--tbt-shadow-sm)">
+  <tbt-sidebar collapsible>
+    <tbt-sidebar-item icon="home"         label="Dashboard"       href="#"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="file-invoice" label="Purchase order"  href="#" active></tbt-sidebar-item>
+    <tbt-sidebar-item icon="shopping-cart" label="Sales"          href="#"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="building-warehouse" label="Inventory" href="#"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="report-analytics" label="Reports"     href="#"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="settings"     label="Settings"        href="#"></tbt-sidebar-item>
+  </tbt-sidebar>
+  <div style="flex:1;padding:var(--tbt-space-5);color:var(--tbt-text-secondary);font-size:var(--tbt-size-sm)">
+    Main content area — click the sidebar toggle button to collapse
+  </div>
+</div>
+
+<!-- ─── APP SHELL COMPOSITION ─────────────────────── -->
+<h2>tbt-app-shell — Full page composition</h2>
+<div style="height:420px;border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden;box-shadow:var(--tbt-shadow-md)">
+  <tbt-app-shell style="min-height:0;height:100%">
+    <tbt-menubar slot="menubar" title="Teibto ERP">
+      <tbt-menu-item label="หน้าหลัก" icon="home"></tbt-menu-item>
+      <tbt-menu-group label="จัดซื้อ">
+        <tbt-menu-item label="Purchase order" active href="#"></tbt-menu-item>
+      </tbt-menu-group>
+      <tbt-button slot="end" variant="ghost" icon="user" size="sm">Wichit</tbt-button>
+    </tbt-menubar>
+    <tbt-sidebar slot="sidebar" collapsible>
+      <tbt-sidebar-item icon="home" label="Dashboard" href="#"></tbt-sidebar-item>
+      <tbt-sidebar-item icon="file-invoice" label="Purchase order" active href="#"></tbt-sidebar-item>
+      <tbt-sidebar-item icon="shopping-cart" label="Sales" href="#"></tbt-sidebar-item>
+    </tbt-sidebar>
+    <div slot="content">
+      <tbt-alert variant="info" dismissible style="margin-bottom:var(--tbt-space-4)">
+        Showing purchase orders pending your approval.
+      </tbt-alert>
+      <tbt-section title="Purchase orders">
+        <tbt-search slot="actions... " placeholder="ค้นหา..." style="display:inline-block"></tbt-search>
+        <tbt-table id="shell-table" empty-message="No records"></tbt-table>
+      </tbt-section>
+    </div>
+  </tbt-app-shell>
+</div>
+<script type="module">
+  const t = document.getElementById('shell-table');
+  t.columns = [{key:'tranid',label:'Document No.'},{key:'vendor',label:'Vendor'},{key:'status',label:'Status',html:true}];
+  t.rows = [
+    {tranid:'PO-2569-0041',vendor:'บจก. เทสโต้',status:'<tbt-badge variant="warning">Pending</tbt-badge>'},
+    {tranid:'PO-2569-0042',vendor:'หจก. เจเอ็มที',status:'<tbt-badge variant="info">In review</tbt-badge>'}
+  ];
+</script>
+
+<!-- ─── APPROVAL FLOW ───────────────────────────────── -->
+<h2>tbt-approval-flow</h2>
+<div class="demo-label">Horizontal (default)</div>
+<div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5)">
+  <tbt-approval-flow id="flow-h"></tbt-approval-flow>
+</div>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">Vertical (with comments)</div>
+<div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5);max-width:360px">
+  <tbt-approval-flow id="flow-v" orientation="vertical"></tbt-approval-flow>
+</div>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">loading skeleton</div>
+<div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5)">
+  <tbt-approval-flow loading></tbt-approval-flow>
+</div>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">loading skeleton — vertical</div>
+<div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5);max-width:320px">
+  <tbt-approval-flow loading orientation="vertical"></tbt-approval-flow>
+</div>
+
+<script type="module">
+  const sampleSteps = [
+    {
+      id: '1',
+      label: 'Supervisor',
+      approver: 'Supansa K.',
+      status: 'approved',
+      timestamp: new Date(Date.now() - 5 * 3600000).toISOString(),
+      comment: 'Verified against contract. OK.'
+    },
+    {
+      id: '2',
+      label: 'Finance manager',
+      approver: 'Wichit Wongta',
+      status: 'current',
+    },
+    {
+      id: '3',
+      label: 'CFO',
+      approver: 'Somchai P.',
+      status: 'pending',
+    }
+  ];
+  document.getElementById('flow-h').steps = sampleSteps;
+  document.getElementById('flow-v').steps = sampleSteps;
+</script>
+
+<!-- ─── AUDIT LOG ────────────────────────────────── -->
+<h2>tbt-audit-log</h2>
+<div class="demo-label">Default (newest first, with field changes)</div>
+<tbt-audit-log id="specimen-audit" max-height="380px"></tbt-audit-log>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">compact — field changes hidden</div>
+<tbt-audit-log id="specimen-audit-compact" compact max-height="260px"></tbt-audit-log>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">loading skeleton</div>
+<tbt-audit-log loading></tbt-audit-log>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">empty state</div>
+<tbt-audit-log empty-message="ยังไม่มีกิจกรรม"></tbt-audit-log>
+
+<script type="module">
+  const sampleLog = [
+    {
+      id: '6', timestamp: new Date(Date.now() - 4 * 60000).toISOString(),
+      user: 'Wichit Wongta', action: 'approved', label: 'Document approved',
+      changes: [{ field: 'Status', from: 'Pending', to: 'Approved' }]
+    },
+    {
+      id: '5', timestamp: new Date(Date.now() - 3 * 3600000).toISOString(),
+      user: 'Supansa K.', action: 'updated', label: 'Line items updated',
+      changes: [
+        { field: 'Qty (row 2)', from: '10', to: '15' },
+        { field: 'Amount', from: '5,000.00', to: '7,500.00' }
+      ]
+    },
+    {
+      id: '4', timestamp: new Date(Date.now() - 6 * 3600000).toISOString(),
+      user: 'Supansa K.', action: 'submitted', label: 'Submitted for approval'
+    },
+    {
+      id: '3', timestamp: new Date(Date.now() - 28 * 3600000).toISOString(),
+      user: 'Wichit Wongta', action: 'updated', label: 'Vendor changed',
+      changes: [{ field: 'Vendor', from: 'ABC Co.', to: 'XYZ Co., Ltd.' }]
+    },
+    {
+      id: '2', timestamp: new Date(Date.now() - 2 * 86400000).toISOString(),
+      user: 'Wichit Wongta', action: 'attached', label: 'Attachment added',
+      detail: 'quotation_draft_v2.pdf'
+    },
+    {
+      id: '1', timestamp: new Date(Date.now() - 3 * 86400000).toISOString(),
+      user: 'Wichit Wongta', action: 'created', label: 'Document created',
+      changes: [{ field: 'Status', from: '', to: 'Draft' }]
+    }
+  ];
+  document.getElementById('specimen-audit').entries = sampleLog;
+  document.getElementById('specimen-audit-compact').entries = sampleLog;
+  document.getElementById('subtab-audit').entries = sampleLog;
+</script>
+
+<!-- ─── SVG ─────────────────────────────────────────────── -->
+<h2>SVG illustrations</h2>
+
+<div class="demo-label">Built-in illustrations</div>
+<div class="demo-row" style="gap:var(--tbt-space-6);flex-wrap:wrap">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="empty"></tbt-svg>
+    <span style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">empty</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="search"></tbt-svg>
+    <span style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">search</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="success"></tbt-svg>
+    <span style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">success</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="error"></tbt-svg>
+    <span style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">error</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="warning"></tbt-svg>
+    <span style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">warning</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="draft"></tbt-svg>
+    <span style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">draft</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="no-access"></tbt-svg>
+    <span style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">no-access</span>
+  </div>
+</div>
+
+<div class="demo-label">Size variants</div>
+<div class="demo-row" style="align-items:flex-end;gap:var(--tbt-space-5)">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="success" size="40"></tbt-svg>
+    <span style="font-size:var(--tbt-size-xs);color:var(--tbt-text-muted)">40px</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="success" size="80"></tbt-svg>
+    <span style="font-size:var(--tbt-size-xs);color:var(--tbt-text-muted)">80px (default)</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--tbt-space-2)">
+    <tbt-svg name="success" size="120"></tbt-svg>
+    <span style="font-size:var(--tbt-size-xs);color:var(--tbt-text-muted)">120px</span>
+  </div>
+</div>
+
+<div class="demo-label">Empty-state composition pattern</div>
+<div style="
+  padding: var(--tbt-space-8) var(--tbt-space-6);
+  background: var(--tbt-bg-card);
+  border: 1px solid var(--tbt-border);
+  border-radius: var(--tbt-radius-lg);
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: var(--tbt-space-3);
+  max-width: 360px;
+">
+  <tbt-svg name="empty" size="100"></tbt-svg>
+  <div>
+    <div style="font-weight:var(--tbt-weight-medium);color:var(--tbt-text-primary);font-family:var(--tbt-font)">No documents yet</div>
+    <div style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary);margin-top:var(--tbt-space-1);font-family:var(--tbt-font)">Create your first document to get started.</div>
+  </div>
+  <tbt-button variant="primary" icon="plus">New document</tbt-button>
+</div>
+
+<div class="demo-label">Inline SVG via slot</div>
+<tbt-svg label="Custom star icon" size="64">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+      style="fill:var(--tbt-warning);stroke:var(--tbt-warning)" stroke-linejoin="round"/>
+  </svg>
+</tbt-svg>
+
+<pre>&lt;tbt-svg name="empty"&gt;&lt;/tbt-svg&gt;
+&lt;tbt-svg name="success" size="120"&gt;&lt;/tbt-svg&gt;
+&lt;tbt-svg src="/assets/my-illustration.svg" size="100"&gt;&lt;/tbt-svg&gt;
+&lt;tbt-svg label="Custom icon"&gt;
+  &lt;svg viewBox="0 0 24 24"&gt;...&lt;/svg&gt;
+&lt;/tbt-svg&gt;</pre>
+
+<div style="height:var(--tbt-space-12)"></div>
+
+<script type="module">
+  const btn  = document.getElementById('theme-toggle');
+  const icon = document.getElementById('theme-icon');
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    icon.className = t === 'dark' ? 'ti ti-moon' : 'ti ti-sun';
+    localStorage.setItem('tbt-theme', t);
+  }
+  applyTheme(localStorage.getItem('tbt-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  btn.addEventListener('click', () =>
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+</script>
+
+</body>
+</html>

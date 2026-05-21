@@ -1,0 +1,45 @@
+/**
+ * TBT-DS — component barrel
+ * @version 1.0.0
+ * @author Wichit Wongta
+ *
+ * Import this single file to register all tbt-* custom elements.
+ * In production, bundle this into tbt-ds.min.js via Rollup.
+ */
+
+/* Layout */
+export * from './tbt-app-shell.js';
+export * from './tbt-menubar.js';
+export * from './tbt-sidebar.js';
+
+/* Navigation */
+export * from './tbt-subtab.js';
+
+/* Actions */
+export * from './tbt-button.js';
+export * from './tbt-modal.js';
+
+/* Feedback */
+export * from './tbt-icon.js';
+export * from './tbt-badge.js';
+export * from './tbt-alert.js';
+
+/* Form inputs */
+export * from './tbt-checkbox.js';
+export * from './tbt-toggle.js';
+export * from './tbt-input.js';
+export * from './tbt-dropdown.js';
+export * from './tbt-multiselect.js';
+export * from './tbt-datepicker.js';
+export * from './tbt-search.js';
+export * from './tbt-form.js';
+
+/* Display */
+export * from './tbt-approval-flow.js';
+export * from './tbt-audit-log.js';
+export * from './tbt-field.js';
+export * from './tbt-field-grid.js';
+export * from './tbt-section.js';
+export * from './tbt-svg.js';
+export * from './tbt-table.js';
+export * from './tbt-summary.js';

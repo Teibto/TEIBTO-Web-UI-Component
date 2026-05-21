@@ -1,0 +1,192 @@
+/**
+ * @component tbt-multiselect
+ * @version 1.0.0
+ * @author Wichit Wongta
+ *
+ * Multi-select with chip display and dropdown checkbox list.
+ *
+ * Usage:
+ *   <tbt-multiselect
+ *     label="Subsidiary"
+ *     placeholder="Select subsidiaries..."
+ *     .options=${[
+ *       { value: '1', label: 'Teibto Co., Ltd.' },
+ *       { value: '2', label: 'Teibto Logistics' },
+ *       { value: '3', label: 'Teibto Retail' }
+ *     ]}
+ *     .value=${['1', '2']}
+ *     @tbt-change=${e => console.log(e.detail.values)}>
+ *   </tbt-multiselect>
+ *
+ * Event: tbt-change → { values: string[], labels: string[] }
+ */
+import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { tablerLink } from './tbt-icons-css.js';
+
+class TbtMultiselect extends LitElement {
+  static properties = {
+    label:       { type: String },
+    name:        { type: String },
+    placeholder: { type: String },
+    options:     { type: Array },
+    value:       { type: Array },
+    required:    { type: Boolean, reflect: true },
+    disabled:    { type: Boolean, reflect: true },
+    error:       { type: String, reflect: true },
+    _open:       { state: true }
+  };
+
+  constructor() {
+    super();
+    this.options = [];
+    this.value = [];
+    this.placeholder = 'Select…';
+    this._open = false;
+  }
+
+  static styles = css`
+    :host { display: block; font-family: var(--tbt-font); position: relative; }
+    .label-row {
+      display: flex; align-items: baseline; gap: var(--tbt-space-1);
+      margin-bottom: var(--tbt-space-1);
+    }
+    label { font-size: var(--tbt-size-xs); font-weight: var(--tbt-weight-medium);
+      color: var(--tbt-text-secondary); letter-spacing: 0.04em; }
+    .required { color: var(--tbt-text-required); font-size: var(--tbt-size-xs); }
+    .trigger {
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: var(--tbt-space-1); min-height: 38px;
+      padding: 5px var(--tbt-space-8) 5px var(--tbt-space-2);
+      background: var(--tbt-bg-card);
+      border: 1px solid var(--tbt-border);
+      border-radius: var(--tbt-radius-md);
+      cursor: pointer; position: relative;
+      transition: border-color var(--tbt-transition-fast), box-shadow var(--tbt-transition-fast);
+    }
+    .trigger:focus-within, :host([open]) .trigger {
+      border-color: var(--tbt-primary-light);
+      box-shadow: var(--tbt-shadow-focus);
+    }
+    :host([error]) .trigger { border-color: var(--tbt-danger); }
+    :host([disabled]) .trigger { background: var(--tbt-bg-hover); cursor: not-allowed; opacity: 0.65; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--tbt-primary-bg); color: var(--tbt-primary-text);
+      font-size: var(--tbt-size-xs); font-weight: var(--tbt-weight-medium);
+      padding: 2px 8px; border-radius: var(--tbt-radius-pill);
+    }
+    .chip-remove {
+      background: none; border: none; cursor: pointer; color: inherit;
+      font-size: 11px; padding: 0; line-height: 1; opacity: 0.7;
+    }
+    .chip-remove:hover { opacity: 1; }
+    .placeholder { font-size: var(--tbt-size-base); color: var(--tbt-text-muted); padding: 2px 4px; }
+    .chevron {
+      position: absolute; right: var(--tbt-space-2); top: 50%;
+      transform: translateY(-50%); font-size: 14px; color: var(--tbt-text-secondary);
+      pointer-events: none; transition: transform var(--tbt-transition-base);
+    }
+    :host([open]) .chevron { transform: translateY(-50%) rotate(180deg); }
+    .dropdown {
+      display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--tbt-bg-card); border: 1px solid var(--tbt-border);
+      border-radius: var(--tbt-radius-md); box-shadow: var(--tbt-shadow-md);
+      z-index: var(--tbt-z-dropdown); max-height: 240px; overflow-y: auto;
+      padding: var(--tbt-space-1) 0;
+    }
+    :host([open]) .dropdown { display: block; }
+    .option {
+      display: flex; align-items: center; gap: var(--tbt-space-2);
+      padding: 8px var(--tbt-space-3); cursor: pointer;
+      font-size: var(--tbt-size-base); color: var(--tbt-text-primary);
+      transition: background var(--tbt-transition-fast);
+    }
+    .option:hover { background: var(--tbt-bg-hover); }
+    .option.selected { background: var(--tbt-primary-bg); color: var(--tbt-primary-text); }
+    input[type="checkbox"] { accent-color: var(--tbt-primary); width: 15px; height: 15px; flex-shrink: 0; }
+    .error-msg { margin-top: var(--tbt-space-1); font-size: var(--tbt-size-xs);
+      color: var(--tbt-danger-text); display: flex; align-items: center; gap: 4px; }
+    .error-icon { font-size: 12px; }
+  `;
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._onOutside = (e) => {
+      if (!this.contains(e.target)) this._open = false;
+    };
+    document.addEventListener('click', this._onOutside);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener('click', this._onOutside);
+  }
+
+  updated(changed) {
+    if (changed.has('_open')) {
+      this.toggleAttribute('open', this._open);
+    }
+  }
+
+  _toggleOpen() {
+    if (!this.disabled) this._open = !this._open;
+  }
+
+  _toggle(val) {
+    const current = this.value.map(String);
+    const next = current.includes(val)
+      ? current.filter(v => v !== val)
+      : [...current, val];
+    this.value = next;
+    const labels = this.options
+      .filter(o => next.includes(String(o.value)))
+      .map(o => o.label);
+    this.dispatchEvent(new CustomEvent('tbt-change', {
+      detail: { values: next, labels },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  _removeChip(val, e) {
+    e.stopPropagation();
+    this._toggle(val);
+  }
+
+  render() {
+    const selected = this.options.filter(o => this.value.includes(String(o.value)));
+    return html`
+      ${tablerLink}
+      ${this.label ? html`
+        <div class="label-row">
+          <label>${this.label}</label>
+          ${this.required ? html`<span class="required">*</span>` : ''}
+        </div>` : ''}
+      <div class="trigger" @click=${this._toggleOpen} tabindex="0">
+        ${selected.length === 0
+          ? html`<span class="placeholder">${this.placeholder}</span>`
+          : selected.map(o => html`
+            <span class="chip">
+              ${o.label}
+              <button class="chip-remove" @click=${e => this._removeChip(String(o.value), e)} aria-label="Remove">×</button>
+            </span>`)}
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="dropdown">
+        ${this.options.map(o => html`
+          <div class="option ${this.value.includes(String(o.value)) ? 'selected' : ''}"
+            @click=${() => this._toggle(String(o.value))}>
+            <input type="checkbox" .checked=${this.value.includes(String(o.value))} tabindex="-1" readonly>
+            ${o.label}
+          </div>`)}
+      </div>
+      ${this.error ? html`
+        <div class="error-msg">
+          <i class="ti ti-alert-circle error-icon"></i>
+          ${this.error}
+        </div>` : ''}
+    `;
+  }
+}
+
+customElements.define('tbt-multiselect', TbtMultiselect);

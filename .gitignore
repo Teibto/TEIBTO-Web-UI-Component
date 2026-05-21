@@ -1,0 +1,13 @@
+# SDF project generated folder (staging area for NetSuite upload)
+tbt-ds/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Node (if used locally)
+node_modules/
