@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TBT-DS · Icons & SVG</title>
+  <script>const _t=localStorage.getItem('tbt-theme');if(_t)document.documentElement.dataset.theme=_t;</script>
+  <link rel="stylesheet" href="../theme/tbt-theme.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <script type="module" src="../components/index.js"></script>
+  <style>
+    body { margin: 0; }
+
+    /* ── Controls bar ── */
+    .controls {
+      display: flex; align-items: center; gap: var(--tbt-space-3);
+      flex-wrap: wrap;
+      padding: var(--tbt-space-3) 0 var(--tbt-space-4);
+      border-bottom: 1px solid var(--tbt-border);
+      margin-bottom: var(--tbt-space-4);
+    }
+    .ctrl-group {
+      display: flex; align-items: center; gap: var(--tbt-space-2);
+      font-family: var(--tbt-font); font-size: var(--tbt-size-sm);
+      color: var(--tbt-text-secondary);
+    }
+    .pill-btn {
+      padding: 3px 10px;
+      border: 1px solid var(--tbt-border);
+      border-radius: var(--tbt-radius-pill);
+      background: transparent;
+      font-family: var(--tbt-font); font-size: var(--tbt-size-sm);
+      color: var(--tbt-text-secondary);
+      cursor: pointer;
+      transition: all var(--tbt-transition-fast);
+    }
+    .pill-btn:hover { border-color: var(--tbt-border-strong); color: var(--tbt-text-primary); }
+    .pill-btn.active {
+      background: var(--tbt-primary); border-color: var(--tbt-primary);
+      color: #fff;
+    }
+    .color-dot {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform var(--tbt-transition-fast);
+    }
+    .color-dot:hover { transform: scale(1.15); }
+    .color-dot.active { border-color: var(--tbt-border-strong); }
+
+    /* ── Icon grid ── */
+    .group-label {
+      font-family: var(--tbt-font); font-size: var(--tbt-size-sm);
+      font-weight: var(--tbt-weight-semibold);
+      color: var(--tbt-primary); text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: var(--tbt-space-5) 0 var(--tbt-space-2);
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 4px;
+    }
+    .icon-cell {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 5px; padding: var(--tbt-space-3) var(--tbt-space-2);
+      border: 1px solid transparent;
+      border-radius: var(--tbt-radius-md);
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--tbt-transition-fast);
+      position: relative;
+    }
+    .icon-cell:hover {
+      border-color: var(--tbt-border);
+      background: var(--tbt-bg-hover);
+    }
+    .icon-cell:active { background: var(--tbt-bg-active); }
+    .icon-cell .i-alias {
+      font-family: var(--tbt-font); font-size: var(--tbt-size-sm);
+      font-weight: var(--tbt-weight-medium);
+      color: var(--tbt-text-primary);
+      word-break: break-all;
+    }
+    .icon-cell .i-tabler {
+      font-family: var(--tbt-font-mono); font-size: 9px;
+      color: var(--tbt-text-muted);
+    }
+    .icon-cell .copy-hint {
+      font-family: var(--tbt-font); font-size: 9px;
+      color: var(--tbt-primary); opacity: 0;
+      transition: opacity var(--tbt-transition-fast);
+    }
+    .icon-cell:hover .copy-hint { opacity: 1; }
+    .icon-cell.just-copied { border-color: var(--tbt-success); background: var(--tbt-success-bg); }
+
+    /* hidden by search filter */
+    .icon-cell[hidden] { display: none; }
+    .group-row[hidden] { display: none; }
+
+    /* ── SVG illustrations grid ── */
+    .svg-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--tbt-space-4);
+    }
+    .svg-card {
+      display: flex; flex-direction: column; align-items: center; gap: var(--tbt-space-3);
+      padding: var(--tbt-space-5);
+      border: 1px solid var(--tbt-border);
+      border-radius: var(--tbt-radius-lg);
+      background: var(--tbt-bg-card);
+      cursor: pointer;
+      transition: all var(--tbt-transition-fast);
+    }
+    .svg-card:hover { border-color: var(--tbt-primary); box-shadow: var(--tbt-shadow-md); transform: translateY(-1px); }
+    .svg-card:active { transform: none; }
+    .svg-card.just-copied { border-color: var(--tbt-success); box-shadow: 0 0 0 2px var(--tbt-success); }
+    .svg-name {
+      font-family: var(--tbt-font-mono); font-size: var(--tbt-size-sm);
+      color: var(--tbt-text-primary); font-weight: var(--tbt-weight-medium);
+    }
+    .svg-hint { font-family: var(--tbt-font); font-size: var(--tbt-size-sm); color: var(--tbt-text-muted); }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: var(--tbt-space-6); left: 50%; transform: translateX(-50%) translateY(12px);
+      background: var(--tbt-text-primary); color: var(--tbt-bg-page);
+      font-family: var(--tbt-font-mono); font-size: var(--tbt-size-sm);
+      padding: var(--tbt-space-2) var(--tbt-space-4);
+      border-radius: var(--tbt-radius-pill);
+      box-shadow: var(--tbt-shadow-md);
+      opacity: 0; pointer-events: none;
+      transition: opacity 150ms ease, transform 150ms ease;
+      z-index: 9998; white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Theme toggle ── */
+    #theme-toggle {
+      position: fixed; bottom: var(--tbt-space-5); right: var(--tbt-space-5);
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid var(--tbt-border); background: var(--tbt-bg-card);
+      color: var(--tbt-text-secondary); cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--tbt-shadow-md); z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+<tbt-app-shell>
+
+  <tbt-menubar slot="menubar" title="TBT-DS · Icons & SVG">
+    <tbt-menu-item label="← PO Demo" href="demo.html"></tbt-menu-item>
+    <tbt-menu-item label="Specimen"  href="specimen.html"></tbt-menu-item>
+  </tbt-menubar>
+
+  <main slot="content">
+    <tbt-section>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--tbt-space-3)">
+        <div style="font-family:var(--tbt-font)">
+          <div style="font-size:var(--tbt-size-lg);font-weight:var(--tbt-weight-semibold);color:var(--tbt-text-primary)">
+            Icons & SVG Illustrations
+          </div>
+          <div style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary);margin-top:2px">
+            Click any item to copy code · <span id="icon-count"></span>
+          </div>
+        </div>
+      </div>
+    </tbt-section>
+
+    <tbt-section>
+      <tbt-subtab>
+
+        <!-- ── Icons tab ── -->
+        <tbt-tab name="icons" label="tbt-icon">
+          <div style="padding-top:var(--tbt-space-3)">
+
+            <!-- Controls -->
+            <div class="controls">
+              <!-- Search -->
+              <div style="flex:1;min-width:180px;max-width:280px">
+                <tbt-search id="icon-search" placeholder="Search icons…"></tbt-search>
+              </div>
+
+              <!-- Size -->
+              <div class="ctrl-group">
+                <span>Size:</span>
+                <button class="pill-btn" data-size="xs">xs</button>
+                <button class="pill-btn" data-size="sm">sm</button>
+                <button class="pill-btn active" data-size="md">md</button>
+                <button class="pill-btn" data-size="lg">lg</button>
+                <button class="pill-btn" data-size="xl">xl</button>
+                <button class="pill-btn" data-size="2xl">2xl</button>
+              </div>
+
+              <!-- Color -->
+              <div class="ctrl-group">
+                <span>Color:</span>
+                <div class="color-dot active" data-color="inherit"    title="inherit"   style="background:var(--tbt-text-primary);border-color:var(--tbt-border-strong)"></div>
+                <div class="color-dot" data-color="primary"   title="primary"   style="background:var(--tbt-primary)"></div>
+                <div class="color-dot" data-color="success"   title="success"   style="background:var(--tbt-success)"></div>
+                <div class="color-dot" data-color="warning"   title="warning"   style="background:var(--tbt-warning)"></div>
+                <div class="color-dot" data-color="danger"    title="danger"    style="background:var(--tbt-danger)"></div>
+                <div class="color-dot" data-color="info"      title="info"      style="background:var(--tbt-info)"></div>
+                <div class="color-dot" data-color="muted"     title="muted"     style="background:var(--tbt-text-muted)"></div>
+              </div>
+            </div>
+
+            <!-- Icon groups rendered by JS -->
+            <div id="icon-groups"></div>
+
+          </div>
+        </tbt-tab>
+
+        <!-- ── SVG tab ── -->
+        <tbt-tab name="svg" label="tbt-svg">
+          <div style="padding-top:var(--tbt-space-4)">
+
+            <!-- Size control -->
+            <div style="display:flex;align-items:center;gap:var(--tbt-space-3);margin-bottom:var(--tbt-space-5);font-family:var(--tbt-font);font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">
+              <span>Size:</span>
+              <input type="range" id="svg-size-range" min="48" max="200" value="100"
+                style="width:160px;cursor:pointer;accent-color:var(--tbt-primary)">
+              <span id="svg-size-label" style="font-family:var(--tbt-font-mono);color:var(--tbt-text-primary);min-width:36px">100px</span>
+            </div>
+
+            <div class="svg-grid" id="svg-grid"></div>
+
+          </div>
+        </tbt-tab>
+
+      </tbt-subtab>
+    </tbt-section>
+  </main>
+</tbt-app-shell>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+<!-- Theme toggle -->
+<button id="theme-toggle" title="Toggle theme">
+  <i id="theme-icon" class="ti ti-sun"></i>
+</button>
+
+<script type="module">
+
+/* ── Icon data ── */
+const ICON_GROUPS = [
+  { group: 'Document actions', icons: [
+    { alias:'save',     tabler:'device-floppy' }, { alias:'print',    tabler:'printer' },
+    { alias:'email',    tabler:'mail' },           { alias:'attach',   tabler:'paperclip' },
+    { alias:'export',   tabler:'file-export' },    { alias:'import',   tabler:'file-import' },
+    { alias:'download', tabler:'download' },        { alias:'upload',   tabler:'upload' },
+    { alias:'share',    tabler:'share' },
+  ]},
+  { group: 'CRUD', icons: [
+    { alias:'add',           tabler:'plus' },          { alias:'new',          tabler:'plus' },
+    { alias:'edit',          tabler:'pencil' },         { alias:'delete',       tabler:'trash' },
+    { alias:'copy',          tabler:'copy' },           { alias:'duplicate',    tabler:'copy' },
+    { alias:'view',          tabler:'eye' },            { alias:'hide',         tabler:'eye-off' },
+    { alias:'search',        tabler:'search' },         { alias:'filter',       tabler:'filter' },
+    { alias:'sort',          tabler:'arrows-sort' },    { alias:'refresh',      tabler:'refresh' },
+    { alias:'clear',         tabler:'eraser' },         { alias:'reset',        tabler:'rotate-2' },
+    { alias:'more',          tabler:'dots' },           { alias:'more-vertical',tabler:'dots-vertical' },
+  ]},
+  { group: 'Approval / Workflow', icons: [
+    { alias:'approve', tabler:'circle-check' }, { alias:'reject',  tabler:'circle-x' },
+    { alias:'submit',  tabler:'send' },          { alias:'cancel',  tabler:'ban' },
+    { alias:'void',    tabler:'ban' },            { alias:'pending', tabler:'clock' },
+    { alias:'draft',   tabler:'file-text' },      { alias:'review',  tabler:'eye-check' },
+    { alias:'lock',    tabler:'lock' },            { alias:'unlock',  tabler:'lock-open' },
+    { alias:'sign',    tabler:'signature' },
+  ]},
+  { group: 'Navigation', icons: [
+    { alias:'back',         tabler:'arrow-left' },   { alias:'forward',     tabler:'arrow-right' },
+    { alias:'up',           tabler:'arrow-up' },     { alias:'down',        tabler:'arrow-down' },
+    { alias:'home',         tabler:'home' },          { alias:'menu',        tabler:'menu-2' },
+    { alias:'close',        tabler:'x' },             { alias:'expand',      tabler:'chevron-down' },
+    { alias:'collapse',     tabler:'chevron-up' },    { alias:'expand-right',tabler:'chevron-right' },
+    { alias:'external',     tabler:'external-link' },
+  ]},
+  { group: 'User & Auth', icons: [
+    { alias:'user',       tabler:'user' },         { alias:'users',      tabler:'users' },
+    { alias:'logout',     tabler:'logout' },        { alias:'login',      tabler:'login' },
+    { alias:'settings',   tabler:'settings' },      { alias:'profile',    tabler:'user-circle' },
+    { alias:'role',       tabler:'shield' },         { alias:'permission', tabler:'shield-check' },
+    { alias:'password',   tabler:'key' },
+  ]},
+  { group: 'Document types', icons: [
+    { alias:'invoice',        tabler:'file-invoice' },   { alias:'receipt',   tabler:'receipt' },
+    { alias:'quotation',      tabler:'file-description'},{ alias:'purchase-order',tabler:'shopping-cart' },
+    { alias:'sales-order',    tabler:'shopping-bag' },   { alias:'payment',   tabler:'credit-card' },
+    { alias:'expense',        tabler:'report-money' },   { alias:'report',    tabler:'report' },
+    { alias:'contract',       tabler:'file-certificate'},{ alias:'document',  tabler:'file' },
+    { alias:'folder',         tabler:'folder' },
+  ]},
+  { group: 'Finance', icons: [
+    { alias:'money',    tabler:'currency-baht' }, { alias:'bank',     tabler:'building-bank' },
+    { alias:'tax',      tabler:'receipt-tax' },   { alias:'discount', tabler:'tag-minus' },
+    { alias:'price',    tabler:'tag' },            { alias:'total',    tabler:'sigma' },
+  ]},
+  { group: 'Inventory', icons: [
+    { alias:'product',   tabler:'box' },           { alias:'warehouse', tabler:'building-warehouse' },
+    { alias:'stock',     tabler:'packages' },       { alias:'barcode',   tabler:'barcode' },
+    { alias:'qrcode',    tabler:'qrcode' },
+  ]},
+  { group: 'Communication', icons: [
+    { alias:'comment',      tabler:'message' },      { alias:'note',         tabler:'note' },
+    { alias:'notification', tabler:'bell' },          { alias:'alert',        tabler:'alert-circle' },
+    { alias:'info',         tabler:'info-circle' },   { alias:'warning',      tabler:'alert-triangle' },
+    { alias:'success',      tabler:'circle-check' },  { alias:'error',        tabler:'alert-circle' },
+  ]},
+  { group: 'Time & Schedule', icons: [
+    { alias:'calendar', tabler:'calendar' }, { alias:'date',     tabler:'calendar-event' },
+    { alias:'time',     tabler:'clock' },    { alias:'history',  tabler:'history' },
+    { alias:'schedule', tabler:'calendar-time' }, { alias:'deadline', tabler:'calendar-due' },
+  ]},
+  { group: 'People & Org', icons: [
+    { alias:'company',    tabler:'building' },       { alias:'branch',     tabler:'building-skyscraper' },
+    { alias:'employee',   tabler:'id-badge-2' },      { alias:'department', tabler:'sitemap' },
+  ]},
+  { group: 'Misc', icons: [
+    { alias:'chart',     tabler:'chart-bar' },     { alias:'dashboard', tabler:'layout-dashboard' },
+    { alias:'map',       tabler:'map-pin' },         { alias:'phone',     tabler:'phone' },
+    { alias:'link',      tabler:'link' },             { alias:'image',     tabler:'photo' },
+    { alias:'check',     tabler:'check' },            { alias:'loader',    tabler:'loader-2' },
+    { alias:'star',      tabler:'star' },             { alias:'bookmark',  tabler:'bookmark' },
+    { alias:'tag',       tabler:'tag' },              { alias:'category',  tabler:'category' },
+  ]},
+];
+
+const SVG_NAMES = ['empty','search','success','error','warning','draft','no-access'];
+
+/* ── State ── */
+let activeSize  = 'md';
+let activeColor = 'inherit';
+let svgSize     = 100;
+
+/* ── Toast ── */
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
+}
+
+/* ── Copy to clipboard ── */
+function copy(text, cell) {
+  navigator.clipboard?.writeText(text).catch(() => {});
+  toast(text);
+  cell.classList.add('just-copied');
+  setTimeout(() => cell.classList.remove('just-copied'), 800);
+}
+
+/* ── Render icon groups ── */
+function renderIcons() {
+  const container = document.getElementById('icon-groups');
+  const totalIcons = ICON_GROUPS.reduce((s, g) => s + g.icons.length, 0);
+  document.getElementById('icon-count').textContent = `${totalIcons} aliases`;
+
+  container.innerHTML = ICON_GROUPS.map(g => `
+    <div class="group-row" data-group="${g.group.toLowerCase()}">
+      <div class="group-label">${g.group}</div>
+      <div class="icon-grid">
+        ${g.icons.map(i => `
+          <div class="icon-cell" data-alias="${i.alias}" data-tabler="${i.tabler}"
+               title="${i.alias} → ti-${i.tabler}">
+            <tbt-icon name="${i.alias}" size="${activeSize}" ${activeColor !== 'inherit' ? `color="${activeColor}"` : ''}></tbt-icon>
+            <span class="i-alias">${i.alias}</span>
+            <span class="i-tabler">ti-${i.tabler}</span>
+            <span class="copy-hint">click to copy</span>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  /* attach click handlers */
+  container.querySelectorAll('.icon-cell').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const alias = cell.dataset.alias;
+      const colorAttr = activeColor !== 'inherit' ? ` color="${activeColor}"` : '';
+      const sizeAttr  = activeSize  !== 'md'      ? ` size="${activeSize}"`   : '';
+      copy(`<tbt-icon name="${alias}"${sizeAttr}${colorAttr}></tbt-icon>`, cell);
+    });
+  });
+}
+
+/* ── Update icon attributes on size/color change ── */
+function updateIconAttrs() {
+  document.querySelectorAll('#icon-groups tbt-icon').forEach(el => {
+    el.size  = activeSize;
+    el.color = activeColor;
+  });
+}
+
+/* ── Render SVG grid ── */
+function renderSVG() {
+  const grid = document.getElementById('svg-grid');
+  grid.innerHTML = SVG_NAMES.map(name => `
+    <div class="svg-card" data-name="${name}">
+      <tbt-svg name="${name}" size="${svgSize}"></tbt-svg>
+      <span class="svg-name">${name}</span>
+      <span class="svg-hint">click to copy</span>
+    </div>`).join('');
+
+  grid.querySelectorAll('.svg-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const name = card.dataset.name;
+      copy(`<tbt-svg name="${name}"></tbt-svg>`, card);
+    });
+  });
+}
+
+/* ── Update SVG sizes ── */
+function updateSVGSize() {
+  document.querySelectorAll('#svg-grid tbt-svg').forEach(el => {
+    el.setAttribute('size', svgSize);
+  });
+}
+
+/* ── Initial render ── */
+renderIcons();
+renderSVG();
+
+/* ── Size pill buttons ── */
+document.querySelectorAll('.pill-btn[data-size]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pill-btn[data-size]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeSize = btn.dataset.size;
+    updateIconAttrs();
+  });
+});
+
+/* ── Color dots ── */
+document.querySelectorAll('.color-dot').forEach(dot => {
+  dot.addEventListener('click', () => {
+    document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+    dot.classList.add('active');
+    activeColor = dot.dataset.color;
+    updateIconAttrs();
+  });
+});
+
+/* ── Icon search ── */
+document.getElementById('icon-search').addEventListener('tbt-search', e => {
+  const q = e.detail.value.toLowerCase().trim();
+  document.querySelectorAll('.icon-cell').forEach(cell => {
+    const match = !q || cell.dataset.alias.includes(q) || cell.dataset.tabler.includes(q);
+    cell.hidden = !match;
+  });
+  /* hide groups with no visible icons */
+  document.querySelectorAll('.group-row').forEach(row => {
+    const visible = [...row.querySelectorAll('.icon-cell')].some(c => !c.hidden);
+    row.hidden = !visible;
+  });
+});
+
+/* ── SVG size slider ── */
+const sizeRange = document.getElementById('svg-size-range');
+const sizeLabel = document.getElementById('svg-size-label');
+sizeRange.addEventListener('input', () => {
+  svgSize = +sizeRange.value;
+  sizeLabel.textContent = `${svgSize}px`;
+  updateSVGSize();
+});
+
+/* ── Theme toggle ── */
+const themeBtn  = document.getElementById('theme-toggle');
+const themeIcon = document.getElementById('theme-icon');
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  themeIcon.className = t === 'dark' ? 'ti ti-moon' : 'ti ti-sun';
+  localStorage.setItem('tbt-theme', t);
+}
+applyTheme(localStorage.getItem('tbt-theme') ||
+  (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+themeBtn.addEventListener('click', () =>
+  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+</script>
+</body>
+</html>

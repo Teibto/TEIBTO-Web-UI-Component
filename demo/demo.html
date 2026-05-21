@@ -118,6 +118,7 @@
 
   <!-- ── Menubar ── -->
   <tbt-menubar slot="menubar" title="Teibto ERP">
+    <tbt-menu-item label="Icons & SVG" href="icon-svg.html"></tbt-menu-item>
     <tbt-menu-item label="Dashboard" href="#"></tbt-menu-item>
     <tbt-menu-group label="ขาย">
       <tbt-menu-item label="ใบเสนอราคา"  href="#"></tbt-menu-item>
@@ -387,7 +388,18 @@ function buildRow(r) {
 
 /* ── Render all rows ── */
 function renderLines() {
-  document.getElementById('lines-body').innerHTML = lines.map(buildRow).join('');
+  const tb = document.getElementById('lines-body');
+  if (lines.length === 0) {
+    tb.innerHTML = `
+      <tr id="empty-row"><td colspan="8" style="text-align:center;padding:var(--tbt-space-8) 0;border:none">
+        <tbt-svg name="empty" size="96"></tbt-svg>
+        <div style="margin-top:var(--tbt-space-3);font-family:var(--tbt-font);font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">
+          No line items — click <strong>Add line</strong> to get started
+        </div>
+      </td></tr>`;
+  } else {
+    tb.innerHTML = lines.map(buildRow).join('');
+  }
 }
 
 /* ── Recalculate totals ── */
@@ -442,7 +454,11 @@ tbody.addEventListener('click', e => {
   if (!btn) return;
   const id = +btn.dataset.id;
   lines = lines.filter(r => r.id !== id);
-  btn.closest('tr').remove();
+  if (lines.length === 0) {
+    renderLines(); // show empty state
+  } else {
+    btn.closest('tr').remove();
+  }
   refreshTotals();
 });
 
@@ -450,7 +466,11 @@ tbody.addEventListener('click', e => {
 document.getElementById('add-line-btn').addEventListener('click', () => {
   const newRow = { id: nextId++, item: '', desc: '', qty: 1, unit: 'Pcs', price: 0, account: '5100' };
   lines.push(newRow);
-  tbody.insertAdjacentHTML('beforeend', buildRow(newRow));
+  if (lines.length === 1) {
+    renderLines(); // clears empty state, renders first row
+  } else {
+    tbody.insertAdjacentHTML('beforeend', buildRow(newRow));
+  }
   tbody.lastElementChild.querySelector('.li')?.focus();
   refreshTotals();
 });

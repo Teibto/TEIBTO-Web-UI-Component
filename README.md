@@ -6,9 +6,9 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
 
 [![Interactive Demo](https://img.shields.io/badge/🎮_Interactive_Demo-Purchase_Order_Page-FF6B35?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/demo.html)
 &nbsp;&nbsp;
-[![Live Demo](https://img.shields.io/badge/🚀_Component_Showcase-Specimen-0D1171?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/specimen.html)
+[![Icons & SVG](https://img.shields.io/badge/✨_Icons_%26_SVG-Gallery-10B981?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/icon-svg.html)
 &nbsp;&nbsp;
-[![API Reference](https://img.shields.io/badge/📖_API_Reference-Component_Docs-8B35C8?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/help.html)
+[![Component Showcase](https://img.shields.io/badge/🚀_Component_Showcase-Specimen-0D1171?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/specimen.html)
 
 </div>
 
