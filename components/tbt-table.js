@@ -1,6 +1,6 @@
 /**
  * @component tbt-table
- * @version 1.21.1
+ * @version 1.21.2
  * @author Wichit Wongta
  *
  * Data table with sortable/resizable columns, scroll, pagination, and responsive card view.

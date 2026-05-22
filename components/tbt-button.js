@@ -1,6 +1,6 @@
 /**
  * @component tbt-button
- * @version 1.21.1
+ * @version 1.21.2
  * @author Wichit Wongta
  *
  * Standard action button with brand variants.

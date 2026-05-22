@@ -1,6 +1,6 @@
 /**
  * @component tbt-playground
- * @version 1.21.1
+ * @version 1.21.2
  * @author Wichit Wongta
  *
  * Interactive prop editor for design system components.
@@ -23,6 +23,11 @@
  * Schema entry:
  *   { key, label, type: 'text'|'number'|'boolean'|'select'|'text-content',
  *     options?: string[], default?: any }
+ *
+ * `key` is the camelCase property name on the target element (e.g. `showSummary`,
+ * not `show-summary`). Values are written via `el[key] = val` for all types
+ * except `text-content`, which sets `element.textContent`. Properties marked
+ * `reflect: true` will sync to the attribute automatically.
  *
  * Special key '_text' with type 'text-content' sets element.textContent.
  */
@@ -133,11 +138,6 @@ class TbtPlayground extends LitElement {
 
   _applyOne(el, key, val, type) {
     if (type === 'text-content') { el.textContent = val; return; }
-    if (type === 'boolean') {
-      if (val) el.setAttribute(key, '');
-      else     el.removeAttribute(key);
-      return;
-    }
     el[key] = val;
   }
 

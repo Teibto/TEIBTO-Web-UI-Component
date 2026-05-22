@@ -9,6 +9,13 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.21.2] — 2026-05-23
+
+### Changed
+- `tbt-playground`: unified schema key handling — all keys are now the camelCase property name on the target element, regardless of `type`. Previously boolean keys had to be the kebab-case attribute name (because the boolean branch routed through `setAttribute`, which lowercases names and broke camelCase props like `showSummary`). Booleans now write the property directly, same as other types — `reflect: true` properties sync to attribute via Lit's machinery. The existing `disabled`/`loading`/`dismissible`/`multiple` etc. playgrounds are unaffected (single-word names work identically either way).
+
+---
+
 ## [1.21.1] — 2026-05-23
 
 ### Fixed

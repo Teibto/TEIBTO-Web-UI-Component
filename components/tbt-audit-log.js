@@ -1,6 +1,6 @@
 /**
  * @component tbt-audit-log
- * @version 1.21.1
+ * @version 1.21.2
  * @author Wichit Wongta
  *
  * Vertical timeline showing document/record activity history.
