@@ -1,6 +1,6 @@
 /**
  * @component tbt-app-shell
- * @version 1.1.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Page-level layout wrapper. Provides menubar slot at top, optional
@@ -24,6 +24,12 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
+/**
+ * @slot menubar - Top navigation bar (tbt-menubar)
+ * @slot sidebar - Left navigation panel (tbt-sidebar)
+ * @slot content - Main page content area
+ * @slot - Additional content (same as content slot)
+ */
 class TbtAppShell extends LitElement {
   static properties = {
     noSidebar:   { type: Boolean, attribute: 'no-sidebar', reflect: true },

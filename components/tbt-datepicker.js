@@ -1,6 +1,6 @@
 /**
  * @component tbt-datepicker
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Styled date input with label and validation. Uses native <input type="date">
@@ -21,6 +21,9 @@
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-change - Fired when date selected; detail: { value: string } (ISO YYYY-MM-DD)
+ */
 class TbtDatepicker extends LitElement {
   static properties = {
     label:    { type: String },

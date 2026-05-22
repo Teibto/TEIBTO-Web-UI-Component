@@ -1,6 +1,6 @@
 /**
  * @component tbt-svg
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * SVG illustration component — built-in named illustrations, external URL fetch,
@@ -154,6 +154,9 @@ const ILLUSTRATIONS = {
 
 /* ─── Component ────────────────────────────────────────────────────────────── */
 
+/**
+ * @slot - Inline SVG element
+ */
 class TbtSvg extends LitElement {
   static properties = {
     name:     { type: String },

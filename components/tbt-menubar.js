@@ -1,6 +1,6 @@
 /**
  * @component tbt-menubar, tbt-menu-item, tbt-menu-group
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Top navigation bar with logo, flat menu items, and grouped dropdown menus.
@@ -20,6 +20,11 @@
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-menu-toggle - Fired when hamburger button clicked on mobile
+ * @slot - Navigation items (tbt-menu-item, tbt-menu-group)
+ * @slot end - Right-side actions (icons, user menu)
+ */
 class TbtMenubar extends LitElement {
   static properties = {
     logo:     { type: String },
@@ -72,7 +77,7 @@ class TbtMenubar extends LitElement {
       flex-shrink: 0;
       transition: background var(--tbt-transition-fast), color var(--tbt-transition-fast);
     }
-    .hamburger:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .hamburger:hover { background: rgba(255,255,255,0.15); color: var(--tbt-text-inverse); }
     .brand {
       display: flex;
       align-items: center;
@@ -88,7 +93,7 @@ class TbtMenubar extends LitElement {
     .brand-title {
       font-size: var(--tbt-size-md);
       font-weight: var(--tbt-weight-semibold);
-      color: #FFFFFF;
+      color: var(--tbt-text-inverse);
       letter-spacing: -0.01em;
     }
     .items {
@@ -165,11 +170,11 @@ class TbtMenuItem extends LitElement {
     }
     a:hover {
       background: var(--_item-hover-bg, rgba(255,255,255,0.12));
-      color: var(--_item-hover-color, #FFFFFF);
+      color: var(--_item-hover-color, var(--tbt-text-inverse));
     }
     :host([active]) a {
       background: var(--_item-active-bg, rgba(255,255,255,0.18));
-      color: var(--_item-active-color, #FFFFFF);
+      color: var(--_item-active-color, var(--tbt-text-inverse));
     }
     .icon { font-size: 15px; line-height: 1; }
   `;
@@ -187,6 +192,9 @@ class TbtMenuItem extends LitElement {
 
 customElements.define('tbt-menu-item', TbtMenuItem);
 
+/**
+ * @slot - tbt-menu-item elements
+ */
 class TbtMenuGroup extends LitElement {
   static properties = {
     label: { type: String },
@@ -221,7 +229,7 @@ class TbtMenuGroup extends LitElement {
     .trigger:hover,
     :host([open]) .trigger {
       background: rgba(255,255,255,0.12);
-      color: #FFFFFF;
+      color: var(--tbt-text-inverse);
     }
     .icon { font-size: 15px; line-height: 1; }
     .chevron {

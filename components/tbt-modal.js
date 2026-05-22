@@ -1,6 +1,6 @@
 /**
  * @component tbt-modal
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Dialog modal using the native <dialog> element for accessibility.
@@ -29,6 +29,14 @@
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-close - Fired when modal closes via X button
+ * @fires tbt-cancel - Fired when cancel button or backdrop clicked or ESC pressed
+ * @fires tbt-confirm - Fired when confirm button clicked
+ * @slot - Body content (shorthand for content slot)
+ * @slot content - Main body content area
+ * @slot footer - Custom footer buttons
+ */
 class TbtModal extends LitElement {
   static properties = {
     open:    { type: Boolean, reflect: true },
@@ -163,6 +171,12 @@ class TbtModal extends LitElement {
     this.dispatchEvent(new CustomEvent('tbt-cancel', { bubbles: true, composed: true }));
   }
 
+  // Sync this.open when native <dialog> closes via ESC key
+  _onNativeCancel(e) {
+    e.preventDefault();
+    this._cancel();
+  }
+
   _confirm() {
     this.dispatchEvent(new CustomEvent('tbt-confirm', { bubbles: true, composed: true }));
   }
@@ -178,10 +192,10 @@ class TbtModal extends LitElement {
     const hasCustomFooter = this.querySelector('[slot="footer"]');
     return html`
       ${tablerLink}
-      <dialog @click=${this._onBackdropClick}>
+      <dialog aria-labelledby="modal-title" @click=${this._onBackdropClick} @cancel=${this._onNativeCancel}>
         <div class="modal-header">
           ${icon ? html`<i class="ti ti-${icon} modal-icon" aria-hidden="true"></i>` : ''}
-          <h3>${this.title}</h3>
+          <h3 id="modal-title">${this.title}</h3>
           <button class="close-btn" @click=${this._close} aria-label="Close modal">
             <i class="ti ti-x" aria-hidden="true"></i>
           </button>

@@ -1,6 +1,6 @@
 /**
  * @component tbt-input
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Styled text input with label, helper, and validation error.
@@ -23,7 +23,13 @@
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-input - Fired on every keystroke; detail: { value: string }
+ * @fires tbt-change - Fired when input loses focus (blur); detail: { value: string }
+ */
 class TbtInput extends LitElement {
+  static formAssociated = true;
+
   static properties = {
     label:       { type: String },
     name:        { type: String },
@@ -43,6 +49,7 @@ class TbtInput extends LitElement {
 
   constructor() {
     super();
+    this._internals = this.attachInternals();
     this.type = 'text';
     this.value = '';
     this.placeholder = '';
@@ -127,6 +134,7 @@ class TbtInput extends LitElement {
 
   _onInput(e) {
     this.value = e.target.value;
+    this._internals.setFormValue(this.value);
     this.dispatchEvent(new CustomEvent('tbt-input', {
       detail: { value: this.value },
       bubbles: true,
@@ -136,6 +144,7 @@ class TbtInput extends LitElement {
 
   _onChange(e) {
     this.value = e.target.value;
+    this._internals.setFormValue(this.value);
     this.dispatchEvent(new CustomEvent('tbt-change', {
       detail: { value: this.value },
       bubbles: true,

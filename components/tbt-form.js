@@ -1,6 +1,6 @@
 /**
  * @component tbt-form
- * @version 1.1.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Form wrapper with submit handling, loading state, and error summary.
@@ -30,6 +30,11 @@ import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
 const FORM_INPUTS = 'tbt-input, tbt-dropdown, tbt-multiselect, tbt-datepicker, tbt-search, tbt-checkbox, tbt-toggle';
 
+/**
+ * @fires tbt-submit - Fired on submit button click; detail: { data: Object }
+ * @slot - Form inputs (tbt-input, tbt-dropdown, etc.) and tbt-button[type=submit]
+ * @slot footer - Footer actions area
+ */
 class TbtForm extends LitElement {
   static properties = {
     errors:  { type: Array },

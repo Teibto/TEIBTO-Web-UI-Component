@@ -1,6 +1,6 @@
 /**
  * @component tbt-sidebar, tbt-sidebar-item
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Collapsible left-side navigation panel.
@@ -15,6 +15,10 @@
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-sidebar-toggle - Fired when sidebar collapsed/expanded; detail: { collapsed: boolean }
+ * @slot - tbt-sidebar-item elements
+ */
 class TbtSidebar extends LitElement {
   static properties = {
     collapsible: { type: Boolean, reflect: true },

@@ -1,6 +1,6 @@
 {
   "name": "@teibto/tbt-ds",
-  "version": "1.0.0",
+  "version": "1.21.0",
   "description": "Teibto Design System — Lit Web Components for NetSuite Suitelet custom HTML pages",
   "author": "Wichit Wongta",
   "license": "UNLICENSED",
@@ -9,17 +9,31 @@
   "files": [
     "components/",
     "theme/",
-    "CHANGELOG.md"
+    "custom-elements.json",
+    "CHANGELOG.md",
+    "LICENSE.txt"
   ],
   "scripts": {
     "serve": "npx http-server -p 8081 -c-1",
     "lint": "node scripts/lint-governance.js",
-    "build": "node scripts/build-bundle.js"
+    "build": "node scripts/build-bundle.js",
+    "version:sync": "node scripts/sync-version.js",
+    "test": "wtr",
+    "test:visual": "playwright test",
+    "analyze": "cem analyze --globs \"components/**/*.js\" --litelement"
   },
   "dependencies": {
     "lit": "^3.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@custom-elements-manifest/analyzer": "^0.11.0",
+    "@open-wc/testing": "^4.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^1.0.0",
+    "@web/test-runner": "^0.20.2",
+    "rollup": "^4.60.4",
+    "@playwright/test": "^1.48.0"
+  },
   "keywords": [
     "teibto",
     "design-system",
@@ -29,8 +43,9 @@
     "netsuite"
   ],
   "tbt": {
-    "ds-version": "1.0.0",
-    "file-cabinet-path": "/SuiteScripts/Teibto/ds/v1.0.0/",
-    "skill-version": "1.0.0"
-  }
+    "ds-version": "1.21.0",
+    "file-cabinet-path": "/SuiteScripts/Teibto/ds/v1.21.0/",
+    "skill-version": "1.21.0"
+  },
+  "customElements": "custom-elements.json"
 }

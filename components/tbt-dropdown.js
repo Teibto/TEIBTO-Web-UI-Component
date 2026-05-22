@@ -1,6 +1,6 @@
 /**
  * @component tbt-dropdown
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Styled select dropdown with label, placeholder, and validation.
@@ -24,7 +24,12 @@
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-change - Fired when selected value changes; detail: { value: string }
+ */
 class TbtDropdown extends LitElement {
+  static formAssociated = true;
+
   static properties = {
     label:       { type: String },
     name:        { type: String },
@@ -38,6 +43,7 @@ class TbtDropdown extends LitElement {
 
   constructor() {
     super();
+    this._internals = this.attachInternals();
     this.options = [];
     this.value = '';
     this.placeholder = 'Select…';
@@ -112,6 +118,7 @@ class TbtDropdown extends LitElement {
   _onChange(e) {
     const sel = e.target;
     this.value = sel.value;
+    this._internals.setFormValue(this.value);
     const opt = this.options.find(o => String(o.value) === sel.value);
     this.dispatchEvent(new CustomEvent('tbt-change', {
       detail: { value: this.value, label: opt?.label ?? '' },

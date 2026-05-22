@@ -1,6 +1,6 @@
 /**
  * @component tbt-search
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Debounced search input. Emits tbt-search event after user stops typing.
@@ -16,6 +16,9 @@
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-search - Fired after debounce when search value changes; detail: { value: string }
+ */
 class TbtSearch extends LitElement {
   static properties = {
     placeholder: { type: String },
@@ -118,6 +121,8 @@ class TbtSearch extends LitElement {
         <i class="ti ti-search icon" aria-hidden="true"></i>
         <input
           type="text"
+          role="searchbox"
+          aria-label=${this.placeholder}
           .value=${this.value}
           placeholder=${this.placeholder}
           ?disabled=${this.disabled}

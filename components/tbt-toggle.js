@@ -1,6 +1,6 @@
 /**
  * @component tbt-toggle
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Sliding toggle switch for boolean on/off settings.
@@ -18,7 +18,12 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
+/**
+ * @fires tbt-change - Fired when toggled; detail: { checked: boolean }
+ */
 class TbtToggle extends LitElement {
+  static formAssociated = true;
+
   static properties = {
     label:    { type: String },
     name:     { type: String },
@@ -30,6 +35,7 @@ class TbtToggle extends LitElement {
 
   constructor() {
     super();
+    this._internals = this.attachInternals();
     this.checked = false;
   }
 
@@ -102,6 +108,7 @@ class TbtToggle extends LitElement {
 
   _onChange(e) {
     this.checked = e.target.checked;
+    this._internals.setFormValue(this.checked ? 'on' : null);
     this.dispatchEvent(new CustomEvent('tbt-change', {
       detail: { checked: this.checked },
       bubbles: true,

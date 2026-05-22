@@ -1,6 +1,6 @@
 /**
  * @component tbt-button
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Standard action button with brand variants.
@@ -16,6 +16,9 @@
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @slot - Button label text
+ */
 class TbtButton extends LitElement {
   static properties = {
     variant:  { type: String, reflect: true },
@@ -66,7 +69,7 @@ class TbtButton extends LitElement {
     /* Primary — Navy Blue */
     :host([variant="primary"]) button {
       background: var(--tbt-primary);
-      color: #FFFFFF;
+      color: var(--tbt-text-inverse);
     }
     :host([variant="primary"]) button:hover:not(:disabled) {
       background: var(--tbt-primary-dark);
@@ -85,7 +88,7 @@ class TbtButton extends LitElement {
     /* Danger */
     :host([variant="danger"]) button {
       background: var(--tbt-danger);
-      color: #FFFFFF;
+      color: var(--tbt-text-inverse);
     }
     :host([variant="danger"]) button:hover:not(:disabled) {
       filter: brightness(0.92);
@@ -104,7 +107,7 @@ class TbtButton extends LitElement {
     /* Accent — gradient from logo O */
     :host([variant="accent"]) button {
       background: var(--tbt-accent-gradient);
-      color: #FFFFFF;
+      color: var(--tbt-text-inverse);
       border: none;
     }
     :host([variant="accent"]) button:hover:not(:disabled) {

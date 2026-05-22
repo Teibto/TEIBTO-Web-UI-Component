@@ -1,6 +1,6 @@
 /**
  * @component tbt-field
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Label + value pair for displaying record data.
@@ -15,6 +15,9 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
+/**
+ * @slot - Custom value content (e.g. tbt-badge); hides value prop when slotted
+ */
 class TbtField extends LitElement {
   static properties = {
     label:    { type: String },

@@ -1,6 +1,6 @@
 /**
  * @component tbt-summary
- * @version 1.1.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Document totals block — subtotal, VAT, grand total.
@@ -19,6 +19,10 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
+/**
+ * @slot - tbt-summary-item elements
+ * @slot extra-rows - Additional custom summary rows
+ */
 class TbtSummary extends LitElement {
   static properties = {
     subtotal:        { type: Number },

@@ -1,6 +1,6 @@
 /**
  * @component tbt-table
- * @version 1.4.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Data table with sortable/resizable columns, scroll, pagination, and responsive card view.
@@ -29,6 +29,7 @@
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { unsafeHTML } from 'https://cdn.jsdelivr.net/npm/lit@3/directives/unsafe-html.js/+esm';
+import './tbt-pagination.js';
 
 class TbtTable extends LitElement {
   static properties = {
@@ -40,6 +41,9 @@ class TbtTable extends LitElement {
     responsive:   { type: Boolean },
     loading:      { type: Boolean, reflect: true },
     emptyMessage: { type: String,  attribute: 'empty-message' },
+    serverSort:   { type: Boolean, attribute: 'server-sort' },
+    sortKey:      { type: String,  attribute: 'sort-key' },
+    sortAsc:      { type: Boolean, attribute: 'sort-asc' },
     _sortKey:     { state: true },
     _sortAsc:     { state: true },
     _page:        { state: true },
@@ -57,6 +61,9 @@ class TbtTable extends LitElement {
     this.responsive = false;
     this.loading = false;
     this.emptyMessage = 'No data';
+    this.serverSort = false;
+    this.sortKey = null;
+    this.sortAsc = true;
     this._sortKey = null;
     this._sortAsc = true;
     this._page = 1;
@@ -197,7 +204,7 @@ class TbtTable extends LitElement {
       transition: background var(--tbt-transition-fast);
     }
     .page-btn:hover:not(:disabled) { background: var(--tbt-bg-hover); color: var(--tbt-text-primary); }
-    .page-btn.active { background: var(--tbt-primary); color: #FFFFFF; border-color: var(--tbt-primary); }
+    .page-btn.active { background: var(--tbt-primary); color: var(--tbt-text-inverse); border-color: var(--tbt-primary); }
     .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* ── Card view (mobile) ──────────────────────────── */
@@ -333,7 +340,7 @@ class TbtTable extends LitElement {
   /* ── Sort ───────────────────────────────────────────── */
 
   _sortedRows() {
-    if (!this._sortKey) return this.rows;
+    if (this.serverSort || !this._sortKey) return this.rows;
     return [...this.rows].sort((a, b) => {
       const av = a[this._sortKey] ?? '';
       const bv = b[this._sortKey] ?? '';
@@ -343,6 +350,15 @@ class TbtTable extends LitElement {
   }
 
   _setSort(key) {
+    if (this.serverSort) {
+      const asc = this.sortKey === key ? !this.sortAsc : true;
+      this.dispatchEvent(new CustomEvent('tbt-sort', {
+        detail: { key, asc },
+        bubbles: true,
+        composed: true,
+      }));
+      return;
+    }
     if (this._sortKey === key) { this._sortAsc = !this._sortAsc; }
     else { this._sortKey = key; this._sortAsc = true; }
     this._page = 1;
@@ -387,31 +403,17 @@ class TbtTable extends LitElement {
 
   _renderPagination(sorted, totalPages, forCards = false) {
     if (!this.paginate || totalPages <= 1) return nothing;
-    return html`
-      <div class="${forCards ? 'pagination pagination-cards' : 'pagination'}">
-        <span class="page-info">
-          ${(this._page - 1) * this.pageSize + 1}–${Math.min(this._page * this.pageSize, sorted.length)}
-          of ${sorted.length}
-        </span>
-        <div class="page-btns">
-          <button class="page-btn" ?disabled=${this._page === 1}
-            @click=${() => this._page--}>‹</button>
-          ${Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter(p => Math.abs(p - this._page) <= 2 || p === 1 || p === totalPages)
-            .reduce((acc, p, i, arr) => {
-              if (i > 0 && p - arr[i - 1] > 1) acc.push('…');
-              acc.push(p);
-              return acc;
-            }, [])
-            .map(p => p === '…'
-              ? html`<span class="page-btn" style="border:none;cursor:default">…</span>`
-              : html`<button class="page-btn ${p === this._page ? 'active' : ''}"
-                  @click=${() => this._page = p}>${p}</button>`)}
-          <button class="page-btn" ?disabled=${this._page === totalPages}
-            @click=${() => this._page++}>›</button>
-        </div>
-      </div>
+    const pag = html`
+      <tbt-pagination
+        .total=${sorted.length}
+        .page=${this._page}
+        .pageSize=${this.pageSize}
+        @tbt-page-change=${e => { this._page = e.detail.page; }}>
+      </tbt-pagination>
     `;
+    return forCards
+      ? html`<div style="margin-top:var(--tbt-space-3)">${pag}</div>`
+      : pag;
   }
 
   /* ── Render ─────────────────────────────────────────── */
@@ -441,13 +443,21 @@ class TbtTable extends LitElement {
             <tr>
               ${this.columns.map((col, i) => html`
                 <th
-                  class=${col.sortable ? (this._sortKey === col.key ? 'sortable active' : 'sortable') : ''}
+                  scope="col"
+                  class=${col.sortable ? ((this.serverSort ? this.sortKey : this._sortKey) === col.key ? 'sortable active' : 'sortable') : ''}
                   data-align=${col.align || 'left'}
+                  aria-sort=${col.sortable
+                    ? ((this.serverSort ? this.sortKey : this._sortKey) === col.key
+                        ? ((this.serverSort ? this.sortAsc : this._sortAsc) ? 'ascending' : 'descending')
+                        : 'none')
+                    : nothing}
                   @click=${col.sortable ? () => this._setSort(col.key) : nothing}>
                   ${col.label}
                   ${col.sortable ? html`
                     <span class="sort-icon" aria-hidden="true">
-                      ${this._sortKey === col.key ? (this._sortAsc ? '↑' : '↓') : '↕'}
+                      ${(this.serverSort ? this.sortKey : this._sortKey) === col.key
+                        ? ((this.serverSort ? this.sortAsc : this._sortAsc) ? '↑' : '↓')
+                        : '↕'}
                     </span>` : ''}
                   ${col.resizable !== false ? html`
                     <span class="resize-handle"

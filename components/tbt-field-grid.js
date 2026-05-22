@@ -1,6 +1,6 @@
 /**
  * @component tbt-field-grid
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Responsive grid for displaying multiple tbt-field elements.
@@ -16,6 +16,9 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
+/**
+ * @slot - tbt-field elements
+ */
 class TbtFieldGrid extends LitElement {
   static properties = {
     columns: { type: Number, reflect: true }

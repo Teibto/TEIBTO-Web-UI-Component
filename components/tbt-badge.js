@@ -1,6 +1,6 @@
 /**
  * @component tbt-badge
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Status pill for showing document state, category, or count.
@@ -15,6 +15,9 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
+/**
+ * @slot - Badge label text
+ */
 class TbtBadge extends LitElement {
   static properties = {
     variant: { type: String, reflect: true },

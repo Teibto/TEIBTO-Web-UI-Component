@@ -1,6 +1,6 @@
 /**
  * @component tbt-line-items
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Self-contained inline-editable line items table with automatic totals.
@@ -62,6 +62,9 @@ const DEFAULT_UNITS = [
   { value:'Roll', label:'Roll' },
 ];
 
+/**
+ * @fires tbt-change - Fired on every row edit, add, or delete; detail: { rows: Array, subtotal: number, vat: number, total: number }
+ */
 class TbtLineItems extends LitElement {
 
   static properties = {

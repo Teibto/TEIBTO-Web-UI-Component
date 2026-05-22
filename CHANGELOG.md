@@ -5,6 +5,80 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [Unreleased]
+
+---
+
+## [1.21.0] — 2026-05-22
+
+### Added
+- `tbt-tabs` / `tbt-tab` — tab panel switcher; discovers `<tbt-tab>` children via slot; keyboard nav (ArrowLeft/Right/Home/End) with focus management; fires `tbt-change { active, label }`. Panels carry `role="tabpanel"` with `aria-controls` wiring; `active` is clamped on slot changes.
+- `tbt-stepper` — horizontal progress stepper; `steps` array prop `[{ label, description?, error? }]`; `active` index; complete steps show check icon; error steps show X icon; connector lines fill on completion; active step carries `aria-current="step"`
+- `tbt-date-range` — dual date range picker (`from`/`to`) composed from two `tbt-datepicker` inputs; form-associated; props: `label`, `name-from`, `name-to`, `from`, `to`, `required`, `disabled`, `error`; fires `tbt-change { from, to }` (YYYY-MM-DD or ''). When `name-from`/`name-to` are set, submits a `FormData` with both fields; otherwise submits a JSON string. `required` participates in constraint validation (`valueMissing`).
+- `tbt-file-upload` — drag-and-drop file upload zone; form-associated; props: `label`, `name`, `accept`, `multiple`, `max-size` (bytes), `disabled`, `required`, `error`; `files` getter; file icon per extension; `_addFiles()` validates size; fires `tbt-change { files: File[] }`. When `name` is set, submits a `FormData` (one entry per file under `name`); `required` participates in constraint validation (`valueMissing`).
+- `tbt-lines-block` — compound component wrapping `tbt-section` + `tbt-line-items` + Add button + totals
+  - Props: `title`, `add-label` (default: "Add line"), `currency`, `vat-rate`, `show-summary`, `height`, `disabled`
+  - `height` prop (default: `240px`) — controls scrollable table area; user can drag resize handle to adjust
+  - `rows` get/set and `getTotal()` delegate directly to the inner `tbt-line-items`
+  - Add button (variant=ghost, icon=plus) positioned bottom-left; `tbt-summary` totals on the right
+  - Forwards `tbt-change` with same `{ rows, subtotal, vat, total }` shape as `tbt-line-items`
+
+---
+
+## [1.19.0] — 2026-05-22
+
+### Added
+- `tbt-data-table` — server-side data table wrapper around `tbt-table`
+  - `fetch` prop: `async ({ page, pageSize, sort, order }) => { rows, total }` — plug in any RESTlet/SuiteQL endpoint
+  - Loading state: shimmer skeletons (via `tbt-skeleton`) while fetching
+  - Error state: `tbt-alert variant="danger"` with Retry button on fetch failure; fires `tbt-load-error`
+  - Server-side sort: clicking sortable headers fires `tbt-sort` event, re-fetches with new `sort`/`order` params
+  - `refresh()` public method — call after create/update/delete to reload current page
+  - `tbt-table` extended with `server-sort`, `sort-key`, `sort-asc` props + `tbt-sort` event to support external sort control
+- `tbt-breadcrumb` — navigation breadcrumb; `items` array prop `[{ label, href? }]`; last item rendered as `<span aria-current="page">` (non-clickable); separator `›` via CSS
+- `tbt-pagination` — standalone pagination bar extracted from `tbt-table`; props: `total`, `page`, `page-size`; fires `tbt-page-change { page }`; ellipsis for large page counts; `tbt-table` now uses it internally
+- `tbt-skeleton` — animated shimmer placeholder; variants: `text` (with `lines` prop), `block`, `circle`, `card` (composite with avatar + title + lines)
+- `tbt-confirm()` — Promise-based confirmation helper built on `tbt-modal`
+  - `await confirm({ title, message, confirmLabel, cancelLabel, variant, size })` → `Promise<boolean>`
+  - Resolves `true` on confirm, `false` on cancel / X button / ESC / backdrop click
+  - Programmatically creates and removes a `<tbt-modal>` — no boilerplate HTML needed
+  - Replaces 10+ lines of modal wiring with one `await` expression
+  - `demo/demo.html` — both submit and delete modals replaced with `confirm()` calls
+- `tbt-toast` — toast notification overlay
+  - Imperative API: `toast.success/danger/info/warning(msg, opts)` — lazy-creates a singleton `<tbt-toast>` in `<body>`
+  - Options: `duration` (ms, default 4000) and `persistent` (no auto-dismiss)
+  - Stacks up to 5 toasts; oldest is evicted when limit is exceeded
+  - Slide-in / slide-out animation (direction adapts to position)
+  - Positions: `top-right` (default), `top-left`, `bottom-right`, `bottom-left`
+  - Click × to dismiss manually; fires `tbt-dismiss` event with `{ id }`
+  - `demo/specimen.html` — "Notifications" section with one button per variant
+- `LICENSE.txt` — proprietary copyright notice (Teibto Co., Ltd., all rights reserved); public repo is for demo/portfolio purposes only
+- `.github/workflows/pages.yml` — GitHub Pages deploy workflow; triggers on every push to `master`; deploys repo root so all three README badge links resolve at `kingcomen.github.io/tbt-ds/`
+- `custom-elements.json` — CEM manifest covering all 31 components; `@fires` and `@slot` tags added at class level so IDE autocomplete shows events and slots
+- `custom-elements.json` added to `package.json` `files` array so it is included in npm publishes
+- `scripts/build-bundle.js` — Rollup bundle (entry: `components/index.js` → `dist/tbt-ds.min.js` + `dist/tbt-theme.css`); CDN Lit imports are rewritten to local npm at build time; output ≈ 28.8 KB gzip
+- `scripts/lint-governance.js` — 6 governance rules: no hex colors in components, no `@latest` URLs, `customElements.define` present, `@version` tag present, consistent Lit CDN URL, no hardcoded colors in demo inline styles
+- `scripts/sync-version.js` — single-command version bumper: propagates a new semver across `package.json`, all `components/**/*.js` `@version` tags, and `README.md`; supports `--dry-run`
+- `web-test-runner.config.js` + `tests/` — 51 unit tests across all components via `@web/test-runner`; importMap redirects CDN Lit to local npm during tests; tests added for tbt-toast, tbt-confirm, tbt-breadcrumb, tbt-pagination, tbt-skeleton, tbt-data-table
+- `tbt-playground` — zero-boilerplate dev harness; `schema` prop drives a live controls panel that mutates the first child element; types: `text`, `number`, `boolean`, `select`, `text-content`
+- `.github/workflows/visual.yml` — visual regression CI via Playwright (`toHaveScreenshot`); runs on PRs to master; uploads diff artifacts on failure
+- `playwright.config.js` + `tests/visual/pages.spec.js` — 4 baseline screenshot tests (specimen light, specimen dark, demo, icon-svg)
+- `dist/` added to `.gitignore`
+
+### Changed
+- `tbt-icons-css.js` — Tabler Icons CDN URL pinned from `@latest` to `@3.44.0` to prevent unexpected icon renames breaking production
+- `demo/specimen.html`, `demo/demo.html`, `demo/help.html`, `demo/icon-svg.html` — Tabler Icons CDN URL pinned to `@3.44.0`
+- `tbt-button.js`, `tbt-menubar.js`, `tbt-table.js` — all `#FFFFFF`/`#fff` literals replaced with `var(--tbt-text-inverse)` design token
+- `tbt-modal.js` — `<dialog>` gains `aria-labelledby="modal-title"`; `<h3>` gains matching `id`; native `cancel` event (ESC key) prevented and routed through `_cancel()` so `tbt-cancel` always fires on ESC
+- `tbt-subtab.js` — ARIA tablist keyboard nav: ArrowLeft/ArrowRight/Home/End move focus between tabs; roving `tabindex` pattern
+- `tbt-multiselect.js` — `role="combobox"` on trigger, `role="listbox"` on dropdown, `role="option"` + `aria-selected` on items; keyboard: Enter/Space toggles, Escape closes, ArrowDown opens
+- `tbt-search.js` — `role="searchbox"` + `aria-label` on native input
+- `tbt-table.js` — `scope="col"` on all `<th>`; sortable columns get `aria-sort="none|ascending|descending"`; pagination buttons get `aria-label`
+- `theme/tbt-theme.css` — added `--tbt-text-inverse` token (`#FFFFFF`) for text on dark/primary backgrounds
+- `tbt-input`, `tbt-dropdown`, `tbt-checkbox`, `tbt-toggle`, `tbt-multiselect` — all are now `formAssociated` (`ElementInternals`); values propagate into native `<form>` via `setFormValue()` so a plain `fetch(new FormData(form))` picks them up with no extra wiring
+
+---
+
 ## [1.18.0] — 2026-05-22
 
 ### Added

@@ -1,6 +1,6 @@
 /**
  * @component tbt-multiselect
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Multi-select with chip display and dropdown checkbox list.
@@ -23,7 +23,12 @@
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-change - Fired when selection changes; detail: { values: string[], labels: string[] }
+ */
 class TbtMultiselect extends LitElement {
+  static formAssociated = true;
+
   static properties = {
     label:       { type: String },
     name:        { type: String },
@@ -38,6 +43,7 @@ class TbtMultiselect extends LitElement {
 
   constructor() {
     super();
+    this._internals = this.attachInternals();
     this.options = [];
     this.value = [];
     this.placeholder = 'Select…';
@@ -138,6 +144,7 @@ class TbtMultiselect extends LitElement {
       ? current.filter(v => v !== val)
       : [...current, val];
     this.value = next;
+    this._internals.setFormValue(next.join(','));
     const labels = this.options
       .filter(o => next.includes(String(o.value)))
       .map(o => o.label);
@@ -153,6 +160,19 @@ class TbtMultiselect extends LitElement {
     this._toggle(val);
   }
 
+  _onTriggerKeydown(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this._toggleOpen();
+    } else if (e.key === 'Escape' && this._open) {
+      e.preventDefault();
+      this._open = false;
+    } else if (e.key === 'ArrowDown' && !this._open) {
+      e.preventDefault();
+      this._open = true;
+    }
+  }
+
   render() {
     const selected = this.options.filter(o => this.value.includes(String(o.value)));
     return html`
@@ -162,7 +182,14 @@ class TbtMultiselect extends LitElement {
           <label>${this.label}</label>
           ${this.required ? html`<span class="required">*</span>` : ''}
         </div>` : ''}
-      <div class="trigger" @click=${this._toggleOpen} tabindex="0">
+      <div class="trigger"
+        role="combobox"
+        aria-haspopup="listbox"
+        aria-expanded=${this._open ? 'true' : 'false'}
+        aria-label=${this.label || this.placeholder}
+        tabindex=${this.disabled ? '-1' : '0'}
+        @click=${this._toggleOpen}
+        @keydown=${this._onTriggerKeydown}>
         ${selected.length === 0
           ? html`<span class="placeholder">${this.placeholder}</span>`
           : selected.map(o => html`
@@ -172,9 +199,11 @@ class TbtMultiselect extends LitElement {
             </span>`)}
         <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
       </div>
-      <div class="dropdown">
+      <div class="dropdown" role="listbox" aria-multiselectable="true">
         ${this.options.map(o => html`
           <div class="option ${this.value.includes(String(o.value)) ? 'selected' : ''}"
+            role="option"
+            aria-selected=${this.value.includes(String(o.value)) ? 'true' : 'false'}
             @click=${() => this._toggle(String(o.value))}>
             <input type="checkbox" .checked=${this.value.includes(String(o.value))} tabindex="-1" readonly>
             ${o.label}

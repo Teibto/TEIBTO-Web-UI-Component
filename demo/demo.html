@@ -6,7 +6,7 @@
   <title>TBT-DS · Demo — Purchase Order</title>
   <script>const _t=localStorage.getItem('tbt-theme');if(_t)document.documentElement.dataset.theme=_t;</script>
   <link rel="stylesheet" href="../theme/tbt-theme.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css">
   <script type="module" src="../components/index.js"></script>
   <style>
     body { margin: 0; }
@@ -143,25 +143,7 @@
   </main>
 </tbt-app-shell>
 
-<!-- ── Modals ── -->
-
-<tbt-modal id="delete-modal" title="Delete document" variant="danger">
-  <p style="font-family:var(--tbt-font);color:var(--tbt-text-secondary);margin:0">
-    Are you sure you want to delete <strong>PO-2569-0042</strong>? This action cannot be undone.
-  </p>
-  <div slot="footer" style="display:flex;gap:var(--tbt-space-3)">
-    <tbt-button variant="danger"    id="confirm-delete-btn">Delete</tbt-button>
-    <tbt-button variant="secondary" id="cancel-delete-btn">Cancel</tbt-button>
-  </div>
-</tbt-modal>
-
-<tbt-modal id="submit-modal" title="Submit for approval" variant="confirm">
-  <p id="submit-body" style="font-family:var(--tbt-font);color:var(--tbt-text-secondary);margin:0"></p>
-  <div slot="footer" style="display:flex;gap:var(--tbt-space-3)">
-    <tbt-button variant="primary"    id="confirm-submit-btn">Submit</tbt-button>
-    <tbt-button variant="secondary"  id="cancel-submit-btn">Cancel</tbt-button>
-  </div>
-</tbt-modal>
+<!-- Modals rendered programmatically via confirm() helper -->
 
 <!-- ── Theme toggle ── -->
 <button id="theme-toggle" title="Toggle theme" style="
@@ -176,6 +158,7 @@
 
 <!-- ── Script ── -->
 <script type="module">
+import { confirm } from '../components/tbt-confirm.js';
 
 /* ── Reference data ── */
 const VENDORS = [
@@ -235,11 +218,7 @@ li.rows = [
 ];
 
 let grandTotal = li.getTotal().total;
-li.addEventListener('tbt-change', e => {
-  grandTotal = e.detail.total;
-  document.getElementById('submit-body').innerHTML =
-    `Submit <strong>PO-2569-0042</strong> (฿${grandTotal.toLocaleString('th-TH', { minimumFractionDigits:2, maximumFractionDigits:2 })}) for manager approval?`;
-});
+li.addEventListener('tbt-change', e => { grandTotal = e.detail.total; });
 
 document.getElementById('add-line-btn').addEventListener('click', () => li.addRow());
 
@@ -273,29 +252,36 @@ document.getElementById('save-btn').addEventListener('click', () => {
   }, 1200);
 });
 
-/* ── Submit modal ── */
-document.getElementById('submit-btn').addEventListener('click', () => {
-  document.getElementById('submit-body').innerHTML =
-    `Submit <strong>PO-2569-0042</strong> (฿${grandTotal.toLocaleString('th-TH', { minimumFractionDigits:2, maximumFractionDigits:2 })}) for manager approval?`;
-  document.getElementById('submit-modal').open = true;
-});
-document.getElementById('cancel-submit-btn').addEventListener('click', () => { document.getElementById('submit-modal').open = false; });
-document.getElementById('confirm-submit-btn').addEventListener('click', () => {
-  document.getElementById('submit-modal').open = false;
-  document.getElementById('doc-status').variant = 'info';
-  document.getElementById('doc-status').textContent = 'In review';
-  const a = document.getElementById('approve-alert');
-  a.style.display = '';
-  setTimeout(() => { a.style.display = 'none'; }, 4000);
+/* ── Submit ── */
+document.getElementById('submit-btn').addEventListener('click', async () => {
+  const fmt = v => v.toLocaleString('th-TH', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  const ok = await confirm({
+    title: 'Submit for approval',
+    message: `Submit <strong>PO-2569-0042</strong> (฿${fmt(grandTotal)}) for manager approval?`,
+    confirmLabel: 'Submit',
+    variant: 'confirm',
+  });
+  if (ok) {
+    document.getElementById('doc-status').variant = 'info';
+    document.getElementById('doc-status').textContent = 'In review';
+    const a = document.getElementById('approve-alert');
+    a.style.display = '';
+    setTimeout(() => { a.style.display = 'none'; }, 4000);
+  }
 });
 
-/* ── Delete modal ── */
-document.getElementById('delete-btn').addEventListener('click', () => { document.getElementById('delete-modal').open = true; });
-document.getElementById('cancel-delete-btn').addEventListener('click', () => { document.getElementById('delete-modal').open = false; });
-document.getElementById('confirm-delete-btn').addEventListener('click', () => {
-  document.getElementById('delete-modal').open = false;
-  document.getElementById('doc-status').variant = 'danger';
-  document.getElementById('doc-status').textContent = 'Deleted';
+/* ── Delete ── */
+document.getElementById('delete-btn').addEventListener('click', async () => {
+  const ok = await confirm({
+    title: 'Delete document',
+    message: 'Are you sure you want to delete <strong>PO-2569-0042</strong>? This action cannot be undone.',
+    confirmLabel: 'Delete',
+    variant: 'danger',
+  });
+  if (ok) {
+    document.getElementById('doc-status').variant = 'danger';
+    document.getElementById('doc-status').textContent = 'Deleted';
+  }
 });
 
 /* ── Print ── */

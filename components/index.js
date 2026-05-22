@@ -1,6 +1,6 @@
 /**
  * TBT-DS — component barrel
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Import this single file to register all tbt-* custom elements.
@@ -14,15 +14,25 @@ export * from './tbt-sidebar.js';
 
 /* Navigation */
 export * from './tbt-subtab.js';
+export * from './tbt-breadcrumb.js';
+export * from './tbt-pagination.js';
 
 /* Actions */
 export * from './tbt-button.js';
 export * from './tbt-modal.js';
+export * from './tbt-confirm.js';
+
+/* Loading */
+export * from './tbt-skeleton.js';
+
+/* Dev tooling */
+export * from './tbt-playground.js';
 
 /* Feedback */
 export * from './tbt-icon.js';
 export * from './tbt-badge.js';
 export * from './tbt-alert.js';
+export * from './tbt-toast.js';
 
 /* Form inputs */
 export * from './tbt-checkbox.js';
@@ -42,5 +52,13 @@ export * from './tbt-field-grid.js';
 export * from './tbt-section.js';
 export * from './tbt-svg.js';
 export * from './tbt-table.js';
+export * from './tbt-data-table.js';
 export * from './tbt-summary.js';
 export * from './tbt-line-items.js';
+export * from './tbt-lines-block.js';
+
+/* Compound / composite */
+export * from './tbt-tabs.js';
+export * from './tbt-stepper.js';
+export * from './tbt-date-range.js';
+export * from './tbt-file-upload.js';

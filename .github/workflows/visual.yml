@@ -1,0 +1,41 @@
+# Visual regression tests — run on every PR, block merge on diff
+# Baseline snapshots live in tests/visual/__snapshots__ (committed to repo)
+# To update baselines: run `npx playwright test --update-snapshots` locally and commit
+
+name: Visual regression
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Start dev server
+        run: npx http-server -p 8081 -c-1 &
+        # Give it a moment to start
+      - run: sleep 2
+
+      - name: Run visual tests
+        run: npm run test:visual
+
+      - name: Upload diff artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diffs
+          path: tests/visual/__snapshots__/**/*-diff.png
+          retention-days: 7

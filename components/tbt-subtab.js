@@ -1,6 +1,6 @@
 /**
  * @component tbt-subtab, tbt-tab
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Horizontal tab navigation for subtabs within a page section.
@@ -18,6 +18,10 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
+/**
+ * @fires tbt-tab-change - Fired when active tab changes; detail: { name: string }
+ * @slot - tbt-tab elements
+ */
 class TbtSubtab extends LitElement {
   static properties = {
     active: { type: String, reflect: true }
@@ -91,14 +95,34 @@ class TbtSubtab extends LitElement {
     }));
   }
 
+  _onKeydown(e) {
+    const tabs = Array.from(this.querySelectorAll('tbt-tab'));
+    const names = tabs.map(t => t.getAttribute('name'));
+    const idx = names.indexOf(this.active);
+    if (e.key === 'ArrowRight' && idx < names.length - 1) {
+      this._select(names[idx + 1]);
+      this.shadowRoot.querySelectorAll('button[role="tab"]')[idx + 1]?.focus();
+    } else if (e.key === 'ArrowLeft' && idx > 0) {
+      this._select(names[idx - 1]);
+      this.shadowRoot.querySelectorAll('button[role="tab"]')[idx - 1]?.focus();
+    } else if (e.key === 'Home') {
+      this._select(names[0]);
+      this.shadowRoot.querySelectorAll('button[role="tab"]')[0]?.focus();
+    } else if (e.key === 'End') {
+      this._select(names[names.length - 1]);
+      this.shadowRoot.querySelectorAll('button[role="tab"]')[names.length - 1]?.focus();
+    }
+  }
+
   render() {
     const tabs = Array.from(this.querySelectorAll('tbt-tab') || []);
     return html`
-      <div class="bar" role="tablist">
+      <div class="bar" role="tablist" @keydown=${this._onKeydown}>
         ${tabs.map(t => html`
           <button
             role="tab"
             aria-selected=${t.getAttribute('name') === this.active}
+            tabindex=${t.getAttribute('name') === this.active ? '0' : '-1'}
             @click=${() => this._select(t.getAttribute('name'))}>
             ${t.getAttribute('label')}
           </button>
@@ -113,6 +137,9 @@ class TbtSubtab extends LitElement {
 
 customElements.define('tbt-subtab', TbtSubtab);
 
+/**
+ * @slot - Tab panel content
+ */
 class TbtTab extends LitElement {
   static properties = {
     name:   { type: String, reflect: true },

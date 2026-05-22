@@ -1,0 +1,50 @@
+import { fixture, html, expect } from '@open-wc/testing';
+import '../components/tbt-file-upload.js';
+
+function makeFile(name, size = 1024, type = 'application/pdf') {
+  return new File([new ArrayBuffer(size)], name, { type });
+}
+
+describe('tbt-file-upload', () => {
+  it('renders drop zone with upload icon', async () => {
+    const el = await fixture(html`<tbt-file-upload label="Attachments"></tbt-file-upload>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.zone')).to.exist;
+    expect(el.shadowRoot.querySelector('.ti-cloud-upload')).to.exist;
+  });
+
+  it('shows label and required asterisk', async () => {
+    const el = await fixture(html`<tbt-file-upload label="Docs" required></tbt-file-upload>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('label').textContent.trim()).to.equal('Docs');
+    expect(el.shadowRoot.querySelector('.required')).to.exist;
+  });
+
+  it('adds files and renders file list items', async () => {
+    const el = await fixture(html`<tbt-file-upload multiple></tbt-file-upload>`);
+    await el.updateComplete;
+    el._addFiles([makeFile('report.pdf'), makeFile('photo.jpg')]);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelectorAll('.file-item')).to.have.length(2);
+    expect(el.files).to.have.length(2);
+  });
+
+  it('fires tbt-change when files are added', async () => {
+    const el = await fixture(html`<tbt-file-upload></tbt-file-upload>`);
+    await el.updateComplete;
+    let detail = null;
+    el.addEventListener('tbt-change', e => { detail = e.detail; });
+    el._addFiles([makeFile('doc.pdf')]);
+    expect(detail.files).to.have.length(1);
+    expect(detail.files[0].name).to.equal('doc.pdf');
+  });
+
+  it('rejects files exceeding max-size and shows error', async () => {
+    const el = await fixture(html`<tbt-file-upload max-size="500"></tbt-file-upload>`);
+    await el.updateComplete;
+    el._addFiles([makeFile('big.pdf', 2048)]);
+    await el.updateComplete;
+    expect(el.files).to.have.length(0);
+    expect(el._sizeError).to.include('big.pdf');
+  });
+});

@@ -1,6 +1,6 @@
 /**
  * @component tbt-alert
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Alert banner for feedback messages. Inline (non-blocking) by default.
@@ -31,6 +31,10 @@ const VARIANT_ICONS = {
   neutral: 'info-circle'
 };
 
+/**
+ * @fires tbt-dismiss - Fired when dismiss button clicked
+ * @slot - Alert message content
+ */
 class TbtAlert extends LitElement {
   static properties = {
     variant:     { type: String, reflect: true },

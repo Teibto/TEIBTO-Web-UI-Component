@@ -1,0 +1,40 @@
+# Deploy TBT-DS demo pages to GitHub Pages
+# Trigger: every push to master
+# Result: https://kingcomen.github.io/tbt-ds/demo/specimen.html
+#
+# One-time repo setup (do once):
+#   Settings → Pages → Source → GitHub Actions
+
+name: Deploy demo to Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:   # allow manual trigger from Actions tab
+
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload repo root — demo/, components/, theme/ are referenced relatively
+          path: '.'
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

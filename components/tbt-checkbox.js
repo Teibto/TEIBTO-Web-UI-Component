@@ -1,6 +1,6 @@
 /**
  * @component tbt-checkbox
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Styled checkbox with label, indeterminate state, and validation.
@@ -17,7 +17,12 @@
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-change - Fired when checked state changes; detail: { checked: boolean }
+ */
 class TbtCheckbox extends LitElement {
+  static formAssociated = true;
+
   static properties = {
     label:         { type: String },
     name:          { type: String },
@@ -31,6 +36,7 @@ class TbtCheckbox extends LitElement {
 
   constructor() {
     super();
+    this._internals = this.attachInternals();
     this.checked = false;
     this.indeterminate = false;
   }
@@ -142,6 +148,7 @@ class TbtCheckbox extends LitElement {
   _onChange(e) {
     this.checked = e.target.checked;
     this.indeterminate = false;
+    this._internals.setFormValue(this.checked ? 'on' : null);
     this.dispatchEvent(new CustomEvent('tbt-change', {
       detail: { checked: this.checked },
       bubbles: true,

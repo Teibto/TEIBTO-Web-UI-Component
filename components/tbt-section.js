@@ -1,6 +1,6 @@
 /**
  * @component tbt-section
- * @version 1.0.0
+ * @version 1.21.0
  * @author Wichit Wongta
  *
  * Collapsible card section. Container for grouped fields or content.
@@ -23,6 +23,11 @@
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
+/**
+ * @fires tbt-section-toggle - Fired when section collapsed/expanded; detail: { collapsed: boolean }
+ * @slot actions - Action buttons displayed in section header
+ * @slot - Section body content
+ */
 class TbtSection extends LitElement {
   static properties = {
     title:     { type: String },
