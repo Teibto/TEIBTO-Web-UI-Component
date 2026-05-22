@@ -67,4 +67,61 @@ describe('tbt-tabs', () => {
     expect(getComputedStyle(tabs[0]).display).to.not.equal('none');
     expect(getComputedStyle(tabs[1]).display).to.equal('none');
   });
+
+  it('gives each tbt-tab role="tabpanel" and a unique id', async () => {
+    const el = await fixture(html`
+      <tbt-tabs>
+        <tbt-tab label="A">A</tbt-tab>
+        <tbt-tab label="B">B</tbt-tab>
+      </tbt-tabs>`);
+    await el.updateComplete;
+    const tabs = el.querySelectorAll('tbt-tab');
+    expect(tabs[0].getAttribute('role')).to.equal('tabpanel');
+    expect(tabs[1].getAttribute('role')).to.equal('tabpanel');
+    expect(tabs[0].id).to.match(/^tbt-tab-\d+$/);
+    expect(tabs[1].id).to.match(/^tbt-tab-\d+$/);
+    expect(tabs[0].id).to.not.equal(tabs[1].id);
+  });
+
+  it('wires aria-controls from each tab button to its panel id', async () => {
+    const el = await fixture(html`
+      <tbt-tabs>
+        <tbt-tab label="A">A</tbt-tab>
+        <tbt-tab label="B">B</tbt-tab>
+      </tbt-tabs>`);
+    await el.updateComplete;
+    const tabs = el.querySelectorAll('tbt-tab');
+    const buttons = el.shadowRoot.querySelectorAll('[role="tab"]');
+    expect(buttons[0].getAttribute('aria-controls')).to.equal(tabs[0].id);
+    expect(buttons[1].getAttribute('aria-controls')).to.equal(tabs[1].id);
+  });
+
+  it('moves focus to the newly active tab button on click', async () => {
+    const el = await fixture(html`
+      <tbt-tabs>
+        <tbt-tab label="A">A</tbt-tab>
+        <tbt-tab label="B">B</tbt-tab>
+      </tbt-tabs>`);
+    await el.updateComplete;
+    el.shadowRoot.querySelectorAll('[role="tab"]')[1].click();
+    await el.updateComplete;
+    await Promise.resolve();
+    const buttons = el.shadowRoot.querySelectorAll('[role="tab"]');
+    expect(el.shadowRoot.activeElement).to.equal(buttons[1]);
+  });
+
+  it('clamps active when trailing tabs are removed', async () => {
+    const el = await fixture(html`
+      <tbt-tabs active="2">
+        <tbt-tab label="A">A</tbt-tab>
+        <tbt-tab label="B">B</tbt-tab>
+        <tbt-tab label="C">C</tbt-tab>
+      </tbt-tabs>`);
+    await el.updateComplete;
+    expect(el.active).to.equal(2);
+    el.removeChild(el.querySelectorAll('tbt-tab')[2]);
+    el.removeChild(el.querySelectorAll('tbt-tab')[1]);
+    await el.updateComplete;
+    expect(el.active).to.equal(0);
+  });
 });

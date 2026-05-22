@@ -46,4 +46,14 @@ describe('tbt-stepper', () => {
     const stepEls = el.shadowRoot.querySelectorAll('.step');
     expect(stepEls[1].classList.contains('error')).to.be.true;
   });
+
+  it('marks only the active step with aria-current="step"', async () => {
+    const el = await fixture(html`<tbt-stepper .steps=${STEPS} active="1"></tbt-stepper>`);
+    await el.updateComplete;
+    const steps = el.shadowRoot.querySelectorAll('.step');
+    expect(steps[0].getAttribute('aria-current')).to.be.null;
+    expect(steps[1].getAttribute('aria-current')).to.equal('step');
+    expect(steps[2].getAttribute('aria-current')).to.be.null;
+    expect(steps[3].getAttribute('aria-current')).to.be.null;
+  });
 });
