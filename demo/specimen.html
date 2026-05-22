@@ -90,6 +90,19 @@
   <tbt-playground id="pg-badge" label="tbt-badge"><tbt-badge variant="success">Approved</tbt-badge></tbt-playground>
   <tbt-playground id="pg-alert" label="tbt-alert"><tbt-alert variant="info">This is an alert message.</tbt-alert></tbt-playground>
   <tbt-playground id="pg-skel" label="tbt-skeleton"><tbt-skeleton variant="text" lines="2"></tbt-skeleton></tbt-playground>
+  <tbt-playground id="pg-tabs" label="tbt-tabs">
+    <tbt-tabs>
+      <tbt-tabs-panel label="General">
+        <div style="padding:var(--tbt-space-3);color:var(--tbt-text-secondary)">General settings panel</div>
+      </tbt-tabs-panel>
+      <tbt-tabs-panel label="Finance">
+        <div style="padding:var(--tbt-space-3);color:var(--tbt-text-secondary)">Payment terms, currency, taxes</div>
+      </tbt-tabs-panel>
+      <tbt-tabs-panel label="Shipping">
+        <div style="padding:var(--tbt-space-3);color:var(--tbt-text-secondary)">Delivery address and dates</div>
+      </tbt-tabs-panel>
+    </tbt-tabs>
+  </tbt-playground>
 </div>
 <script type="module">
   document.getElementById('pg-btn').schema = [
@@ -115,6 +128,9 @@
       options: ['text','block','circle','card'], default: 'text' },
     { key: 'lines',   label: 'Lines',   type: 'number', default: 2 },
     { key: 'height',  label: 'Height',  type: 'text', default: '' },
+  ];
+  document.getElementById('pg-tabs').schema = [
+    { key: 'active', label: 'Active tab (0–2)', type: 'number', default: 0 },
   ];
 </script>
 
