@@ -14,7 +14,7 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
 
 ---
 
-- **30 components** — layout, navigation, forms, data display, feedback, and illustrations
+- **38 components** — layout, navigation, forms, data display, feedback, and illustrations
 - **No build step** in development — Lit 3 loads from CDN as ES modules
 - **Design tokens** via `--tbt-*` CSS custom properties — automatic dark mode
 - **Mobile-first** — sidebar drawer, responsive table card view, touch-friendly inputs
@@ -68,20 +68,27 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
 ```
 tbt-ds/
 ├── components/
-│   ├── index.js                # Barrel — imports all 30 tbt-* components
+│   ├── index.js                # Barrel — imports all 38 tbt-* components
 │   ├── tbt-icons-css.js        # Shared Tabler CSS injector for shadow DOM
 │   │
 │   ├── tbt-app-shell.js        # Page wrapper (menubar + sidebar + content)
 │   ├── tbt-menubar.js          # Top nav bar + hamburger (mobile ≤ 768px)
 │   ├── tbt-sidebar.js          # Collapsible left sidebar + sidebar-item
-│   ├── tbt-subtab.js           # Tab navigation + tab panel
+│   ├── tbt-subtab.js           # In-page tab nav (legacy — see tbt-tabs for new work)
+│   ├── tbt-tabs.js             # Horizontal tab switcher + tbt-tabs-panel
+│   ├── tbt-breadcrumb.js       # Breadcrumb trail navigation
+│   ├── tbt-pagination.js       # Standalone pagination bar
+│   ├── tbt-stepper.js          # Multi-step progress indicator
 │   │
 │   ├── tbt-button.js           # Action button (primary / secondary / danger / ghost / accent)
 │   ├── tbt-modal.js            # Dialog modal (default / confirm / danger)
+│   ├── tbt-confirm.js          # Promise-based confirm() helper built on tbt-modal
 │   │
 │   ├── tbt-icon.js             # Tabler icon wrapper — 80+ ERP semantic aliases
 │   ├── tbt-badge.js            # Status badge (6 variants)
 │   ├── tbt-alert.js            # Inline alert (4 variants, dismissible)
+│   ├── tbt-toast.js            # Transient toast notifications
+│   ├── tbt-skeleton.js         # Shimmer placeholder for loading states
 │   ├── tbt-svg.js              # SVG illustration (7 built-ins + src fetch + inline slot)
 │   │
 │   ├── tbt-form.js             # Form wrapper with shadow-DOM data collection
@@ -89,6 +96,8 @@ tbt-ds/
 │   ├── tbt-dropdown.js         # Select dropdown
 │   ├── tbt-multiselect.js      # Multi-select with chips
 │   ├── tbt-datepicker.js       # Date picker with calendar popup
+│   ├── tbt-date-range.js       # Dual date range picker (from/to)
+│   ├── tbt-file-upload.js      # Drag-and-drop file upload zone
 │   ├── tbt-search.js           # Search input with debounce
 │   ├── tbt-checkbox.js         # Checkbox (with indeterminate state)
 │   ├── tbt-toggle.js           # On/off toggle switch
@@ -97,10 +106,12 @@ tbt-ds/
 │   ├── tbt-field-grid.js       # Responsive grid of tbt-field
 │   ├── tbt-section.js          # Content card with optional title + actions slot
 │   ├── tbt-table.js            # Data table (sort, pagination, responsive card view)
+│   ├── tbt-data-table.js       # Server-side data table (fetch + loading + retry)
 │   ├── tbt-summary.js          # Document totals block
 │   ├── tbt-approval-flow.js    # Approval chain (horizontal / vertical)
 │   ├── tbt-audit-log.js        # Activity timeline with field-level diffs
-│   └── tbt-line-items.js       # Inline-editable line items table + auto totals
+│   ├── tbt-line-items.js       # Inline-editable line items table + auto totals
+│   └── tbt-lines-block.js      # Compound: section + line-items + add button + totals
 │
 ├── theme/
 │   └── tbt-theme.css           # All design tokens — single source of truth
@@ -108,7 +119,7 @@ tbt-ds/
 ├── demo/
 │   ├── demo.html               # Interactive Purchase Order page (fully editable form)
 │   ├── icon-svg.html           # Icon gallery + SVG illustration browser
-│   └── specimen.html           # Component showcase (all 30 components)
+│   └── specimen.html           # Component showcase (all 38 components)
 │
 ├── CHANGELOG.md
 └── package.json
@@ -262,7 +273,7 @@ Collapsible left navigation panel. On mobile, hidden by default and opened as a 
 ---
 
 #### `tbt-subtab` / `tbt-tab`
-In-page tab navigation.
+In-page tab navigation. Legacy — for new work prefer [`tbt-tabs`](#tbt-tabs--tbt-tabs-panel) below (proper ARIA, focus management, keyboard nav).
 
 ```html
 <tbt-subtab>
@@ -274,6 +285,81 @@ In-page tab navigation.
   </tbt-tab>
 </tbt-subtab>
 ```
+
+---
+
+#### `tbt-tabs` / `tbt-tabs-panel`
+Horizontal tab switcher with WAI-ARIA roles, arrow-key navigation, and focus management.
+
+| Prop on `tbt-tabs` | Type | Description |
+|---|---|---|
+| `active` | Number | Active tab index (default `0`) |
+
+**Events:** `tbt-change` → `{ active: number, label: string }`  
+**Keyboard:** ArrowLeft / ArrowRight / Home / End cycle through tabs
+
+```html
+<tbt-tabs active="0">
+  <tbt-tabs-panel label="General">
+    <tbt-field-grid columns="4">...</tbt-field-grid>
+  </tbt-tabs-panel>
+  <tbt-tabs-panel label="Finance">...</tbt-tabs-panel>
+  <tbt-tabs-panel label="Shipping">...</tbt-tabs-panel>
+</tbt-tabs>
+```
+
+---
+
+#### `tbt-breadcrumb`
+Navigation breadcrumb. Last item is rendered as non-clickable current page.
+
+```html
+<tbt-breadcrumb .items=${[
+  { label: 'Dashboard', href: '/dash' },
+  { label: 'Invoices',  href: '/invoices' },
+  { label: 'INV-0001' },
+]}></tbt-breadcrumb>
+```
+
+---
+
+#### `tbt-pagination`
+Standalone pagination bar; ellipsis for large page counts. Used internally by `tbt-table` — exposed here for custom contexts.
+
+| Prop | Type | Description |
+|---|---|---|
+| `total` | Number | Total row count |
+| `page` | Number | Current page (1-based) |
+| `page-size` | Number | Rows per page |
+
+**Events:** `tbt-page-change` → `{ page: number }`
+
+```html
+<tbt-pagination total="237" page="1" page-size="20"></tbt-pagination>
+```
+
+---
+
+#### `tbt-stepper`
+Horizontal multi-step progress indicator. Active step carries `aria-current="step"`.
+
+```html
+<tbt-stepper active="1" .steps=${[
+  { label: 'Draft' },
+  { label: 'Review' },
+  { label: 'Approve' },
+  { label: 'Done' },
+]}></tbt-stepper>
+
+<!-- Error state on a step -->
+<tbt-stepper active="1" .steps=${[
+  { label: 'Draft' },
+  { label: 'Review', error: true },
+  { label: 'Done' },
+]}></tbt-stepper>
+```
+
+Step shape: `{ label, description?, error? }`. Steps before `active` show a check; the active step is highlighted; remaining steps are dimmed.
 
 ---
 
@@ -327,6 +413,26 @@ In-page tab navigation.
   });
 </script>
 ```
+
+---
+
+#### `confirm()` helper
+Promise-based confirmation built on `tbt-modal`. No boilerplate HTML required.
+
+```javascript
+import { confirm } from '/sc/SuiteScripts/Teibto/ds/v1.21.1/tbt-confirm.js';
+
+const ok = await confirm({
+  title: 'Delete document?',
+  message: 'This action cannot be undone.',
+  confirmLabel: 'Delete',
+  cancelLabel: 'Cancel',
+  variant: 'danger',
+});
+if (ok) await deleteRecord();
+```
+
+Resolves `true` on confirm, `false` on cancel / ESC / backdrop click / X button.
 
 ---
 
@@ -442,6 +548,34 @@ Built-in names: `empty` · `search` · `success` · `error` · `warning` · `dra
 
 ---
 
+#### `tbt-toast`
+Transient notification — slides in, auto-dismisses, stacks if multiple. Trigger via the static `show()` helper from any script.
+
+```javascript
+import { showToast } from '/sc/SuiteScripts/Teibto/ds/v1.21.1/tbt-toast.js';
+
+showToast({ variant: 'success', message: 'Saved.',          duration: 3000 });
+showToast({ variant: 'danger',  message: 'Network error.',  duration: 5000 });
+```
+
+Variants: `success` · `warning` · `danger` · `info`. Multiple toasts stack in the corner.
+
+---
+
+#### `tbt-skeleton`
+Animated shimmer placeholder for loading states.
+
+```html
+<tbt-skeleton variant="text" lines="3"></tbt-skeleton>
+<tbt-skeleton variant="block" style="width:200px;height:120px"></tbt-skeleton>
+<tbt-skeleton variant="circle" style="width:48px;height:48px"></tbt-skeleton>
+<tbt-skeleton variant="card"></tbt-skeleton>
+```
+
+Variants: `text` (with `lines` prop) · `block` · `circle` · `card` (avatar + title + lines).
+
+---
+
 ### Form inputs
 
 All form inputs share: `label` · `name` · `required` · `disabled` · `readonly` · `error` · `helper`
@@ -522,6 +656,48 @@ Options are set as a JavaScript property (Array of `{ value, label }`).
 ```
 
 Event: `tbt-change` → `e.detail.value` (ISO date string `YYYY-MM-DD`)
+
+---
+
+#### `tbt-date-range`
+Dual date range picker (from/to) — form-associated. When `name-from`/`name-to` are set, submits a `FormData` with both fields. `required` participates in constraint validation (`valueMissing`).
+
+```html
+<tbt-date-range
+  label="Reporting period"
+  name-from="period_from"
+  name-to="period_to"
+  from="2026-01-01"
+  to="2026-12-31"
+  required></tbt-date-range>
+```
+
+Event: `tbt-change` → `{ from, to }` (each ISO `YYYY-MM-DD` or `''` if empty)
+
+---
+
+#### `tbt-file-upload`
+Drag-and-drop file upload zone with per-file size validation. Form-associated — when `name` is set, submits one `FormData` entry per file under that name.
+
+| Prop | Type | Description |
+|---|---|---|
+| `name` | String | Field name in `FormData` |
+| `accept` | String | Accepted MIME types / extensions (e.g. `.pdf,.jpg`) |
+| `multiple` | Boolean | Allow multiple files |
+| `max-size` | Number | Per-file size limit in bytes |
+| `required` | Boolean | Wires `valueMissing` constraint |
+
+**Event:** `tbt-change` → `{ files: File[] }`  
+**Property:** `files` (getter) — current `File[]` snapshot
+
+```html
+<tbt-file-upload
+  label="Attachments"
+  name="receipts"
+  multiple
+  accept=".pdf,.jpg,.png,.xlsx"
+  max-size="5242880"></tbt-file-upload>
+```
 
 ---
 
@@ -616,6 +792,37 @@ Column definition:
   mobileTitle: true,                    // card header in responsive mode
   resizable:   false,                   // disable column drag-resize
 }
+```
+
+---
+
+#### `tbt-data-table`
+Server-side data table — wraps `tbt-table` and adds a `fetch` callback for server-side paging, sorting, and loading states. Plug into any RESTlet or SuiteQL endpoint.
+
+| Prop | Type | Description |
+|---|---|---|
+| `fetch` | Function | `async ({ page, pageSize, sort, order }) => ({ rows, total })` |
+| `columns` | Array | Column definitions (same shape as `tbt-table`) |
+| `page-size` | Number | Rows per page |
+
+**Methods:** `refresh()` — re-fetches current page (call after create/update/delete)  
+**Events:** `tbt-load-error` on fetch failure (Retry button shown via `tbt-alert`)
+
+```html
+<tbt-data-table id="inv-table" page-size="50"></tbt-data-table>
+
+<script type="module">
+  const table = document.getElementById('inv-table');
+  table.columns = [
+    { key: 'tranid',  label: 'No.',    sortable: true },
+    { key: 'vendor',  label: 'Vendor' },
+    { key: 'amount',  label: 'Amount', align: 'right', sortable: true },
+  ];
+  table.fetch = async ({ page, pageSize, sort, order }) => {
+    const r = await fetch(`/restlet?page=${page}&size=${pageSize}&sort=${sort}&order=${order}`);
+    return r.json();  // { rows: [...], total: 237 }
+  };
+</script>
 ```
 
 ---
@@ -715,6 +922,32 @@ Event: `tbt-change` → `{ rows, subtotal, vat, total }` — fires on every edit
   li.addEventListener('tbt-change', e => {
     console.log(e.detail.rows, e.detail.total);
   });
+</script>
+```
+
+---
+
+#### `tbt-lines-block`
+Compound component — wraps `tbt-section` + `tbt-line-items` + Add button + totals in a single tag. Use this instead of composing the three by hand. Scrollable table area is user-resizable via a drag handle.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `title` | String | — | Section title |
+| `add-label` | String | `Add line` | Add-button label |
+| `currency` | String | `฿` | Currency prefix |
+| `vat-rate` | Number | `0.07` | VAT rate |
+| `show-summary` | Boolean | `true` | Show subtotal/VAT/total below |
+| `height` | String | `240px` | Initial scrollable table height (drag-resizable) |
+| `disabled` | Boolean | — | Disable Add button |
+
+`rows` (get/set) and `getTotal()` delegate to the inner `tbt-line-items`. Forwards `tbt-change` with the same `{ rows, subtotal, vat, total }` payload.
+
+```html
+<tbt-lines-block id="lb" title="Line items" currency="฿" vat-rate="0.07" height="240px">
+</tbt-lines-block>
+
+<script type="module">
+  document.getElementById('lb').rows = window.__DATA__.lines;
 </script>
 ```
 
@@ -939,7 +1172,7 @@ Demo pages:
 |---|---|---|
 | Interactive demo | `/demo/demo.html` | Full Purchase Order page — editable form, inline line items, approval flow |
 | Icons & SVG | `/demo/icon-svg.html` | All 80+ icon aliases + SVG illustrations with live search and copy |
-| Component showcase | `/demo/specimen.html` | All 29 components in one page |
+| Component showcase | `/demo/specimen.html` | All 38 components in one page |
 
 No build step needed in development — components import Lit 3 from CDN.
 
