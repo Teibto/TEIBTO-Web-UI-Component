@@ -103,6 +103,18 @@
       </tbt-tabs-panel>
     </tbt-tabs>
   </tbt-playground>
+  <tbt-playground id="pg-stepper" label="tbt-stepper">
+    <tbt-stepper active="1"></tbt-stepper>
+  </tbt-playground>
+  <tbt-playground id="pg-dr" label="tbt-date-range">
+    <tbt-date-range label="Period" from="2026-01-01" to="2026-12-31"></tbt-date-range>
+  </tbt-playground>
+  <tbt-playground id="pg-fu" label="tbt-file-upload">
+    <tbt-file-upload label="Attachments" multiple accept=".pdf,.jpg,.png"></tbt-file-upload>
+  </tbt-playground>
+  <tbt-playground id="pg-lb" label="tbt-lines-block">
+    <tbt-lines-block title="Line items" currency="฿" height="200px"></tbt-lines-block>
+  </tbt-playground>
 </div>
 <script type="module">
   document.getElementById('pg-btn').schema = [
@@ -131,6 +143,32 @@
   ];
   document.getElementById('pg-tabs').schema = [
     { key: 'active', label: 'Active tab (0–2)', type: 'number', default: 0 },
+  ];
+  document.querySelector('#pg-stepper tbt-stepper').steps = [
+    { label: 'Draft' }, { label: 'Review' }, { label: 'Approve' }, { label: 'Done' },
+  ];
+  document.getElementById('pg-stepper').schema = [
+    { key: 'active', label: 'Active step (0–4)', type: 'number', default: 1 },
+  ];
+  document.getElementById('pg-dr').schema = [
+    { key: 'label',    label: 'Label',     type: 'text',    default: 'Period' },
+    { key: 'required', label: 'Required',  type: 'boolean' },
+    { key: 'disabled', label: 'Disabled',  type: 'boolean' },
+    { key: 'error',    label: 'Error msg', type: 'text',    default: '' },
+  ];
+  document.getElementById('pg-fu').schema = [
+    { key: 'label',    label: 'Label',    type: 'text',    default: 'Attachments' },
+    { key: 'multiple', label: 'Multiple', type: 'boolean', default: true },
+    { key: 'required', label: 'Required', type: 'boolean' },
+    { key: 'disabled', label: 'Disabled', type: 'boolean' },
+    { key: 'accept',   label: 'Accept',   type: 'text',    default: '.pdf,.jpg,.png' },
+  ];
+  document.getElementById('pg-lb').schema = [
+    { key: 'title',         label: 'Title',        type: 'text',    default: 'Line items' },
+    { key: 'currency',      label: 'Currency',     type: 'text',    default: '฿' },
+    { key: 'height',        label: 'Height',       type: 'text',    default: '200px' },
+    { key: 'disabled',      label: 'Disabled',     type: 'boolean' },
+    { key: 'show-summary',  label: 'Show summary', type: 'boolean', default: true },
   ];
 </script>
 
