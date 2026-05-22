@@ -45,8 +45,8 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teibto · Page Name</title>
-  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.21.0/tbt-theme.css">
-  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.21.0/index.js"></script>
+  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.21.1/tbt-theme.css">
+  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.21.1/index.js"></script>
 </head>
 <body>
   <tbt-app-shell>
@@ -879,7 +879,7 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ### File Cabinet structure
 
 ```
-/SuiteScripts/Teibto/ds/v1.21.0/
+/SuiteScripts/Teibto/ds/v1.21.1/
   tbt-theme.css
   index.js
   tbt-icons-css.js
@@ -896,8 +896,8 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ### Standard page `<head>`
 
 ```html
-<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.21.0/tbt-theme.css">
-<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.21.0/index.js"></script>
+<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.21.1/tbt-theme.css">
+<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.21.1/index.js"></script>
 ```
 
 > Always pin to an exact version. Never use `/latest/`.
@@ -907,7 +907,7 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ```bash
 cd tbt-ds/tbt-ds               # SDF project folder
 suitecloud account:setup        # first-time auth (opens browser)
-suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.21.0/*"
+suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.21.1/*"
 ```
 
 ---

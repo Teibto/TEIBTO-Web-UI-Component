@@ -1,27 +1,27 @@
 /**
  * @component tbt-tabs
- * @version 1.21.0
+ * @version 1.21.1
  * @author Wichit Wongta
  *
  * Horizontal tab switcher with client-side panels.
- * Each panel is a <tbt-tab> child element.
+ * Each panel is a <tbt-tabs-panel> child element.
  *
  * Usage:
  *   <tbt-tabs active="0" @tbt-change=${e => console.log(e.detail.active, e.detail.label)}>
- *     <tbt-tab label="Details">Details content here</tbt-tab>
- *     <tbt-tab label="History">History content here</tbt-tab>
- *     <tbt-tab label="Notes">Notes content here</tbt-tab>
+ *     <tbt-tabs-panel label="Details">Details content here</tbt-tabs-panel>
+ *     <tbt-tabs-panel label="History">History content here</tbt-tabs-panel>
+ *     <tbt-tabs-panel label="Notes">Notes content here</tbt-tabs-panel>
  *   </tbt-tabs>
  *
  * Event: tbt-change → { active: number, label: string }
  *
- * @slot - tbt-tab elements
+ * @slot - tbt-tabs-panel elements
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
 // ── Panel element ──────────────────────────────────────────────────────────────
 
-class TbtTab extends LitElement {
+class TbtTabsPanel extends LitElement {
   static _uid = 0;
 
   static properties = {
@@ -37,7 +37,7 @@ class TbtTab extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.setAttribute('role', 'tabpanel');
-    if (!this.id) this.id = `tbt-tab-${++TbtTab._uid}`;
+    if (!this.id) this.id = `tbt-tabs-panel-${++TbtTabsPanel._uid}`;
     if (this.label && !this.hasAttribute('aria-label')) {
       this.setAttribute('aria-label', this.label);
     }
@@ -48,7 +48,7 @@ class TbtTab extends LitElement {
   }
 }
 
-customElements.define('tbt-tab', TbtTab);
+customElements.define('tbt-tabs-panel', TbtTabsPanel);
 
 // ── Container element ──────────────────────────────────────────────────────────
 
@@ -69,7 +69,7 @@ class TbtTabs extends LitElement {
   }
 
   _tabs() {
-    return [...this.querySelectorAll(':scope > tbt-tab')];
+    return [...this.querySelectorAll(':scope > tbt-tabs-panel')];
   }
 
   _onSlotChange() {

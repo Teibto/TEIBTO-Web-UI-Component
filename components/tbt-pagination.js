@@ -1,6 +1,6 @@
 /**
  * @component tbt-pagination
- * @version 1.21.0
+ * @version 1.21.1
  * @author Wichit Wongta
  *
  * Standalone pagination bar. Used internally by tbt-table and usable

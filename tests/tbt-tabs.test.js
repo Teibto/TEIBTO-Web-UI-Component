@@ -2,12 +2,12 @@ import { fixture, html, expect } from '@open-wc/testing';
 import '../components/tbt-tabs.js';
 
 describe('tbt-tabs', () => {
-  it('renders a tab button for each tbt-tab child', async () => {
+  it('renders a tab button for each tbt-tabs-panel child', async () => {
     const el = await fixture(html`
       <tbt-tabs>
-        <tbt-tab label="A">Content A</tbt-tab>
-        <tbt-tab label="B">Content B</tbt-tab>
-        <tbt-tab label="C">Content C</tbt-tab>
+        <tbt-tabs-panel label="A">Content A</tbt-tabs-panel>
+        <tbt-tabs-panel label="B">Content B</tbt-tabs-panel>
+        <tbt-tabs-panel label="C">Content C</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
     const buttons = el.shadowRoot.querySelectorAll('[role="tab"]');
@@ -19,34 +19,34 @@ describe('tbt-tabs', () => {
   it('shows first tab active by default', async () => {
     const el = await fixture(html`
       <tbt-tabs>
-        <tbt-tab label="First">First</tbt-tab>
-        <tbt-tab label="Second">Second</tbt-tab>
+        <tbt-tabs-panel label="First">First</tbt-tabs-panel>
+        <tbt-tabs-panel label="Second">Second</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
-    const tabs = el.querySelectorAll('tbt-tab');
-    expect(tabs[0].active).to.be.true;
-    expect(tabs[1].active).to.be.false;
+    const panels = el.querySelectorAll('tbt-tabs-panel');
+    expect(panels[0].active).to.be.true;
+    expect(panels[1].active).to.be.false;
   });
 
   it('switches active panel on click', async () => {
     const el = await fixture(html`
       <tbt-tabs>
-        <tbt-tab label="A">A</tbt-tab>
-        <tbt-tab label="B">B</tbt-tab>
+        <tbt-tabs-panel label="A">A</tbt-tabs-panel>
+        <tbt-tabs-panel label="B">B</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
     el.shadowRoot.querySelectorAll('[role="tab"]')[1].click();
     await el.updateComplete;
-    const tabs = el.querySelectorAll('tbt-tab');
-    expect(tabs[0].active).to.be.false;
-    expect(tabs[1].active).to.be.true;
+    const panels = el.querySelectorAll('tbt-tabs-panel');
+    expect(panels[0].active).to.be.false;
+    expect(panels[1].active).to.be.true;
   });
 
   it('fires tbt-change with active index and label', async () => {
     const el = await fixture(html`
       <tbt-tabs>
-        <tbt-tab label="Alpha">A</tbt-tab>
-        <tbt-tab label="Beta">B</tbt-tab>
+        <tbt-tabs-panel label="Alpha">A</tbt-tabs-panel>
+        <tbt-tabs-panel label="Beta">B</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
     let detail = null;
@@ -56,51 +56,51 @@ describe('tbt-tabs', () => {
     expect(detail.label).to.equal('Beta');
   });
 
-  it('hides inactive tbt-tab via display:none', async () => {
+  it('hides inactive tbt-tabs-panel via display:none', async () => {
     const el = await fixture(html`
       <tbt-tabs>
-        <tbt-tab label="X">X</tbt-tab>
-        <tbt-tab label="Y">Y</tbt-tab>
+        <tbt-tabs-panel label="X">X</tbt-tabs-panel>
+        <tbt-tabs-panel label="Y">Y</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
-    const tabs = el.querySelectorAll('tbt-tab');
-    expect(getComputedStyle(tabs[0]).display).to.not.equal('none');
-    expect(getComputedStyle(tabs[1]).display).to.equal('none');
+    const panels = el.querySelectorAll('tbt-tabs-panel');
+    expect(getComputedStyle(panels[0]).display).to.not.equal('none');
+    expect(getComputedStyle(panels[1]).display).to.equal('none');
   });
 
-  it('gives each tbt-tab role="tabpanel" and a unique id', async () => {
+  it('gives each tbt-tabs-panel role="tabpanel" and a unique id', async () => {
     const el = await fixture(html`
       <tbt-tabs>
-        <tbt-tab label="A">A</tbt-tab>
-        <tbt-tab label="B">B</tbt-tab>
+        <tbt-tabs-panel label="A">A</tbt-tabs-panel>
+        <tbt-tabs-panel label="B">B</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
-    const tabs = el.querySelectorAll('tbt-tab');
-    expect(tabs[0].getAttribute('role')).to.equal('tabpanel');
-    expect(tabs[1].getAttribute('role')).to.equal('tabpanel');
-    expect(tabs[0].id).to.match(/^tbt-tab-\d+$/);
-    expect(tabs[1].id).to.match(/^tbt-tab-\d+$/);
-    expect(tabs[0].id).to.not.equal(tabs[1].id);
+    const panels = el.querySelectorAll('tbt-tabs-panel');
+    expect(panels[0].getAttribute('role')).to.equal('tabpanel');
+    expect(panels[1].getAttribute('role')).to.equal('tabpanel');
+    expect(panels[0].id).to.match(/^tbt-tabs-panel-\d+$/);
+    expect(panels[1].id).to.match(/^tbt-tabs-panel-\d+$/);
+    expect(panels[0].id).to.not.equal(panels[1].id);
   });
 
   it('wires aria-controls from each tab button to its panel id', async () => {
     const el = await fixture(html`
       <tbt-tabs>
-        <tbt-tab label="A">A</tbt-tab>
-        <tbt-tab label="B">B</tbt-tab>
+        <tbt-tabs-panel label="A">A</tbt-tabs-panel>
+        <tbt-tabs-panel label="B">B</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
-    const tabs = el.querySelectorAll('tbt-tab');
+    const panels = el.querySelectorAll('tbt-tabs-panel');
     const buttons = el.shadowRoot.querySelectorAll('[role="tab"]');
-    expect(buttons[0].getAttribute('aria-controls')).to.equal(tabs[0].id);
-    expect(buttons[1].getAttribute('aria-controls')).to.equal(tabs[1].id);
+    expect(buttons[0].getAttribute('aria-controls')).to.equal(panels[0].id);
+    expect(buttons[1].getAttribute('aria-controls')).to.equal(panels[1].id);
   });
 
   it('moves focus to the newly active tab button on click', async () => {
     const el = await fixture(html`
       <tbt-tabs>
-        <tbt-tab label="A">A</tbt-tab>
-        <tbt-tab label="B">B</tbt-tab>
+        <tbt-tabs-panel label="A">A</tbt-tabs-panel>
+        <tbt-tabs-panel label="B">B</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
     el.shadowRoot.querySelectorAll('[role="tab"]')[1].click();
@@ -113,14 +113,14 @@ describe('tbt-tabs', () => {
   it('clamps active when trailing tabs are removed', async () => {
     const el = await fixture(html`
       <tbt-tabs active="2">
-        <tbt-tab label="A">A</tbt-tab>
-        <tbt-tab label="B">B</tbt-tab>
-        <tbt-tab label="C">C</tbt-tab>
+        <tbt-tabs-panel label="A">A</tbt-tabs-panel>
+        <tbt-tabs-panel label="B">B</tbt-tabs-panel>
+        <tbt-tabs-panel label="C">C</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
     expect(el.active).to.equal(2);
-    el.removeChild(el.querySelectorAll('tbt-tab')[2]);
-    el.removeChild(el.querySelectorAll('tbt-tab')[1]);
+    el.removeChild(el.querySelectorAll('tbt-tabs-panel')[2]);
+    el.removeChild(el.querySelectorAll('tbt-tabs-panel')[1]);
     await el.updateComplete;
     expect(el.active).to.equal(0);
   });

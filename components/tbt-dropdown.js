@@ -1,6 +1,6 @@
 /**
  * @component tbt-dropdown
- * @version 1.21.0
+ * @version 1.21.1
  * @author Wichit Wongta
  *
  * Styled select dropdown with label, placeholder, and validation.

@@ -9,6 +9,16 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.21.1] — 2026-05-23
+
+### Fixed
+- `tbt-tabs`: panel element renamed from `<tbt-tab>` to `<tbt-tabs-panel>` to resolve a name collision with the pre-existing `<tbt-tab>` registered by `tbt-subtab`. When both `tbt-subtab` and `tbt-tabs` loaded via `components/index.js` (the normal Suitelet path), the second `customElements.define('tbt-tab', …)` threw and `tbt-tabs` failed to register — making `<tbt-tabs>` fall back to `HTMLUnknownElement` on any page that loaded the barrel. `tbt-subtab` continues to use `<tbt-tab>` unchanged.
+
+### Migration
+- Anywhere you used the v1.21.0 `<tbt-tabs>` API: replace `<tbt-tab>` children with `<tbt-tabs-panel>`. The container `<tbt-tabs>` element and its API (`active`, `tbt-change`) are unchanged. The auto-generated panel id now uses prefix `tbt-tabs-panel-` instead of `tbt-tab-`.
+
+---
+
 ## [1.21.0] — 2026-05-22
 
 ### Added

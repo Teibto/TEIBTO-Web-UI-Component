@@ -1,6 +1,6 @@
 /**
  * @component tbt-file-upload
- * @version 1.21.0
+ * @version 1.21.1
  * @author Wichit Wongta
  *
  * File upload drop zone with drag-and-drop and click-to-browse.

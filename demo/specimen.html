@@ -976,24 +976,24 @@
 <!-- ─── TABS ──────────────────────────────────────── -->
 <h2>tbt-tabs</h2>
 <tbt-tabs id="demo-tabs">
-  <tbt-tab label="General">
+  <tbt-tabs-panel label="General">
     <tbt-field label="Document no." placeholder="QT-2026-0001"></tbt-field>
     <tbt-field label="Reference" placeholder="Optional reference"></tbt-field>
-  </tbt-tab>
-  <tbt-tab label="Finance">
+  </tbt-tabs-panel>
+  <tbt-tabs-panel label="Finance">
     <tbt-field label="Payment terms" placeholder="30 days"></tbt-field>
     <tbt-field label="Currency" value="THB"></tbt-field>
-  </tbt-tab>
-  <tbt-tab label="Shipping">
+  </tbt-tabs-panel>
+  <tbt-tabs-panel label="Shipping">
     <tbt-field label="Delivery address" placeholder="123 Main St"></tbt-field>
     <tbt-field label="Expected date" placeholder="YYYY-MM-DD"></tbt-field>
-  </tbt-tab>
+  </tbt-tabs-panel>
 </tbt-tabs>
 
 <div class="demo-label" style="margin-top:var(--tbt-space-6)">With disabled tab (coming soon)</div>
 <tbt-tabs>
-  <tbt-tab label="Active">Active content</tbt-tab>
-  <tbt-tab label="Another">Another tab content</tbt-tab>
+  <tbt-tabs-panel label="Active">Active content</tbt-tabs-panel>
+  <tbt-tabs-panel label="Another">Another tab content</tbt-tabs-panel>
 </tbt-tabs>
 
 <div id="tabs-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary);margin-top:var(--tbt-space-2)"></div>
