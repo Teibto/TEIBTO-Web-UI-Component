@@ -1,6 +1,6 @@
 /**
  * @component tbt-menubar, tbt-menu-item, tbt-menu-group
- * @version 1.24.1
+ * @version 1.24.2
  * @author Wichit Wongta
  *
  * Top navigation bar with logo, flat menu items, and grouped dropdown menus.
@@ -54,7 +54,8 @@ class TbtMenubar extends LitElement {
   static styles = css`
     :host {
       display: block;
-      background: var(--tbt-primary);
+      background: var(--tbt-bg-card);
+      border-bottom: 1px solid var(--tbt-border);
       font-family: var(--tbt-font);
     }
     nav {
@@ -72,12 +73,12 @@ class TbtMenubar extends LitElement {
       border: none; background: none;
       border-radius: var(--tbt-radius-md);
       cursor: pointer;
-      color: rgba(255,255,255,0.85);
+      color: var(--tbt-text-secondary);
       font-size: 22px;
       flex-shrink: 0;
       transition: background var(--tbt-transition-fast), color var(--tbt-transition-fast);
     }
-    .hamburger:hover { background: rgba(255,255,255,0.15); color: var(--tbt-text-inverse); }
+    .hamburger:hover { background: var(--tbt-bg-hover); color: var(--tbt-text-primary); }
     .brand {
       display: flex;
       align-items: center;
@@ -93,7 +94,7 @@ class TbtMenubar extends LitElement {
     .brand-title {
       font-size: var(--tbt-size-md);
       font-weight: var(--tbt-weight-semibold);
-      color: var(--tbt-text-inverse);
+      color: var(--tbt-text-primary);
       letter-spacing: -0.01em;
     }
     .items {
@@ -162,19 +163,19 @@ class TbtMenuItem extends LitElement {
       border-radius: var(--tbt-radius-md);
       font-size: var(--tbt-size-sm);
       font-weight: var(--tbt-weight-medium);
-      color: var(--_item-color, rgba(255,255,255,0.75));
+      color: var(--_item-color, var(--tbt-text-secondary));
       text-decoration: none;
       white-space: nowrap;
       transition: background var(--tbt-transition-fast), color var(--tbt-transition-fast);
       font-family: var(--tbt-font);
     }
     a:hover {
-      background: var(--_item-hover-bg, rgba(255,255,255,0.12));
-      color: var(--_item-hover-color, var(--tbt-text-inverse));
+      background: var(--_item-hover-bg, var(--tbt-bg-hover));
+      color: var(--_item-hover-color, var(--tbt-text-primary));
     }
     :host([active]) a {
-      background: var(--_item-active-bg, rgba(255,255,255,0.18));
-      color: var(--_item-active-color, var(--tbt-text-inverse));
+      background: var(--_item-active-bg, var(--tbt-primary-bg));
+      color: var(--_item-active-color, var(--tbt-primary-text));
     }
     .icon { font-size: 15px; line-height: 1; }
   `;
@@ -217,7 +218,7 @@ class TbtMenuGroup extends LitElement {
       border-radius: var(--tbt-radius-md);
       font-size: var(--tbt-size-sm);
       font-weight: var(--tbt-weight-medium);
-      color: rgba(255,255,255,0.75);
+      color: var(--tbt-text-secondary);
       cursor: pointer;
       white-space: nowrap;
       transition: background var(--tbt-transition-fast), color var(--tbt-transition-fast);
@@ -228,8 +229,8 @@ class TbtMenuGroup extends LitElement {
     }
     .trigger:hover,
     :host([open]) .trigger {
-      background: rgba(255,255,255,0.12);
-      color: var(--tbt-text-inverse);
+      background: var(--tbt-bg-hover);
+      color: var(--tbt-text-primary);
     }
     .icon { font-size: 15px; line-height: 1; }
     .chevron {

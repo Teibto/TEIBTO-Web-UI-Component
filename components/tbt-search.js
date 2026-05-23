@@ -1,6 +1,6 @@
 /**
  * @component tbt-search
- * @version 1.24.1
+ * @version 1.24.2
  * @author Wichit Wongta
  *
  * Debounced search input. Emits tbt-search event after user stops typing.

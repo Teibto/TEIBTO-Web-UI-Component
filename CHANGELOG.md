@@ -12,6 +12,13 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.24.2] — 2026-05-23
+
+### Changed
+- `tbt-menubar`: switched from dark navy (`var(--tbt-primary)`) to a light/neutral background (`var(--tbt-bg-card)`) with a 1px bottom border. Text and hover/active states now use the standard text/surface tokens (`--tbt-text-secondary`, `--tbt-text-primary`, `--tbt-bg-hover`, `--tbt-primary-bg`/`--tbt-primary-text` for active) — automatically theme-aware. `tbt-menu-item` and `tbt-menu-group` updated to match. `specimen.html`'s slotted theme toggle (`.theme-btn`) likewise switched from white-on-dark to token-based.
+
+---
+
 ## [1.24.1] — 2026-05-23
 
 ### Fixed

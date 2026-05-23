@@ -45,8 +45,8 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teibto · Page Name</title>
-  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.24.1/tbt-theme.css">
-  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.24.1/index.js"></script>
+  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.24.2/tbt-theme.css">
+  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.24.2/index.js"></script>
 </head>
 <body>
   <tbt-app-shell>
@@ -420,7 +420,7 @@ Step shape: `{ label, description?, error? }`. Steps before `active` show a chec
 Promise-based confirmation built on `tbt-modal`. No boilerplate HTML required.
 
 ```javascript
-import { confirm } from '/sc/SuiteScripts/Teibto/ds/v1.24.1/tbt-confirm.js';
+import { confirm } from '/sc/SuiteScripts/Teibto/ds/v1.24.2/tbt-confirm.js';
 
 const ok = await confirm({
   title: 'Delete document?',
@@ -552,7 +552,7 @@ Built-in names: `empty` · `search` · `success` · `error` · `warning` · `dra
 Transient notification — slides in, auto-dismisses, stacks if multiple. Trigger via the static `show()` helper from any script.
 
 ```javascript
-import { showToast } from '/sc/SuiteScripts/Teibto/ds/v1.24.1/tbt-toast.js';
+import { showToast } from '/sc/SuiteScripts/Teibto/ds/v1.24.2/tbt-toast.js';
 
 showToast({ variant: 'success', message: 'Saved.',          duration: 3000 });
 showToast({ variant: 'danger',  message: 'Network error.',  duration: 5000 });
@@ -1112,7 +1112,7 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ### File Cabinet structure
 
 ```
-/SuiteScripts/Teibto/ds/v1.24.1/
+/SuiteScripts/Teibto/ds/v1.24.2/
   tbt-theme.css
   index.js
   tbt-icons-css.js
@@ -1129,8 +1129,8 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ### Standard page `<head>`
 
 ```html
-<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.24.1/tbt-theme.css">
-<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.24.1/index.js"></script>
+<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.24.2/tbt-theme.css">
+<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.24.2/index.js"></script>
 ```
 
 > Always pin to an exact version. Never use `/latest/`.
@@ -1140,7 +1140,7 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ```bash
 cd tbt-ds/tbt-ds               # SDF project folder
 suitecloud account:setup        # first-time auth (opens browser)
-suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.24.1/*"
+suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.24.2/*"
 ```
 
 ---
