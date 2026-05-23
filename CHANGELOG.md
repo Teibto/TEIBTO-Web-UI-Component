@@ -9,6 +9,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.22.0] — 2026-05-23
+
+### Changed
+- `tbt-lines-block`: scroll behavior switched from fixed `height` + drag-resize handle to `max-height` + content-driven sizing. Table now fits its content up to `max-height`, then scrolls vertically. No pagination.
+
+### Renamed
+- `tbt-lines-block`: `height` prop → `max-height`. Default `240px` → `320px`. Removed the `resize: vertical` drag handle from the table wrapper.
+
+### Migration
+- `<tbt-lines-block height="240px">` → `<tbt-lines-block max-height="320px">` (or the value you prefer). If you relied on the drag-resize handle to grow the table at runtime, you'll need to adjust `max-height` instead.
+
+---
+
 ## [1.21.2] — 2026-05-23
 
 ### Changed

@@ -1,6 +1,6 @@
 /**
  * @component tbt-lines-block
- * @version 1.21.2
+ * @version 1.22.0
  * @author Wichit Wongta
  *
  * Compound component: section wrapper + inline-editable line items + Add button + totals.
@@ -12,15 +12,15 @@
  *     add-label="Add line"
  *     currency="฿"
  *     vat-rate="0.07"
- *     height="280px"
+ *     max-height="320px"
  *     @tbt-change=${e => console.log(e.detail.rows, e.detail.total)}>
  *   </tbt-lines-block>
  *
  *   // Load initial rows
  *   el.rows = [{ item: 'Widget', desc: '', qty: 2, unit: 'pcs', price: 500, account: '' }];
  *
- *   height  CSS height of the scrollable table area (default: '240px').
- *           User can also drag the resize handle to adjust at runtime.
+ *   max-height  CSS max-height of the scrollable table area (default: '320px').
+ *               Container fits content up to this height, then scrolls vertically.
  *
  * Properties (pass-through to tbt-line-items):
  *   rows (get/set)  Array of row objects
@@ -45,7 +45,7 @@ class TbtLinesBlock extends LitElement {
     currency:    { type: String },
     vatRate:     { type: Number,  attribute: 'vat-rate' },
     showSummary: { type: Boolean, attribute: 'show-summary' },
-    height:      { type: String },
+    maxHeight:   { type: String,  attribute: 'max-height' },
     disabled:    { type: Boolean, reflect: true },
     _totals:     { state: true },
   };
@@ -56,7 +56,7 @@ class TbtLinesBlock extends LitElement {
     this.currency    = '฿';
     this.vatRate     = 0.07;
     this.showSummary = true;
-    this.height      = '240px';
+    this.maxHeight   = '320px';
     this._totals     = { subtotal: 0, vat: 0, total: 0 };
   }
 
@@ -97,8 +97,6 @@ class TbtLinesBlock extends LitElement {
     .table-wrap {
       overflow-y: auto;
       overflow-x: auto;
-      resize: vertical;
-      min-height: 72px;
       border: 1px solid var(--tbt-border);
       border-radius: var(--tbt-radius-md);
       box-sizing: border-box;
@@ -117,7 +115,7 @@ class TbtLinesBlock extends LitElement {
     const vatPct = `VAT ${Math.round((this.vatRate ?? 0.07) * 100)}%`;
     return html`
       <tbt-section .title=${this.title ?? ''}>
-        <div class="table-wrap" style="height:${this.height ?? '240px'}">
+        <div class="table-wrap" style="max-height:${this.maxHeight ?? '320px'}">
           <tbt-line-items
             .currency=${this.currency ?? '฿'}
             .vatRate=${this.vatRate ?? 0.07}

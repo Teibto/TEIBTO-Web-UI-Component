@@ -113,7 +113,7 @@
     <tbt-file-upload label="Attachments" multiple accept=".pdf,.jpg,.png"></tbt-file-upload>
   </tbt-playground>
   <tbt-playground id="pg-lb" label="tbt-lines-block">
-    <tbt-lines-block title="Line items" currency="฿" height="200px"></tbt-lines-block>
+    <tbt-lines-block title="Line items" currency="฿" max-height="320px"></tbt-lines-block>
   </tbt-playground>
 </div>
 <script type="module">
@@ -164,11 +164,11 @@
     { key: 'accept',   label: 'Accept',   type: 'text',    default: '.pdf,.jpg,.png' },
   ];
   document.getElementById('pg-lb').schema = [
-    { key: 'title',         label: 'Title',        type: 'text',    default: 'Line items' },
-    { key: 'currency',      label: 'Currency',     type: 'text',    default: '฿' },
-    { key: 'height',        label: 'Height',       type: 'text',    default: '200px' },
-    { key: 'disabled',      label: 'Disabled',     type: 'boolean' },
-    { key: 'showSummary',   label: 'Show summary', type: 'boolean', default: true },
+    { key: 'title',       label: 'Title',        type: 'text',    default: 'Line items' },
+    { key: 'currency',    label: 'Currency',     type: 'text',    default: '฿' },
+    { key: 'maxHeight',   label: 'Max height',   type: 'text',    default: '320px' },
+    { key: 'disabled',    label: 'Disabled',     type: 'boolean' },
+    { key: 'showSummary', label: 'Show summary', type: 'boolean', default: true },
   ];
 </script>
 
@@ -664,7 +664,7 @@
 
 <!-- ─── LINES BLOCK ────────────────────────────────── -->
 <h2>tbt-lines-block</h2>
-<tbt-lines-block id="lb1" title="Line items" add-label="Add line" currency="฿" vat-rate="0.07" height="200px"></tbt-lines-block>
+<tbt-lines-block id="lb1" title="Line items" add-label="Add line" currency="฿" vat-rate="0.07" max-height="320px"></tbt-lines-block>
 
 <div class="demo-label" style="margin-top:var(--tbt-space-6)">Pre-loaded rows</div>
 <tbt-lines-block id="lb2" title="Services" add-label="Add service"></tbt-lines-block>
