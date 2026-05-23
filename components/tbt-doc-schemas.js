@@ -1,6 +1,6 @@
 /**
  * @module tbt-doc-schemas
- * @version 1.24.3
+ * @version 1.25.0
  * @author Wichit Wongta
  *
  * Pre-built schemas for tbt-doc-form. Drop one in and you have a working

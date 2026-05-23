@@ -1,6 +1,6 @@
 /**
  * @component tbt-input
- * @version 1.24.3
+ * @version 1.25.0
  * @author Wichit Wongta
  *
  * Styled text input with label, helper, and validation error.

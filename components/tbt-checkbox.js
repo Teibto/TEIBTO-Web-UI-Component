@@ -1,6 +1,6 @@
 /**
  * @component tbt-checkbox
- * @version 1.24.3
+ * @version 1.25.0
  * @author Wichit Wongta
  *
  * Styled checkbox with label, indeterminate state, and validation.

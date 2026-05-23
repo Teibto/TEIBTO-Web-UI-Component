@@ -1,6 +1,6 @@
 /**
  * @component tbt-date-range
- * @version 1.24.3
+ * @version 1.25.0
  * @author Wichit Wongta
  *
  * Date range picker: two tbt-datepicker inputs (From / To) in one field.

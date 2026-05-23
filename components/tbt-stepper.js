@@ -1,6 +1,6 @@
 /**
  * @component tbt-stepper
- * @version 1.24.3
+ * @version 1.25.0
  * @author Wichit Wongta
  *
  * Multi-step progress indicator. Steps before `active` are complete (checkmark),

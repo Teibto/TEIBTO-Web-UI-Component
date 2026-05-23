@@ -14,7 +14,7 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
 
 ---
 
-- **38 components** — layout, navigation, forms, data display, feedback, and illustrations
+- **41 components** — layout, navigation, forms, data display, feedback, and illustrations
 - **No build step** in development — Lit 3 loads from CDN as ES modules
 - **Design tokens** via `--tbt-*` CSS custom properties — automatic dark mode
 - **Mobile-first** — sidebar drawer, responsive table card view, touch-friendly inputs
@@ -45,8 +45,8 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teibto · Page Name</title>
-  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.24.3/tbt-theme.css">
-  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.24.3/index.js"></script>
+  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-theme.css">
+  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.25.0/index.js"></script>
 </head>
 <body>
   <tbt-app-shell>
@@ -68,7 +68,7 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
 ```
 tbt-ds/
 ├── components/
-│   ├── index.js                # Barrel — imports all 38 tbt-* components
+│   ├── index.js                # Barrel — imports all 41 tbt-* components
 │   ├── tbt-icons-css.js        # Shared Tabler CSS injector for shadow DOM
 │   │
 │   ├── tbt-app-shell.js        # Page wrapper (menubar + sidebar + content)
@@ -93,6 +93,7 @@ tbt-ds/
 │   │
 │   ├── tbt-form.js             # Form wrapper with shadow-DOM data collection
 │   ├── tbt-input.js            # Text / number / email / password input
+│   ├── tbt-textarea.js         # Multiline text input
 │   ├── tbt-dropdown.js         # Select dropdown
 │   ├── tbt-multiselect.js      # Multi-select with chips
 │   ├── tbt-datepicker.js       # Date picker with calendar popup
@@ -111,7 +112,10 @@ tbt-ds/
 │   ├── tbt-approval-flow.js    # Approval chain (horizontal / vertical)
 │   ├── tbt-audit-log.js        # Activity timeline with field-level diffs
 │   ├── tbt-line-items.js       # Inline-editable line items table + auto totals
-│   └── tbt-lines-block.js      # Compound: section + line-items + add button + totals
+│   ├── tbt-lines-block.js      # Compound: section + line-items + add button + totals
+│   ├── tbt-address.js          # Composite address field (street/city/postcode/country)
+│   ├── tbt-doc-form.js         # Schema-driven document form scaffold
+│   └── tbt-doc-schemas.js      # Pre-built PO / Customer / Sales Order / Invoice schemas
 │
 ├── theme/
 │   └── tbt-theme.css           # All design tokens — single source of truth
@@ -119,7 +123,7 @@ tbt-ds/
 ├── demo/
 │   ├── demo.html               # Interactive Purchase Order page (fully editable form)
 │   ├── icon-svg.html           # Icon gallery + SVG illustration browser
-│   └── specimen.html           # Component showcase (all 38 components)
+│   └── specimen.html           # Component showcase (all 41 components)
 │
 ├── CHANGELOG.md
 └── package.json
@@ -420,7 +424,7 @@ Step shape: `{ label, description?, error? }`. Steps before `active` show a chec
 Promise-based confirmation built on `tbt-modal`. No boilerplate HTML required.
 
 ```javascript
-import { confirm } from '/sc/SuiteScripts/Teibto/ds/v1.24.3/tbt-confirm.js';
+import { confirm } from '/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-confirm.js';
 
 const ok = await confirm({
   title: 'Delete document?',
@@ -552,7 +556,7 @@ Built-in names: `empty` · `search` · `success` · `error` · `warning` · `dra
 Transient notification — slides in, auto-dismisses, stacks if multiple. Trigger via the static `show()` helper from any script.
 
 ```javascript
-import { showToast } from '/sc/SuiteScripts/Teibto/ds/v1.24.3/tbt-toast.js';
+import { showToast } from '/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-toast.js';
 
 showToast({ variant: 'success', message: 'Saved.',          duration: 3000 });
 showToast({ variant: 'danger',  message: 'Network error.',  duration: 5000 });
@@ -610,6 +614,38 @@ Fires `tbt-submit` with `{ data: { fieldName: value } }` when a `tbt-button[type
 <tbt-input label="Email"         name="email"  type="email" error="Invalid format"></tbt-input>
 <tbt-input label="Password"      name="pass"   type="password"></tbt-input>
 ```
+
+---
+
+#### `tbt-textarea`
+
+Multiline text input. Form-associated. Same `label/name/required/disabled/readonly/error/helper` API as `tbt-input`, plus `rows` (default 3) and `maxlength`.
+
+```html
+<tbt-textarea label="Memo"  name="memo"  rows="4" placeholder="Optional notes…"></tbt-textarea>
+<tbt-textarea label="Notes" name="notes" required error="Please describe the request"></tbt-textarea>
+```
+
+Events: `tbt-input` (every keystroke), `tbt-change` (on blur).
+
+---
+
+#### `tbt-address`
+
+Composite address field — street (full-width), city, state, postcode, country. Form-associated. `value` is a nested object.
+
+```html
+<tbt-address id="addr" label="Shipping address" name="ship_to" required></tbt-address>
+
+<script type="module">
+  document.getElementById('addr').value = {
+    street: '99/9 Sukhumvit Rd.', city: 'Bangkok', state: 'BKK', postcode: '10110', country: 'Thailand',
+  };
+  addr.addEventListener('tbt-change', e => console.log(e.detail.value));
+</script>
+```
+
+When `name` is set, the form value is a `FormData` with `<name>.street`, `<name>.city`, etc. Required mode enforces street + city + country.
 
 ---
 
@@ -953,6 +989,88 @@ Compound component — wraps `tbt-section` + `tbt-line-items` + Add button + tot
 
 ---
 
+### Form templates (schema-driven)
+
+For complete ERP document pages (PO, Customer, Sales Order, Invoice), use `tbt-doc-form` with a schema instead of composing sections by hand. Schemas are plain JS objects — edit the field list or section order without writing new components.
+
+#### `tbt-doc-form`
+
+| Prop | Type | Description |
+|---|---|---|
+| `schema` | Object | Required. Sections + actions definition. |
+| `value` | Object | `{name: value}` for all named fields. Cascading get/set. |
+| `lines` | Array | Pass-through to `tbt-lines-block.rows` for the `type:'lines'` section. |
+| `approval-steps` | Array | Pass-through to `tbt-approval-flow.steps`. |
+| `audit-entries` | Array | Pass-through to `tbt-audit-log.entries`. |
+| `option-lists` | Object | `{[key]: Array<{value,label}>}` — referenced by string keys in field defs. |
+| `disabled` | Boolean | Disables every field + non-cancel actions. |
+| `readonly` | Boolean | Sets `readonly` on every field. |
+
+**Events:** `tbt-change` `{ name, value, data }` · `tbt-action` `{ action, data }` · `tbt-submit` `{ data }` (when action `submit:true`).
+
+```html
+<tbt-doc-form id="po-form"></tbt-doc-form>
+
+<script type="module">
+  import { PO_SCHEMA } from '/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-doc-schemas.js';
+
+  const form = document.getElementById('po-form');
+  form.schema = PO_SCHEMA;
+  form.optionLists = {
+    vendors:        await fetchVendors(),
+    subsidiaries:   await fetchSubsidiaries(),
+    departments:    await fetchDepartments(),
+    currencies:     [{ value: 'THB', label: 'THB — Thai Baht' }],
+    'payment-terms':[{ value: 'NET30', label: 'Net 30' }],
+  };
+  form.value = window.__DATA__;          // pre-filled fields
+  form.lines = window.__DATA__.lines;
+  form.approvalSteps = window.__DATA__.approvals;
+  form.auditEntries  = window.__DATA__.audit;
+
+  form.addEventListener('tbt-submit', async e => {
+    await postToRESTlet(e.detail.data);
+  });
+</script>
+```
+
+#### Pre-built schemas
+
+Import from `tbt-doc-schemas.js`:
+
+| Export | Sections | Actions |
+|---|---|---|
+| `PO_SCHEMA` | doc info, lines, approval, audit | delete, cancel, save, submit |
+| `CUSTOMER_SCHEMA` | profile, contact, billing addr, shipping addr, terms | cancel, save |
+| `SALES_ORDER_SCHEMA` | doc info, shipping, lines, approval | cancel, save, submit |
+| `INVOICE_SCHEMA` | doc info, lines, audit | cancel, print, email, save |
+
+#### Custom schema shape
+
+```js
+const MY_SCHEMA = {
+  title: 'My Document',
+  sections: [
+    { title: 'Header', columns: 4, fields: [
+        { name: 'tranid', label: 'Doc no.', type: 'text', required: true },
+        { name: 'vendor', label: 'Vendor', type: 'dropdown', options: 'vendors', searchable: true },
+        { name: 'memo',   label: 'Memo',   type: 'textarea', rows: 3, span: 2 },
+    ]},
+    { title: 'Line items', type: 'lines', currency: '฿', vatRate: 0.07 },
+    { title: 'Approval',   type: 'approval', orientation: 'horizontal' },
+    { title: 'Audit',      type: 'audit' },
+  ],
+  actions: [
+    { name: 'cancel', label: 'Cancel', variant: 'secondary' },
+    { name: 'save',   label: 'Save',   variant: 'primary', icon: 'device-floppy', submit: true },
+  ],
+};
+```
+
+Field `type` accepts: `text`, `number`, `email`, `password`, `textarea`, `date`, `date-range`, `dropdown`, `multiselect`, `checkbox`, `toggle`, `search`, `file`, `address`. Unknown types render a visible warning placeholder.
+
+---
+
 ## Design tokens
 
 All tokens live in `theme/tbt-theme.css`. Components use only `var(--tbt-*)` — never hardcode values.
@@ -1112,7 +1230,7 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ### File Cabinet structure
 
 ```
-/SuiteScripts/Teibto/ds/v1.24.3/
+/SuiteScripts/Teibto/ds/v1.25.0/
   tbt-theme.css
   index.js
   tbt-icons-css.js
@@ -1129,8 +1247,8 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ### Standard page `<head>`
 
 ```html
-<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.24.3/tbt-theme.css">
-<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.24.3/index.js"></script>
+<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-theme.css">
+<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.25.0/index.js"></script>
 ```
 
 > Always pin to an exact version. Never use `/latest/`.
@@ -1140,7 +1258,7 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ```bash
 cd tbt-ds/tbt-ds               # SDF project folder
 suitecloud account:setup        # first-time auth (opens browser)
-suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.24.3/*"
+suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.25.0/*"
 ```
 
 ---
@@ -1172,7 +1290,7 @@ Demo pages:
 |---|---|---|
 | Interactive demo | `/demo/demo.html` | Full Purchase Order page — editable form, inline line items, approval flow |
 | Icons & SVG | `/demo/icon-svg.html` | All 80+ icon aliases + SVG illustrations with live search and copy |
-| Component showcase | `/demo/specimen.html` | All 38 components in one page |
+| Component showcase | `/demo/specimen.html` | All 41 components in one page |
 
 No build step needed in development — components import Lit 3 from CDN.
 

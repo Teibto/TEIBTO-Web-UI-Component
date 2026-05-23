@@ -7,8 +7,22 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+---
+
+## [1.25.0] — 2026-05-23
+
+### Added
+- `tbt-textarea` — multiline text input. Form-associated. Mirrors `tbt-input`'s `label/name/value/placeholder/required/disabled/readonly/error/helper` API plus `rows` (default 3) and `maxlength`. Wires `valueMissing` constraint.
+- `tbt-address` — composite address field (street/city/state/postcode/country). Form-associated; `value` is a nested object. When `name` is set, submits a `FormData` with prefixed keys (`<name>.street`, `<name>.city`, etc.). `required` mode enforces street + city + country.
+- `tbt-doc-form` — schema-driven document form scaffold. Reads a plain-JS schema and renders sections (fields / lines / approval / audit) plus a footer action row. Public API: `.schema`, `.value` (cascading), `.lines`, `.approvalSteps`, `.auditEntries`, `.optionLists`, `.disabled`, `.readonly`. Events: `tbt-change`, `tbt-action`, `tbt-submit`.
+- `tbt-doc-schemas.js` — pre-built schemas: `PO_SCHEMA`, `CUSTOMER_SCHEMA`, `SALES_ORDER_SCHEMA`, `INVOICE_SCHEMA`. Drop one in with a lookup-data `optionLists` and the form renders. New consumers go from ~140 lines of hand-composed markup to ~5 lines.
+
+### Changed
+- `tbt-form.js`: `FORM_INPUTS` constant extended to include `tbt-textarea`, `tbt-date-range`, `tbt-file-upload`, `tbt-address` so the existing `tbt-form` data collector also picks them up.
+- `scripts/lint-governance.js`: `tbt-doc-schemas.js` added to `UTIL_MODULES` (exempt from the "every tbt-*.js must call customElements.define" rule, same as `tbt-confirm.js` and `tbt-icons-css.js`).
+
 ### Docs
-- Consolidated demo pages: `demo/help.html` removed; `demo/specimen.html` now uses the `tbt-app-shell` + categorized `tbt-sidebar` layout from the deleted help page (7 nav groups: Theme · Layout · Navigation · Actions · Feedback · Form · Display) while keeping all existing live demos, playgrounds, and form-submission examples. Scroll-spy highlights the active sidebar item as you scroll. Anchor IDs on every section.
+- Consolidated demo pages: `demo/help.html` removed; `demo/specimen.html` now uses the `tbt-app-shell` + categorized `tbt-sidebar` layout from the deleted help page (7 nav groups: Theme · Layout · Navigation · Actions · Feedback · Form · Display) + a new "Form templates" group with 4 entries. Scroll-spy highlights the active sidebar item as you scroll. Anchor IDs on every section. (Originally landed in 1.24.x but only documented here.)
 
 ---
 

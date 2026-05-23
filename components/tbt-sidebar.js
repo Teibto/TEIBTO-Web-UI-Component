@@ -1,6 +1,6 @@
 /**
  * @component tbt-sidebar, tbt-sidebar-item
- * @version 1.24.3
+ * @version 1.25.0
  * @author Wichit Wongta
  *
  * Collapsible left-side navigation panel.
