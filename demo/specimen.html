@@ -9,15 +9,12 @@
   <link rel="stylesheet" href="../theme/tbt-theme.css">
   <script type="module" src="../components/index.js"></script>
   <style>
-    body {
-      margin: 0;
-      background: var(--tbt-bg-page);
-      font-family: var(--tbt-font);
-      color: var(--tbt-text-primary);
-      padding: var(--tbt-space-6);
-      max-width: 1000px;
-      margin: 0 auto;
-    }
+    html, body { margin: 0; height: 100%; }
+    body { background: var(--tbt-bg-page); font-family: var(--tbt-font); color: var(--tbt-text-primary); }
+
+    /* Content padding inside app-shell content slot */
+    .content-pad { padding: var(--tbt-space-6); max-width: 1000px; }
+
     .ds-header { margin-bottom: var(--tbt-space-8); }
     .ds-header h1 {
       font-size: var(--tbt-size-xl); font-weight: var(--tbt-weight-bold);
@@ -31,6 +28,7 @@
       margin-top: var(--tbt-space-10); margin-bottom: var(--tbt-space-4);
       padding-bottom: var(--tbt-space-2); border-bottom: 2px solid var(--tbt-primary-bg);
       color: var(--tbt-primary);
+      scroll-margin-top: var(--tbt-space-4);
     }
     .demo-row { display: flex; gap: var(--tbt-space-3); flex-wrap: wrap; margin-bottom: var(--tbt-space-4); align-items: flex-start; }
     .demo-label { font-size: var(--tbt-size-sm); color: var(--tbt-text-secondary); margin-bottom: var(--tbt-space-2); }
@@ -46,29 +44,100 @@
     .swatch-name { color: var(--tbt-text-primary); font-weight: var(--tbt-weight-medium); }
     .swatch-val  { color: var(--tbt-text-muted); font-size: var(--tbt-size-xs); }
     .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--tbt-space-4); margin-bottom: var(--tbt-space-4); }
-    .theme-toggle {
-      position: fixed; top: var(--tbt-space-4); right: var(--tbt-space-4);
-      width: 36px; height: 36px; border-radius: 50%;
-      border: 1px solid var(--tbt-border); background: var(--tbt-bg-card);
-      color: var(--tbt-text-secondary); cursor: pointer;
-      display: flex; align-items: center; justify-content: center; font-size: 17px;
-      box-shadow: var(--tbt-shadow-md); z-index: 999;
-      transition: background var(--tbt-transition-fast), color var(--tbt-transition-fast), transform var(--tbt-transition-fast);
+
+    /* Sidebar nav-group label */
+    .nav-group {
+      padding: 14px 12px 4px;
+      font-size: var(--tbt-size-xs);
+      font-weight: var(--tbt-weight-semibold);
+      color: var(--tbt-text-muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
     }
-    .theme-toggle:hover { background: var(--tbt-bg-hover); color: var(--tbt-primary); transform: scale(1.08); }
+    .nav-group:first-child { padding-top: var(--tbt-space-3); }
+
+    /* Menubar theme toggle */
+    .theme-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.75); font-size: 18px;
+      padding: 4px 8px; border-radius: 6px;
+      display: flex; align-items: center;
+      transition: color 100ms ease, background 100ms ease;
+    }
+    .theme-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
   </style>
 </head>
 <body>
 
-<button class="theme-toggle" id="theme-toggle" title="Toggle theme"><i id="theme-icon" class="ti ti-sun"></i></button>
+<tbt-app-shell>
 
-<div class="ds-header">
-  <h1>TBT-DS Specimen</h1>
-  <div class="sub">Teibto Design System — Component Showcase v1.0.0 · 19 components</div>
-</div>
+  <tbt-menubar slot="menubar" title="TBT-DS">
+    <button slot="end" class="theme-btn" id="theme-toggle" title="Toggle theme">
+      <i id="theme-icon" class="ti ti-sun"></i>
+    </button>
+  </tbt-menubar>
+
+  <tbt-sidebar slot="sidebar">
+    <div class="nav-group">Theme</div>
+    <tbt-sidebar-item icon="palette"             label="Colors"        href="#colors"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="adjustments"         label="Playground"    href="#playground"></tbt-sidebar-item>
+
+    <div class="nav-group">Layout</div>
+    <tbt-sidebar-item icon="layout-sidebar"      label="App shell"     href="#app-shell"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="menu-2"              label="Menubar"       href="#menubar"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="layout-sidebar-left" label="Sidebar"       href="#sidebar"></tbt-sidebar-item>
+
+    <div class="nav-group">Navigation</div>
+    <tbt-sidebar-item icon="layout-bottombar"    label="Subtab"        href="#subtab"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="layout-grid"         label="Tabs"          href="#tabs"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="chevron-right"       label="Breadcrumb"    href="#breadcrumb"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="layout-list"         label="Pagination"    href="#pagination"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="circles"             label="Stepper"       href="#stepper"></tbt-sidebar-item>
+
+    <div class="nav-group">Actions</div>
+    <tbt-sidebar-item icon="cursor"              label="Button"        href="#button"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="layout-board"        label="Modal"         href="#modal"></tbt-sidebar-item>
+
+    <div class="nav-group">Feedback</div>
+    <tbt-sidebar-item icon="square-rounded-letter-i" label="Icon"      href="#icon"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="tag"                 label="Badge"         href="#badge"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="alert-triangle"      label="Alert"         href="#alert"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="bell"                label="Toast"         href="#toast"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="loader-2"            label="Skeleton"      href="#skeleton"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="photo"               label="SVG"           href="#svg"></tbt-sidebar-item>
+
+    <div class="nav-group">Form</div>
+    <tbt-sidebar-item icon="forms"               label="Input"         href="#input"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="chevron-down"        label="Dropdown"      href="#dropdown"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="list-check"          label="Multiselect"   href="#multiselect"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="calendar"            label="Datepicker"    href="#datepicker"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="calendar-event"      label="Date range"    href="#date-range"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="upload"              label="File upload"   href="#file-upload"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="search"              label="Search"        href="#search"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="clipboard-list"      label="Form wrapper"  href="#form"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="checkbox"            label="Checkbox"      href="#checkbox"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="toggle-right"        label="Toggle"        href="#toggle"></tbt-sidebar-item>
+
+    <div class="nav-group">Display</div>
+    <tbt-sidebar-item icon="layout-list"         label="Field"         href="#field"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="section"             label="Section"       href="#section-comp"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="table"               label="Table"         href="#table"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="database"            label="Data table"    href="#data-table"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="sum"                 label="Summary"       href="#summary"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="list-details"        label="Lines block"   href="#lines-block"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="check-list"          label="Approval flow" href="#approval-flow"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="history"             label="Audit log"     href="#audit-log"></tbt-sidebar-item>
+  </tbt-sidebar>
+
+  <div slot="content" class="content-pad">
+
+  <div class="ds-header">
+    <h1>TBT-DS Specimen</h1>
+    <div class="sub">Teibto Design System — Component Showcase</div>
+  </div>
 
 <!-- ─── COLORS ─────────────────────────────────────── -->
-<h2>Colors</h2>
+<h2 id="colors">Colors</h2>
 <div class="swatch-grid">
   <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-primary)"></div><div><div class="swatch-name">primary</div><div class="swatch-val">#0D1171</div></div></div>
   <div class="swatch"><div class="swatch-dot" style="background:var(--tbt-primary-light)"></div><div><div class="swatch-name">primary-light</div><div class="swatch-val">#1E2B99</div></div></div>
@@ -84,7 +153,7 @@
 </div>
 
 <!-- ─── PLAYGROUND ───────────────────────────────────── -->
-<h2>tbt-playground — interactive prop editor</h2>
+<h2 id="playground">tbt-playground — interactive prop editor</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-5)">
   <tbt-playground id="pg-btn" label="tbt-button"><tbt-button variant="primary">Click me</tbt-button></tbt-playground>
   <tbt-playground id="pg-badge" label="tbt-badge"><tbt-badge variant="success">Approved</tbt-badge></tbt-playground>
@@ -173,7 +242,7 @@
 </script>
 
 <!-- ─── ICON ──────────────────────────────────────── -->
-<h2>tbt-icon</h2>
+<h2 id="icon">tbt-icon</h2>
 <style>
   .icon-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:var(--tbt-space-2); margin-bottom:var(--tbt-space-5); }
   .icon-cell { display:flex; flex-direction:column; align-items:center; gap:6px;
@@ -310,7 +379,7 @@
 &lt;tbt-icon name="device-floppy"&gt;&lt;/tbt-icon&gt;</pre>
 
 <!-- ─── BUTTON ─────────────────────────────────────── -->
-<h2>tbt-button</h2>
+<h2 id="button">tbt-button</h2>
 <div class="demo-label">Variants</div>
 <div class="demo-row">
   <tbt-button variant="primary">Primary</tbt-button>
@@ -335,7 +404,7 @@
 </div>
 
 <!-- ─── BADGE ─────────────────────────────────────── -->
-<h2>tbt-badge</h2>
+<h2 id="badge">tbt-badge</h2>
 <div class="demo-row">
   <tbt-badge variant="success">Approved</tbt-badge>
   <tbt-badge variant="warning">Pending</tbt-badge>
@@ -346,7 +415,7 @@
 </div>
 
 <!-- ─── ALERT ─────────────────────────────────────── -->
-<h2>tbt-alert</h2>
+<h2 id="alert">tbt-alert</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-3)">
   <tbt-alert variant="success">Document saved successfully. Record PO-2569-0042 has been approved.</tbt-alert>
   <tbt-alert variant="warning" title="Attention required">Payment terms have not been set. Please fill in before submitting.</tbt-alert>
@@ -356,7 +425,7 @@
 </div>
 
 <!-- ─── TOAST ─────────────────────────────────────── -->
-<h2>tbt-toast</h2>
+<h2 id="toast">tbt-toast</h2>
 <div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2)">
   <tbt-button variant="success" onclick="document.querySelector('tbt-toast').add('Document saved successfully.','success')">Success toast</tbt-button>
   <tbt-button variant="danger"  onclick="document.querySelector('tbt-toast').add('Save failed — please retry.','danger')">Danger toast</tbt-button>
@@ -368,7 +437,7 @@
 <tbt-toast position="top-right"></tbt-toast>
 
 <!-- ─── INPUT ─────────────────────────────────────── -->
-<h2>tbt-input</h2>
+<h2 id="input">tbt-input</h2>
 <div class="form-grid">
   <tbt-input label="Document No." placeholder="PO-YYYY-XXXX" required></tbt-input>
   <tbt-input label="Amount" type="number" min="0" step="0.01" placeholder="0.00"></tbt-input>
@@ -381,7 +450,7 @@
 </div>
 
 <!-- ─── DROPDOWN ─────────────────────────────────────── -->
-<h2>tbt-dropdown</h2>
+<h2 id="dropdown">tbt-dropdown</h2>
 <div class="form-grid">
   <tbt-dropdown id="dd1" label="สถานะ" placeholder="เลือกสถานะ..."></tbt-dropdown>
   <tbt-dropdown id="dd2" label="Currency" value="THB"></tbt-dropdown>
@@ -429,7 +498,7 @@
 </script>
 
 <!-- ─── MULTISELECT ─────────────────────────────────── -->
-<h2>tbt-multiselect</h2>
+<h2 id="multiselect">tbt-multiselect</h2>
 <div class="form-grid">
   <tbt-multiselect id="ms1" label="Subsidiary" placeholder="Select subsidiaries..."></tbt-multiselect>
   <tbt-multiselect id="ms2" label="Department (pre-selected)" placeholder="Select..."></tbt-multiselect>
@@ -468,7 +537,7 @@
 </script>
 
 <!-- ─── DATEPICKER ─────────────────────────────────── -->
-<h2>tbt-datepicker</h2>
+<h2 id="datepicker">tbt-datepicker</h2>
 <div class="form-grid">
   <tbt-datepicker id="dp1" label="Document date" required></tbt-datepicker>
   <tbt-datepicker label="Due date" min="2026-01-01" max="2026-12-31" helper="Must be within 2026"></tbt-datepicker>
@@ -483,7 +552,7 @@
 </script>
 
 <!-- ─── SEARCH ─────────────────────────────────────── -->
-<h2>tbt-search</h2>
+<h2 id="search">tbt-search</h2>
 <div class="demo-row">
   <tbt-search placeholder="ค้นหาเอกสาร..." id="demo-search"></tbt-search>
   <tbt-search placeholder="Disabled" disabled></tbt-search>
@@ -496,7 +565,7 @@
 </script>
 
 <!-- ─── FORM ─────────────────────────────────────── -->
-<h2>tbt-form</h2>
+<h2 id="form">tbt-form</h2>
 <tbt-form id="demo-form">
   <tbt-field-grid columns="2">
     <tbt-input label="Vendor name" required placeholder="Enter vendor..."></tbt-input>
@@ -518,7 +587,7 @@
 </script>
 
 <!-- ─── CHECKBOX + TOGGLE ───────────────────────────── -->
-<h2>tbt-checkbox</h2>
+<h2 id="checkbox">tbt-checkbox</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-3);padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
   <tbt-checkbox label="Default (unchecked)"></tbt-checkbox>
   <tbt-checkbox label="Checked" checked></tbt-checkbox>
@@ -533,7 +602,7 @@
   document.getElementById('cb-indeterminate').indeterminate = true;
 </script>
 
-<h2>tbt-toggle</h2>
+<h2 id="toggle">tbt-toggle</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-4);padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
   <tbt-toggle label="Default (off)"></tbt-toggle>
   <tbt-toggle label="On" checked></tbt-toggle>
@@ -544,7 +613,7 @@
 </div>
 
 <!-- ─── FIELD + FIELD-GRID ─────────────────────────── -->
-<h2>tbt-field + tbt-field-grid</h2>
+<h2 id="field">tbt-field + tbt-field-grid</h2>
 <tbt-field-grid columns="4" style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5)">
   <tbt-field label="Document No." value="PO-2569-0042" required></tbt-field>
   <tbt-field label="Vendor" value="บจก. เทสโต้ ซัพพลาย"></tbt-field>
@@ -557,7 +626,7 @@
 </tbt-field-grid>
 
 <!-- ─── SECTION ─────────────────────────────────────── -->
-<h2>tbt-section</h2>
+<h2 id="section-comp">tbt-section</h2>
 <tbt-section title="Purchase order info" icon="file-invoice">
   <tbt-button slot="actions" variant="primary" icon="pencil" size="sm">Edit</tbt-button>
   <tbt-field-grid columns="3">
@@ -571,7 +640,7 @@
 </tbt-section>
 
 <!-- ─── SUBTAB ─────────────────────────────────────── -->
-<h2>tbt-subtab</h2>
+<h2 id="subtab">tbt-subtab</h2>
 <tbt-subtab active="general">
   <tbt-tab name="general" label="ข้อมูลทั่วไป">
     <tbt-field-grid columns="3">
@@ -592,7 +661,7 @@
 </tbt-subtab>
 
 <!-- ─── TABLE ─────────────────────────────────────── -->
-<h2>tbt-table</h2>
+<h2 id="table">tbt-table</h2>
 <div class="demo-label">Scrollable (max-height="320px") — no pagination</div>
 <tbt-table id="demo-table" max-height="320px" empty-message="ไม่พบเอกสาร"></tbt-table>
 
@@ -650,7 +719,7 @@
 </script>
 
 <!-- ─── DATA TABLE ──────────────────────────────────── -->
-<h2>tbt-data-table</h2>
+<h2 id="data-table">tbt-data-table</h2>
 <tbt-data-table id="dt1" page-size="5" empty-message="No records found"></tbt-data-table>
 <script type="module">
   const MOCK = Array.from({ length: 23 }, (_, i) => ({
@@ -686,7 +755,7 @@
 </script>
 
 <!-- ─── SUMMARY ─────────────────────────────────────── -->
-<h2>tbt-summary</h2>
+<h2 id="summary">tbt-summary</h2>
 <div class="demo-label">Auto (props) — full width</div>
 <tbt-summary subtotal="100000" vat="7000"></tbt-summary>
 
@@ -706,7 +775,7 @@
 </div>
 
 <!-- ─── LINES BLOCK ────────────────────────────────── -->
-<h2>tbt-lines-block</h2>
+<h2 id="lines-block">tbt-lines-block</h2>
 <tbt-lines-block id="lb1" title="Line items" add-label="Add line" currency="฿" vat-rate="0.07" max-height="320px"></tbt-lines-block>
 
 <div class="demo-label" style="margin-top:var(--tbt-space-6)">Pre-loaded rows</div>
@@ -720,7 +789,7 @@
 </script>
 
 <!-- ─── MODAL ─────────────────────────────────────── -->
-<h2>tbt-modal</h2>
+<h2 id="modal">tbt-modal</h2>
 <div class="demo-row">
   <tbt-button variant="primary" id="open-default">Open default modal</tbt-button>
   <tbt-button variant="secondary" id="open-confirm">Open confirm modal</tbt-button>
@@ -759,7 +828,7 @@
 </script>
 
 <!-- ─── MENUBAR ─────────────────────────────────────── -->
-<h2>tbt-menubar</h2>
+<h2 id="menubar">tbt-menubar</h2>
 <div style="border-radius:var(--tbt-radius-lg);overflow:hidden;box-shadow:var(--tbt-shadow-md)">
   <tbt-menubar title="Teibto ERP">
     <tbt-menu-item label="หน้าหลัก" icon="home" active></tbt-menu-item>
@@ -778,7 +847,7 @@
 </div>
 
 <!-- ─── SIDEBAR ─────────────────────────────────────── -->
-<h2>tbt-sidebar</h2>
+<h2 id="sidebar">tbt-sidebar</h2>
 <div style="display:flex;height:280px;border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden;box-shadow:var(--tbt-shadow-sm)">
   <tbt-sidebar collapsible>
     <tbt-sidebar-item icon="home"         label="Dashboard"       href="#"></tbt-sidebar-item>
@@ -794,7 +863,7 @@
 </div>
 
 <!-- ─── APP SHELL COMPOSITION ─────────────────────── -->
-<h2>tbt-app-shell — Full page composition</h2>
+<h2 id="app-shell">tbt-app-shell — Full page composition</h2>
 <div style="height:420px;border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden;box-shadow:var(--tbt-shadow-md)">
   <tbt-app-shell style="min-height:0;height:100%">
     <tbt-menubar slot="menubar" title="Teibto ERP">
@@ -830,7 +899,7 @@
 </script>
 
 <!-- ─── APPROVAL FLOW ───────────────────────────────── -->
-<h2>tbt-approval-flow</h2>
+<h2 id="approval-flow">tbt-approval-flow</h2>
 <div class="demo-label">Horizontal (default)</div>
 <div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5)">
   <tbt-approval-flow id="flow-h"></tbt-approval-flow>
@@ -879,7 +948,7 @@
 </script>
 
 <!-- ─── AUDIT LOG ────────────────────────────────── -->
-<h2>tbt-audit-log</h2>
+<h2 id="audit-log">tbt-audit-log</h2>
 <div class="demo-label">Default (newest first, with field changes)</div>
 <tbt-audit-log id="specimen-audit" max-height="380px"></tbt-audit-log>
 
@@ -933,7 +1002,7 @@
 </script>
 
 <!-- ─── BREADCRUMB ──────────────────────────────────────── -->
-<h2>tbt-breadcrumb</h2>
+<h2 id="breadcrumb">tbt-breadcrumb</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-3)">
   <tbt-breadcrumb id="bc1"></tbt-breadcrumb>
   <tbt-breadcrumb id="bc2"></tbt-breadcrumb>
@@ -952,7 +1021,7 @@
 </script>
 
 <!-- ─── PAGINATION ───────────────────────────────────────── -->
-<h2>tbt-pagination</h2>
+<h2 id="pagination">tbt-pagination</h2>
 <div id="pag-demo" style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden;max-width:600px">
   <tbt-pagination id="pag1" total="234" page="1" page-size="25"></tbt-pagination>
 </div>
@@ -962,7 +1031,7 @@
 </script>
 
 <!-- ─── SKELETON ─────────────────────────────────────────── -->
-<h2>tbt-skeleton</h2>
+<h2 id="skeleton">tbt-skeleton</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-4);max-width:480px">
   <div>
     <div class="demo-label">text (1 line)</div>
@@ -987,7 +1056,7 @@
 </div>
 
 <!-- ─── SVG ─────────────────────────────────────────────── -->
-<h2>SVG illustrations</h2>
+<h2 id="svg">SVG illustrations</h2>
 
 <div class="demo-label">Built-in illustrations</div>
 <div class="demo-row" style="gap:var(--tbt-space-6);flex-wrap:wrap">
@@ -1071,7 +1140,7 @@
 &lt;/tbt-svg&gt;</pre>
 
 <!-- ─── TABS ──────────────────────────────────────── -->
-<h2>tbt-tabs</h2>
+<h2 id="tabs">tbt-tabs</h2>
 <tbt-tabs id="demo-tabs">
   <tbt-tabs-panel label="General">
     <tbt-field label="Document no." placeholder="QT-2026-0001"></tbt-field>
@@ -1102,7 +1171,7 @@
 </script>
 
 <!-- ─── STEPPER ────────────────────────────────────── -->
-<h2>tbt-stepper</h2>
+<h2 id="stepper">tbt-stepper</h2>
 <div class="demo-label">Step 1 active (draft)</div>
 <tbt-stepper id="step1" active="0"></tbt-stepper>
 
@@ -1134,7 +1203,7 @@
 </script>
 
 <!-- ─── DATE RANGE ─────────────────────────────────── -->
-<h2>tbt-date-range</h2>
+<h2 id="date-range">tbt-date-range</h2>
 <tbt-date-range id="dr1" label="Period" from="2026-01-01" to="2026-12-31"></tbt-date-range>
 
 <div class="demo-label" style="margin-top:var(--tbt-space-6)">Required + error</div>
@@ -1174,7 +1243,7 @@
 </script>
 
 <!-- ─── FILE UPLOAD ───────────────────────────────── -->
-<h2>tbt-file-upload</h2>
+<h2 id="file-upload">tbt-file-upload</h2>
 <tbt-file-upload id="fu1" label="Attachments" multiple accept=".pdf,.jpg,.png,.xlsx" max-size="5242880"></tbt-file-upload>
 
 <div class="demo-label" style="margin-top:var(--tbt-space-6)">Required + error</div>
@@ -1217,7 +1286,11 @@
 
 <div style="height:var(--tbt-space-12)"></div>
 
+  </div> <!-- /slot=content -->
+</tbt-app-shell>
+
 <script type="module">
+  // ── Theme toggle ──
   const btn  = document.getElementById('theme-toggle');
   const icon = document.getElementById('theme-icon');
   function applyTheme(t) {
@@ -1228,6 +1301,26 @@
   applyTheme(localStorage.getItem('tbt-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   btn.addEventListener('click', () =>
     applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+  // ── Active sidebar item on scroll (scroll-spy) ──
+  // Scope queries to the top-level sidebar so the demo <tbt-sidebar> examples
+  // further down the page don't get caught in the scroll-spy.
+  await customElements.whenDefined('tbt-app-shell');
+  const shell = document.querySelector('tbt-app-shell');
+  const contentRoot = shell.shadowRoot?.querySelector('.content-slot') ?? null;
+  const navSidebar = document.querySelector('tbt-sidebar[slot="sidebar"]');
+  const navItems = navSidebar.querySelectorAll('tbt-sidebar-item[href^="#"]');
+  const sections = document.querySelectorAll('h2[id]');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(i => i.active = false);
+        const item = navSidebar.querySelector(`tbt-sidebar-item[href="#${e.target.id}"]`);
+        if (item) item.active = true;
+      }
+    });
+  }, { root: contentRoot, rootMargin: '-5% 0px -80% 0px' });
+  sections.forEach(s => io.observe(s));
 </script>
 
 </body>

@@ -7,6 +7,9 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Docs
+- Consolidated demo pages: `demo/help.html` removed; `demo/specimen.html` now uses the `tbt-app-shell` + categorized `tbt-sidebar` layout from the deleted help page (7 nav groups: Theme · Layout · Navigation · Actions · Feedback · Form · Display) while keeping all existing live demos, playgrounds, and form-submission examples. Scroll-spy highlights the active sidebar item as you scroll. Anchor IDs on every section.
+
 ---
 
 ## [1.24.0] — 2026-05-23
