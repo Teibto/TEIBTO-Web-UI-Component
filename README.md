@@ -1,4 +1,4 @@
-# TBT-DS — Teibto Design System
+# TEIBTO Web UI Component — Teibto Design System
 
 Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitelet custom HTML pages.
 
