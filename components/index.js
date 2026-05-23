@@ -38,11 +38,13 @@ export * from './tbt-toast.js';
 export * from './tbt-checkbox.js';
 export * from './tbt-toggle.js';
 export * from './tbt-input.js';
+export * from './tbt-textarea.js';
 export * from './tbt-dropdown.js';
 export * from './tbt-multiselect.js';
 export * from './tbt-datepicker.js';
 export * from './tbt-search.js';
 export * from './tbt-form.js';
+export * from './tbt-address.js';
 
 /* Display */
 export * from './tbt-approval-flow.js';

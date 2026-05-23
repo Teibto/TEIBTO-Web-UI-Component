@@ -28,7 +28,7 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
-const FORM_INPUTS = 'tbt-input, tbt-dropdown, tbt-multiselect, tbt-datepicker, tbt-search, tbt-checkbox, tbt-toggle';
+const FORM_INPUTS = 'tbt-input, tbt-textarea, tbt-dropdown, tbt-multiselect, tbt-datepicker, tbt-date-range, tbt-search, tbt-checkbox, tbt-toggle, tbt-file-upload, tbt-address';
 
 /**
  * @fires tbt-submit - Fired on submit button click; detail: { data: Object }
