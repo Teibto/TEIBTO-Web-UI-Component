@@ -65,3 +65,4 @@ export * from './tbt-stepper.js';
 export * from './tbt-date-range.js';
 export * from './tbt-file-upload.js';
 export * from './tbt-doc-form.js';
+export * from './tbt-doc-schemas.js';
