@@ -1,6 +1,6 @@
 /**
  * @component tbt-alert
- * @version 1.22.0
+ * @version 1.23.0
  * @author Wichit Wongta
  *
  * Alert banner for feedback messages. Inline (non-blocking) by default.

@@ -9,6 +9,16 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.23.0] — 2026-05-23
+
+### Added
+- `tbt-line-items`: `max-height` prop. When set, the table area scrolls vertically with a sticky `<thead>` and gets `tbt-table`-style chrome (1px border, `--tbt-radius-lg`, `--tbt-shadow-sm`). Standalone usage without `max-height` is unchanged.
+
+### Changed
+- `tbt-lines-block`: scroll shell now comes from the inner `tbt-line-items` via its new `max-height` prop instead of an extra wrapper `<div>`. Visual now matches `tbt-table` scrollable mode (sticky header, rounded border, subtle shadow) — previously the wrapper rendered as a plain rounded box and the table headers scrolled out of view.
+
+---
+
 ## [1.22.0] — 2026-05-23
 
 ### Changed

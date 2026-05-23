@@ -1,6 +1,6 @@
 /**
  * @component tbt-line-items
- * @version 1.22.0
+ * @version 1.23.0
  * @author Wichit Wongta
  *
  * Self-contained inline-editable line items table with automatic totals.
@@ -75,6 +75,7 @@ class TbtLineItems extends LitElement {
     showSummary:    { type: Boolean, attribute: 'show-summary', reflect: true },
     readonly:       { type: Boolean, reflect: true },
     loading:        { type: Boolean, reflect: true },
+    maxHeight:      { type: String,  attribute: 'max-height' },
     /* Internal reactive state — drives summary re-render only */
     _totals:        { state: true },
   };
@@ -85,6 +86,19 @@ class TbtLineItems extends LitElement {
     /* ── Layout ── */
     .wrap { display:flex; flex-direction:column; gap:var(--tbt-space-4); }
     .lines-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+
+    /* Scrollable mode — when max-height is set, match tbt-table's .scroll shell */
+    .lines-wrap.scrollable {
+      overflow-y: auto;
+      border: 1px solid var(--tbt-border);
+      border-radius: var(--tbt-radius-lg);
+      box-shadow: var(--tbt-shadow-sm);
+    }
+    .lines-wrap.scrollable thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
 
     /* ── Table structure ── */
     table { width:100%; border-collapse:collapse; font-family:var(--tbt-font); font-size:var(--tbt-size-base); }
@@ -241,11 +255,13 @@ class TbtLineItems extends LitElement {
   render() {
     const { subtotal, vat, total } = this._totals;
     const vatPct = `VAT ${Math.round((this.vatRate ?? 0.07) * 100)}%`;
+    const wrapClass = this.maxHeight ? 'lines-wrap scrollable' : 'lines-wrap';
+    const wrapStyle = this.maxHeight ? `max-height:${this.maxHeight}` : '';
 
     if (this.loading) return html`
       ${tablerLink}
       <div class="wrap">
-        <div class="lines-wrap">
+        <div class=${wrapClass} style=${wrapStyle}>
           <table>
             <thead>
               <tr>${['Item','Desc','Qty','Unit','Price','Amount','Account',''].map(l =>
@@ -265,7 +281,7 @@ class TbtLineItems extends LitElement {
       ${tablerLink}
       <div class="wrap">
 
-        <div class="lines-wrap">
+        <div class=${wrapClass} style=${wrapStyle}>
           <table>
             <colgroup>
               <col style="min-width:160px">

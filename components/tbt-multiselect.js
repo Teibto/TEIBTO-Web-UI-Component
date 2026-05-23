@@ -1,6 +1,6 @@
 /**
  * @component tbt-multiselect
- * @version 1.22.0
+ * @version 1.23.0
  * @author Wichit Wongta
  *
  * Multi-select with chip display and dropdown checkbox list.

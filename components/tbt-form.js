@@ -1,6 +1,6 @@
 /**
  * @component tbt-form
- * @version 1.22.0
+ * @version 1.23.0
  * @author Wichit Wongta
  *
  * Form wrapper with submit handling, loading state, and error summary.

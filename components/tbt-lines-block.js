@@ -1,6 +1,6 @@
 /**
  * @component tbt-lines-block
- * @version 1.22.0
+ * @version 1.23.0
  * @author Wichit Wongta
  *
  * Compound component: section wrapper + inline-editable line items + Add button + totals.
@@ -94,13 +94,6 @@ class TbtLinesBlock extends LitElement {
 
   static styles = css`
     :host { display: block; font-family: var(--tbt-font); }
-    .table-wrap {
-      overflow-y: auto;
-      overflow-x: auto;
-      border: 1px solid var(--tbt-border);
-      border-radius: var(--tbt-radius-md);
-      box-sizing: border-box;
-    }
     .footer {
       display: flex;
       align-items: flex-start;
@@ -115,14 +108,13 @@ class TbtLinesBlock extends LitElement {
     const vatPct = `VAT ${Math.round((this.vatRate ?? 0.07) * 100)}%`;
     return html`
       <tbt-section .title=${this.title ?? ''}>
-        <div class="table-wrap" style="max-height:${this.maxHeight ?? '320px'}">
-          <tbt-line-items
-            .currency=${this.currency ?? '฿'}
-            .vatRate=${this.vatRate ?? 0.07}
-            .showSummary=${false}
-            @tbt-change=${this._onLiChange}>
-          </tbt-line-items>
-        </div>
+        <tbt-line-items
+          .currency=${this.currency ?? '฿'}
+          .vatRate=${this.vatRate ?? 0.07}
+          .maxHeight=${this.maxHeight ?? '320px'}
+          .showSummary=${false}
+          @tbt-change=${this._onLiChange}>
+        </tbt-line-items>
         <div class="footer">
           <tbt-button
             variant="ghost"
