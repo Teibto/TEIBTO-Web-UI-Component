@@ -1,6 +1,6 @@
 /**
  * @component tbt-playground
- * @version 1.24.2
+ * @version 1.24.3
  * @author Wichit Wongta
  *
  * Interactive prop editor for design system components.
