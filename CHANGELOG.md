@@ -12,6 +12,15 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.24.1] — 2026-05-23
+
+### Fixed
+- `tbt-sidebar` + `tbt-app-shell`: sidebar nav items now scroll internally when they overflow vertically (e.g., the 38-item nav on specimen.html).
+  - `tbt-app-shell`: host `min-height: 100vh` → `height: 100vh`. The shell stays viewport-sized so the content area + sidebar can scroll internally instead of pushing the whole page taller. `.body` also gets `min-height: 0` so its `overflow: hidden` actually clips children (classic flex-shrink gotcha).
+  - `tbt-sidebar`: host switched to flex column with `height: 100%`. The toggle header stays pinned at the top via `flex-shrink: 0`; the `<nav>` region is `flex: 1; overflow-y: auto`. Previously the sidebar grew to its content height (because `min-height: 100%` and the parent didn't constrain), so `overflow-y` had nothing to scroll.
+
+---
+
 ## [1.24.0] — 2026-05-23
 
 ### Added

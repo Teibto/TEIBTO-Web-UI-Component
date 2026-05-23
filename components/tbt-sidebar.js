@@ -1,6 +1,6 @@
 /**
  * @component tbt-sidebar, tbt-sidebar-item
- * @version 1.24.0
+ * @version 1.24.1
  * @author Wichit Wongta
  *
  * Collapsible left-side navigation panel.
@@ -33,14 +33,14 @@ class TbtSidebar extends LitElement {
 
   static styles = css`
     :host {
-      display: block;
+      display: flex;
+      flex-direction: column;
       background: var(--tbt-bg-card);
       border-right: 1px solid var(--tbt-border);
       width: 220px;
-      min-height: 100%;
+      height: 100%;          /* fill the parent (sidebar-slot) height */
       transition: width var(--tbt-transition-base);
-      overflow-x: hidden;   /* clip for collapse animation */
-      overflow-y: auto;     /* allow vertical scroll when items overflow */
+      overflow-x: hidden;    /* clip for collapse animation */
       font-family: var(--tbt-font);
       /* item state vars — inherited by tbt-sidebar-item children */
       --_lbl-max-width: 200px;
@@ -64,6 +64,7 @@ class TbtSidebar extends LitElement {
       padding: var(--tbt-space-3) var(--tbt-space-3);
       border-bottom: 1px solid var(--tbt-border);
       min-height: 48px;
+      flex-shrink: 0;        /* keep toggle pinned at top */
     }
     .toggle-btn {
       display: flex;
@@ -88,6 +89,8 @@ class TbtSidebar extends LitElement {
     }
     nav {
       padding: var(--tbt-space-2) 0;
+      flex: 1;               /* fill remaining vertical space */
+      overflow-y: auto;      /* scroll nav items when they overflow */
     }
   `;
 

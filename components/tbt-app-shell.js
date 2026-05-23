@@ -1,6 +1,6 @@
 /**
  * @component tbt-app-shell
- * @version 1.24.0
+ * @version 1.24.1
  * @author Wichit Wongta
  *
  * Page-level layout wrapper. Provides menubar slot at top, optional
@@ -82,7 +82,7 @@ class TbtAppShell extends LitElement {
     :host {
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      height: 100vh;       /* constrain to viewport so sidebar + content can scroll internally */
       background: var(--tbt-bg-page);
       font-family: var(--tbt-font);
     }
@@ -95,6 +95,7 @@ class TbtAppShell extends LitElement {
     .body {
       display: flex;
       flex: 1;
+      min-height: 0;       /* allow children with overflow:auto to scroll instead of pushing body taller */
       overflow: hidden;
     }
     .sidebar-slot {
