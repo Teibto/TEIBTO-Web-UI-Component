@@ -45,8 +45,8 @@ Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitele
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teibto · Page Name</title>
-  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-theme.css">
-  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.25.0/index.js"></script>
+  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.26.0/tbt-theme.css">
+  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.26.0/index.js"></script>
 </head>
 <body>
   <tbt-app-shell>
@@ -115,7 +115,7 @@ tbt-ds/
 │   ├── tbt-lines-block.js      # Compound: section + line-items + add button + totals
 │   ├── tbt-address.js          # Composite address field (street/city/postcode/country)
 │   ├── tbt-doc-form.js         # Schema-driven document form scaffold
-│   └── tbt-doc-schemas.js      # Pre-built PO / Customer / Sales Order / Invoice schemas
+│   └── tbt-doc-schemas.js      # Pre-built PO / Customer / Quotation / SO / Fulfillment / Invoice / Receipt schemas
 │
 ├── theme/
 │   └── tbt-theme.css           # All design tokens — single source of truth
@@ -424,7 +424,7 @@ Step shape: `{ label, description?, error? }`. Steps before `active` show a chec
 Promise-based confirmation built on `tbt-modal`. No boilerplate HTML required.
 
 ```javascript
-import { confirm } from '/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-confirm.js';
+import { confirm } from '/sc/SuiteScripts/Teibto/ds/v1.26.0/tbt-confirm.js';
 
 const ok = await confirm({
   title: 'Delete document?',
@@ -556,7 +556,7 @@ Built-in names: `empty` · `search` · `success` · `error` · `warning` · `dra
 Transient notification — slides in, auto-dismisses, stacks if multiple. Trigger via the static `show()` helper from any script.
 
 ```javascript
-import { showToast } from '/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-toast.js';
+import { showToast } from '/sc/SuiteScripts/Teibto/ds/v1.26.0/tbt-toast.js';
 
 showToast({ variant: 'success', message: 'Saved.',          duration: 3000 });
 showToast({ variant: 'danger',  message: 'Network error.',  duration: 5000 });
@@ -1012,7 +1012,7 @@ For complete ERP document pages (PO, Customer, Sales Order, Invoice), use `tbt-d
 <tbt-doc-form id="po-form"></tbt-doc-form>
 
 <script type="module">
-  import { PO_SCHEMA } from '/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-doc-schemas.js';
+  import { PO_SCHEMA } from '/sc/SuiteScripts/Teibto/ds/v1.26.0/tbt-doc-schemas.js';
 
   const form = document.getElementById('po-form');
   form.schema = PO_SCHEMA;
@@ -1223,6 +1223,71 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 </script>
 ```
 
+### Sales process — full workflow
+
+The full sales workflow (Dashboard → Customer → Quotation → Sales Order → Item Fulfillment → Invoice → Receipt) lives at [demo/sales-process.html](https://kingcomen.github.io/tbt-ds/demo/sales-process.html). It demonstrates how to chain document forms with a workflow stepper at the top of each transaction screen and a dashboard at the entry point.
+
+**Workflow stepper** — `tbt-stepper` rendered above each transaction form, with `active` set to that document's position in the chain:
+
+```html
+<tbt-stepper id="wf"></tbt-stepper>
+<tbt-doc-form id="form" .schema=${QUOTATION_SCHEMA}></tbt-doc-form>
+
+<script type="module">
+  document.getElementById('wf').steps = [
+    { label: 'Customer' }, { label: 'Quotation' }, { label: 'Sales Order' },
+    { label: 'Fulfillment' }, { label: 'Invoice' }, { label: 'Receipt' },
+  ];
+  document.getElementById('wf').active = 1;  // Quotation
+</script>
+```
+
+**Dashboard layout** — KPI strip + quick-action row + pending tasks + recent activity, built from existing primitives (no new dashboard component needed):
+
+```html
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-label">Sales MTD</div>
+    <div class="kpi-value">฿2,450,000</div>
+    <div class="kpi-trend up"><i class="ti ti-trending-up"></i> +12.4%</div>
+  </div>
+  <!-- 3 more cards -->
+</div>
+
+<div class="quick-actions">
+  <tbt-button variant="primary" icon="plus">New Quotation</tbt-button>
+  <tbt-button variant="primary" icon="plus">New Sales Order</tbt-button>
+  <!-- … -->
+</div>
+
+<div class="dash-row">
+  <tbt-section title="Pending tasks">
+    <tbt-data-table .fetch=${fetchTasks} page-size="5"></tbt-data-table>
+  </tbt-section>
+  <tbt-section title="Recent activity">
+    <tbt-audit-log max-height="320px"></tbt-audit-log>
+  </tbt-section>
+</div>
+```
+
+The `.kpi-card`, `.kpi-grid`, `.quick-actions`, and `.dash-row` CSS classes are defined per-page (see `demo/sales-process.html`). If you find yourself repeating this pattern across many pages, that's the signal a `tbt-kpi-card` component is worth building.
+
+**Screen swap** — for a single-page workflow demo, use `data-screen` attributes on sidebar items + a small JS function:
+
+```js
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s =>
+    s.classList.toggle('active', s.dataset.screen === name));
+  document.querySelectorAll('tbt-sidebar-item[data-screen]').forEach(i =>
+    i.active = i.dataset.screen === name);
+}
+document.querySelectorAll('tbt-sidebar-item[data-screen]').forEach(item => {
+  item.addEventListener('click', () => showScreen(item.dataset.screen));
+});
+```
+
+CSS: `.screen { display: none; } .screen.active { display: block; }`. In a real Suitelet deployment each screen is a separate page — this pattern is for showcasing the chain in one place.
+
 ---
 
 ## NetSuite deployment
@@ -1230,7 +1295,7 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ### File Cabinet structure
 
 ```
-/SuiteScripts/Teibto/ds/v1.25.0/
+/SuiteScripts/Teibto/ds/v1.26.0/
   tbt-theme.css
   index.js
   tbt-icons-css.js
@@ -1247,8 +1312,8 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ### Standard page `<head>`
 
 ```html
-<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-theme.css">
-<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.25.0/index.js"></script>
+<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.26.0/tbt-theme.css">
+<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.26.0/index.js"></script>
 ```
 
 > Always pin to an exact version. Never use `/latest/`.
@@ -1258,7 +1323,7 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 ```bash
 cd tbt-ds/tbt-ds               # SDF project folder
 suitecloud account:setup        # first-time auth (opens browser)
-suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.25.0/*"
+suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.26.0/*"
 ```
 
 ---

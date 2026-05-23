@@ -1,6 +1,6 @@
 /**
  * @component tbt-modal
- * @version 1.25.0
+ * @version 1.26.0
  * @author Wichit Wongta
  *
  * Dialog modal using the native <dialog> element for accessibility.

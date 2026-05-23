@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TEIBTO Web UI Component · Sales Process</title>
+  <script>const _t=localStorage.getItem('tbt-theme');if(_t)document.documentElement.dataset.theme=_t;</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="../theme/tbt-theme.css">
+  <script type="module" src="../components/index.js"></script>
+  <style>
+    html, body { margin: 0; height: 100%; }
+    body { background: var(--tbt-bg-page); font-family: var(--tbt-font); color: var(--tbt-text-primary); }
+    .content-pad { padding: var(--tbt-space-6); }
+
+    .nav-group {
+      padding: 14px 12px 4px;
+      font-size: var(--tbt-size-xs); font-weight: var(--tbt-weight-semibold);
+      color: var(--tbt-text-muted);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+    .nav-group:first-child { padding-top: var(--tbt-space-3); }
+
+    .theme-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.85); font-size: 18px;
+      padding: 4px 8px; border-radius: 6px;
+      display: flex; align-items: center;
+      transition: color 100ms ease, background 100ms ease;
+    }
+    .theme-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* ── Screen swap ─────────────────────────────────────── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .page-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: var(--tbt-space-4);
+      margin-bottom: var(--tbt-space-5);
+    }
+    .page-title {
+      font-size: var(--tbt-size-xl); font-weight: var(--tbt-weight-bold);
+      margin: 0;
+      color: var(--tbt-text-primary);
+    }
+    .page-subtitle { color: var(--tbt-text-secondary); font-size: var(--tbt-size-sm); }
+
+    .workflow-strip {
+      background: var(--tbt-bg-card);
+      border: 1px solid var(--tbt-border);
+      border-radius: var(--tbt-radius-lg);
+      padding: var(--tbt-space-4) var(--tbt-space-5);
+      margin-bottom: var(--tbt-space-5);
+    }
+
+    /* ── Dashboard ───────────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--tbt-space-4);
+      margin-bottom: var(--tbt-space-5);
+    }
+    .kpi-card {
+      background: var(--tbt-bg-card);
+      border: 1px solid var(--tbt-border);
+      border-radius: var(--tbt-radius-lg);
+      padding: var(--tbt-space-4) var(--tbt-space-5);
+      box-shadow: var(--tbt-shadow-sm);
+    }
+    .kpi-label {
+      font-size: var(--tbt-size-xs); font-weight: var(--tbt-weight-medium);
+      color: var(--tbt-text-secondary);
+      text-transform: uppercase; letter-spacing: .05em;
+      margin-bottom: var(--tbt-space-2);
+    }
+    .kpi-value {
+      font-size: var(--tbt-size-xl); font-weight: var(--tbt-weight-bold);
+      color: var(--tbt-text-primary);
+      margin-bottom: var(--tbt-space-1);
+    }
+    .kpi-trend { display: flex; align-items: center; gap: 4px; font-size: var(--tbt-size-xs); }
+    .kpi-trend.up   { color: var(--tbt-success-text); }
+    .kpi-trend.down { color: var(--tbt-danger-text); }
+    .kpi-trend.flat { color: var(--tbt-text-muted); }
+
+    .quick-actions {
+      display: flex; gap: var(--tbt-space-3); flex-wrap: wrap;
+      margin-bottom: var(--tbt-space-5);
+    }
+
+    .dash-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--tbt-space-4); }
+    @media (max-width: 900px) { .dash-row { grid-template-columns: 1fr; } }
+
+    /* ── Apply-to-invoice table (Receipt) ───────────────── */
+    .apply-table {
+      width: 100%; border-collapse: collapse;
+      font-size: var(--tbt-size-sm);
+    }
+    .apply-table th, .apply-table td {
+      padding: var(--tbt-space-2) var(--tbt-space-3);
+      text-align: left; border-bottom: 1px solid var(--tbt-border);
+    }
+    .apply-table th {
+      background: var(--tbt-bg-page); color: var(--tbt-text-secondary);
+      font-weight: var(--tbt-weight-medium); font-size: var(--tbt-size-xs);
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .apply-table td.r { text-align: right; font-variant-numeric: tabular-nums; }
+    .apply-table input[type="number"] {
+      width: 100px; padding: 4px 8px;
+      border: 1px solid var(--tbt-border); border-radius: var(--tbt-radius-sm);
+      text-align: right;
+      font-family: inherit;
+    }
+
+    /* ── Action log (visible feedback) ───────────────────── */
+    .action-log {
+      margin-top: var(--tbt-space-4);
+      padding: var(--tbt-space-3) var(--tbt-space-4);
+      background: var(--tbt-bg-hover);
+      border-radius: var(--tbt-radius-md);
+      font-size: var(--tbt-size-sm); color: var(--tbt-text-secondary);
+      font-family: var(--tbt-font-mono);
+    }
+  </style>
+</head>
+<body>
+
+<tbt-app-shell>
+
+  <tbt-menubar slot="menubar" title="TEIBTO · Sales Process">
+    <tbt-menu-item label="Specimen" href="specimen.html" icon="flask"></tbt-menu-item>
+    <tbt-menu-item label="PO Demo"  href="demo.html"      icon="file-description"></tbt-menu-item>
+    <button slot="end" class="theme-btn" id="theme-toggle" title="Toggle theme">
+      <i id="theme-icon" class="ti ti-sun"></i>
+    </button>
+  </tbt-menubar>
+
+  <tbt-sidebar slot="sidebar">
+    <div class="nav-group">Sales workflow</div>
+    <tbt-sidebar-item icon="dashboard"        label="Dashboard"        data-screen="dashboard" active></tbt-sidebar-item>
+    <tbt-sidebar-item icon="user-circle"      label="Customer"         data-screen="customer"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="file-description" label="Quotation"        data-screen="quotation"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="shopping-cart"    label="Sales Order"      data-screen="so"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="truck-delivery"   label="Item Fulfillment" data-screen="fulfillment"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="file-invoice"     label="Invoice"          data-screen="invoice"></tbt-sidebar-item>
+    <tbt-sidebar-item icon="receipt"          label="Receipt"          data-screen="receipt"></tbt-sidebar-item>
+  </tbt-sidebar>
+
+  <div slot="content" class="content-pad">
+
+    <!-- ── Dashboard ───────────────────────────────────── -->
+    <div class="screen active" data-screen="dashboard">
+      <div class="page-header">
+        <h1 class="page-title">Sales Dashboard</h1>
+        <span class="page-subtitle">Snapshot of today · 23 May 2026</span>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Sales MTD</div>
+          <div class="kpi-value">฿2,450,000</div>
+          <div class="kpi-trend up"><i class="ti ti-trending-up"></i> +12.4% vs last month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Open quotations</div>
+          <div class="kpi-value">18</div>
+          <div class="kpi-trend up"><i class="ti ti-trending-up"></i> 3 new this week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Pending fulfillment</div>
+          <div class="kpi-value">7</div>
+          <div class="kpi-trend flat"><i class="ti ti-minus"></i> No change</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Overdue invoices</div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-trend down"><i class="ti ti-trending-down"></i> ฿185,000 overdue</div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <tbt-button variant="primary" icon="plus"  data-goto="quotation">New Quotation</tbt-button>
+        <tbt-button variant="primary" icon="plus"  data-goto="so">New Sales Order</tbt-button>
+        <tbt-button variant="primary" icon="plus"  data-goto="fulfillment">New Fulfillment</tbt-button>
+        <tbt-button variant="primary" icon="plus"  data-goto="receipt">New Receipt</tbt-button>
+        <tbt-button variant="secondary" icon="user-plus" data-goto="customer">New Customer</tbt-button>
+      </div>
+
+      <div class="dash-row">
+        <tbt-section title="Pending tasks">
+          <tbt-data-table id="dash-tasks" page-size="5"></tbt-data-table>
+        </tbt-section>
+        <tbt-section title="Recent activity">
+          <tbt-audit-log id="dash-audit" max-height="320px"></tbt-audit-log>
+        </tbt-section>
+      </div>
+    </div>
+
+    <!-- ── Customer ─────────────────────────────────────── -->
+    <div class="screen" data-screen="customer">
+      <div class="page-header">
+        <h1 class="page-title">Customer</h1>
+        <span class="page-subtitle">Master record · C-0001</span>
+      </div>
+      <div class="workflow-strip">
+        <tbt-stepper id="wf-customer" active="0"></tbt-stepper>
+      </div>
+      <tbt-doc-form id="form-customer"></tbt-doc-form>
+      <div class="action-log" id="log-customer">Edit any field then click an action button…</div>
+    </div>
+
+    <!-- ── Quotation ────────────────────────────────────── -->
+    <div class="screen" data-screen="quotation">
+      <div class="page-header">
+        <h1 class="page-title">Quotation</h1>
+        <span class="page-subtitle">QT-2569-0042 · บริษัท ABC จำกัด</span>
+      </div>
+      <div class="workflow-strip">
+        <tbt-stepper id="wf-quotation" active="1"></tbt-stepper>
+      </div>
+      <tbt-doc-form id="form-quotation"></tbt-doc-form>
+      <div class="action-log" id="log-quotation">Edit any field then click an action button…</div>
+    </div>
+
+    <!-- ── Sales Order ──────────────────────────────────── -->
+    <div class="screen" data-screen="so">
+      <div class="page-header">
+        <h1 class="page-title">Sales Order</h1>
+        <span class="page-subtitle">SO-2569-0042 · บริษัท ABC จำกัด</span>
+      </div>
+      <div class="workflow-strip">
+        <tbt-stepper id="wf-so" active="2"></tbt-stepper>
+      </div>
+      <tbt-doc-form id="form-so"></tbt-doc-form>
+      <div class="action-log" id="log-so">Edit any field then click an action button…</div>
+    </div>
+
+    <!-- ── Item Fulfillment ─────────────────────────────── -->
+    <div class="screen" data-screen="fulfillment">
+      <div class="page-header">
+        <h1 class="page-title">Item Fulfillment</h1>
+        <span class="page-subtitle">IF-2569-0042 · ref. SO-2569-0042</span>
+      </div>
+      <div class="workflow-strip">
+        <tbt-stepper id="wf-fulfillment" active="3"></tbt-stepper>
+      </div>
+      <tbt-doc-form id="form-fulfillment"></tbt-doc-form>
+      <tbt-section title="Picked items" style="margin-top:var(--tbt-space-4)">
+        <table class="apply-table">
+          <thead>
+            <tr><th>Item</th><th>Description</th><th class="r">Ordered</th><th class="r">Picked</th><th class="r">Remaining</th></tr>
+          </thead>
+          <tbody id="picked-rows"></tbody>
+        </table>
+      </tbt-section>
+      <div class="action-log" id="log-fulfillment">Edit any field then click an action button…</div>
+    </div>
+
+    <!-- ── Invoice ──────────────────────────────────────── -->
+    <div class="screen" data-screen="invoice">
+      <div class="page-header">
+        <h1 class="page-title">Invoice</h1>
+        <span class="page-subtitle">INV-2569-0042 · ref. SO-2569-0042</span>
+      </div>
+      <div class="workflow-strip">
+        <tbt-stepper id="wf-invoice" active="4"></tbt-stepper>
+      </div>
+      <tbt-doc-form id="form-invoice"></tbt-doc-form>
+      <div class="action-log" id="log-invoice">Edit any field then click an action button…</div>
+    </div>
+
+    <!-- ── Receipt ──────────────────────────────────────── -->
+    <div class="screen" data-screen="receipt">
+      <div class="page-header">
+        <h1 class="page-title">Customer Receipt</h1>
+        <span class="page-subtitle">CR-2569-0042 · บริษัท ABC จำกัด</span>
+      </div>
+      <div class="workflow-strip">
+        <tbt-stepper id="wf-receipt" active="5"></tbt-stepper>
+      </div>
+      <tbt-doc-form id="form-receipt"></tbt-doc-form>
+      <tbt-section title="Apply to open invoices" style="margin-top:var(--tbt-space-4)">
+        <table class="apply-table">
+          <thead>
+            <tr><th>Invoice no.</th><th>Date</th><th class="r">Open balance</th><th class="r">Apply</th></tr>
+          </thead>
+          <tbody id="apply-rows"></tbody>
+        </table>
+      </tbt-section>
+      <div class="action-log" id="log-receipt">Edit any field then click an action button…</div>
+    </div>
+
+  </div>
+</tbt-app-shell>
+
+<script type="module">
+  import {
+    CUSTOMER_SCHEMA, QUOTATION_SCHEMA, SALES_ORDER_SCHEMA,
+    FULFILLMENT_SCHEMA, INVOICE_SCHEMA, RECEIPT_SCHEMA,
+  } from '../components/tbt-doc-schemas.js';
+
+  /* ── Sample lookup data ─────────────────────────────── */
+  const lookups = {
+    customers: [
+      { value: 'C001', label: 'บริษัท ABC จำกัด' },
+      { value: 'C002', label: 'XYZ Industries Co., Ltd.' },
+      { value: 'C003', label: 'Smart Office Solutions' },
+    ],
+    'sales-orders': [
+      { value: 'SO-2569-0042', label: 'SO-2569-0042 · บริษัท ABC จำกัด' },
+      { value: 'SO-2569-0041', label: 'SO-2569-0041 · XYZ Industries' },
+    ],
+    subsidiaries: [
+      { value: '1', label: 'Teibto Co., Ltd.' },
+      { value: '2', label: 'Teibto Logistics' },
+    ],
+    departments: [
+      { value: 'SAL', label: 'Sales' },
+      { value: 'OPS', label: 'Operations' },
+    ],
+    currencies: [
+      { value: 'THB', label: 'THB — Thai Baht' },
+      { value: 'USD', label: 'USD — US Dollar' },
+    ],
+    'payment-terms': [
+      { value: 'NET15', label: 'Net 15' },
+      { value: 'NET30', label: 'Net 30' },
+      { value: 'NET60', label: 'Net 60' },
+    ],
+    'payment-methods': [
+      { value: 'CASH',    label: 'Cash' },
+      { value: 'CHEQUE',  label: 'Cheque' },
+      { value: 'BANK',    label: 'Bank transfer' },
+      { value: 'CREDIT',  label: 'Credit card' },
+    ],
+    'sales-reps': [
+      { value: 'WW', label: 'Wichit Wongta' },
+      { value: 'AS', label: 'Apinya Suk' },
+    ],
+    'ship-via': [
+      { value: 'KE',  label: 'Kerry Express' },
+      { value: 'TH',  label: 'Thailand Post' },
+      { value: 'DHL', label: 'DHL' },
+    ],
+    'fulfillment-statuses': [
+      { value: 'PICKED',  label: 'Picked' },
+      { value: 'PACKED',  label: 'Packed' },
+      { value: 'SHIPPED', label: 'Shipped' },
+    ],
+    'bank-accounts': [
+      { value: 'BBL-001', label: 'Bangkok Bank · 123-456-789' },
+      { value: 'SCB-002', label: 'SCB · 234-567-890' },
+    ],
+    'customer-categories': [
+      { value: 'GOV',  label: 'Government' },
+      { value: 'CORP', label: 'Corporate' },
+      { value: 'SME',  label: 'SME' },
+    ],
+  };
+
+  /* ── Workflow stepper steps ─────────────────────────── */
+  const WORKFLOW_STEPS = [
+    { label: 'Customer' },
+    { label: 'Quotation' },
+    { label: 'Sales Order' },
+    { label: 'Fulfillment' },
+    { label: 'Invoice' },
+    { label: 'Receipt' },
+  ];
+  ['customer','quotation','so','fulfillment','invoice','receipt'].forEach(k => {
+    document.getElementById(`wf-${k}`).steps = WORKFLOW_STEPS;
+  });
+
+  /* ── Sample line items (for QT / SO / Invoice) ──────── */
+  const sampleLines = [
+    { item: 'Laptop',  desc: 'Dell 14" i7',     qty: 5, unit: 'Pcs', price: 35000, account: '4100' },
+    { item: 'Mouse',   desc: 'Wireless',         qty: 5, unit: 'Pcs', price: 800,   account: '4100' },
+    { item: 'Keyboard',desc: 'Mechanical',       qty: 5, unit: 'Pcs', price: 2500,  account: '4100' },
+  ];
+  const approvalSteps = [
+    { id:'1', label:'Sales rep', approver:'Wichit',  status:'approved', timestamp:'2026-05-20T09:00:00Z' },
+    { id:'2', label:'Manager',   approver:'Somchai', status:'current' },
+    { id:'3', label:'Director',  approver:'Apinya',  status:'pending' },
+  ];
+  const auditEntries = [
+    { id:'3', timestamp:'2026-05-23T10:00:00Z', user:'Wichit',  action:'updated', label:'Updated grand total' },
+    { id:'2', timestamp:'2026-05-22T09:00:00Z', user:'Wichit',  action:'submitted', label:'Submitted for approval' },
+    { id:'1', timestamp:'2026-05-22T08:00:00Z', user:'Wichit',  action:'created',   label:'Document created' },
+  ];
+
+  /* ── Helper: wire a form + log actions ──────────────── */
+  function wireForm(id, schema, value, opts = {}) {
+    const el = document.getElementById(`form-${id}`);
+    el.schema = schema;
+    el.optionLists = lookups;
+    el.value = value;
+    if (opts.lines)    el.lines    = opts.lines;
+    if (opts.approval) el.approvalSteps = opts.approval;
+    if (opts.audit)    el.auditEntries  = opts.audit;
+
+    const log = document.getElementById(`log-${id}`);
+    el.addEventListener('tbt-action', e => {
+      const ts = new Date().toLocaleTimeString();
+      log.textContent = `[${ts}] action="${e.detail.action}" · ${Object.keys(e.detail.data).length} fields collected`;
+    });
+  }
+
+  /* ── Customer ──────────────────────────────────────── */
+  wireForm('customer', CUSTOMER_SCHEMA, {
+    entityid: 'C-0001', companyname: 'บริษัท ABC จำกัด',
+    taxid: '0105556012345', category: 'CORP', subsidiary: '1', salesrep: 'WW', currency: 'THB',
+    email: 'contact@abc.co.th', phone: '02-123-4567', contactname: 'คุณสมชาย',
+    terms: 'NET30', creditlimit: 1000000, tax_exempt: false,
+  });
+  // Address values populate on next tick (custom property on tbt-address)
+  setTimeout(() => {
+    const bill = document.querySelector('#form-customer')?.shadowRoot?.querySelector('tbt-address[name="bill_to"]');
+    if (bill) bill.value = { street: '99/9 Sukhumvit Rd.', city: 'Bangkok', state: 'BKK', postcode: '10110', country: 'Thailand' };
+  }, 200);
+
+  /* ── Quotation ─────────────────────────────────────── */
+  wireForm('quotation', QUOTATION_SCHEMA, {
+    tranid: 'QT-2569-0042', customer: 'C001', date: '2026-05-15', expirydate: '2026-06-15',
+    salesrep: 'WW', subsidiary: '1', currency: 'THB', terms: 'NET30',
+    memo: 'Discount granted for repeat business.',
+  }, { lines: sampleLines, approval: approvalSteps });
+
+  /* ── Sales Order ───────────────────────────────────── */
+  wireForm('so', SALES_ORDER_SCHEMA, {
+    tranid: 'SO-2569-0042', customer: 'C001', date: '2026-05-18', expected: '2026-05-25',
+    salesrep: 'WW', subsidiary: '1', currency: 'THB', terms: 'NET30',
+    po_number: 'PO-CUST-9988',
+  }, { lines: sampleLines, approval: approvalSteps });
+
+  /* ── Fulfillment ───────────────────────────────────── */
+  wireForm('fulfillment', FULFILLMENT_SCHEMA, {
+    tranid: 'IF-2569-0042', so_number: 'SO-2569-0042', customer: 'บริษัท ABC จำกัด',
+    date: '2026-05-23', ship_via: 'KE', tracking: 'KE1234567890', weight: 5.2, status: 'PACKED',
+  }, { approval: approvalSteps });
+
+  document.getElementById('picked-rows').innerHTML = `
+    <tr><td>Laptop</td>  <td>Dell 14" i7</td>     <td class="r">5</td><td class="r">5</td><td class="r">0</td></tr>
+    <tr><td>Mouse</td>   <td>Wireless</td>         <td class="r">5</td><td class="r">5</td><td class="r">0</td></tr>
+    <tr><td>Keyboard</td><td>Mechanical</td>       <td class="r">5</td><td class="r">5</td><td class="r">0</td></tr>
+  `;
+
+  /* ── Invoice ───────────────────────────────────────── */
+  wireForm('invoice', INVOICE_SCHEMA, {
+    tranid: 'INV-2569-0042', customer: 'C001', date: '2026-05-25', duedate: '2026-06-24',
+    po_number: 'PO-CUST-9988', salesrep: 'WW', subsidiary: '1', currency: 'THB', terms: 'NET30',
+  }, { lines: sampleLines, audit: auditEntries });
+
+  /* ── Receipt ───────────────────────────────────────── */
+  wireForm('receipt', RECEIPT_SCHEMA, {
+    tranid: 'CR-2569-0042', customer: 'C001', date: '2026-06-10',
+    payment_method: 'BANK', amount: 187650, currency: 'THB',
+    reference: 'TRF-20260610-001', bank_account: 'BBL-001',
+  }, { audit: auditEntries });
+
+  document.getElementById('apply-rows').innerHTML = `
+    <tr><td>INV-2569-0042</td><td>2026-05-25</td><td class="r">฿187,650.00</td>
+        <td class="r"><input type="number" value="187650" step="0.01"></td></tr>
+    <tr><td>INV-2569-0038</td><td>2026-04-30</td><td class="r">฿42,000.00</td>
+        <td class="r"><input type="number" value="0" step="0.01"></td></tr>
+  `;
+
+  /* ── Dashboard data ────────────────────────────────── */
+  const dashTasks = document.getElementById('dash-tasks');
+  dashTasks.columns = [
+    { key: 'tranid',   label: 'Document',  mobileTitle: true },
+    { key: 'type',     label: 'Type' },
+    { key: 'customer', label: 'Customer' },
+    { key: 'amount',   label: 'Amount',  align: 'right' },
+    { key: 'status',   label: 'Status' },
+  ];
+  dashTasks.fetch = async () => ({
+    rows: [
+      { tranid: 'QT-2569-0042', type: 'Quotation',  customer: 'บริษัท ABC จำกัด',  amount: '฿187,650', status: 'Pending approval' },
+      { tranid: 'SO-2569-0041', type: 'Sales Order',customer: 'XYZ Industries',     amount: '฿  92,400', status: 'Awaiting fulfillment' },
+      { tranid: 'IF-2569-0040', type: 'Fulfillment',customer: 'Smart Office',       amount: '฿  18,000', status: 'Packed' },
+      { tranid: 'INV-2569-0038',type: 'Invoice',    customer: 'บริษัท ABC จำกัด',  amount: '฿  42,000', status: 'Overdue 15 days' },
+      { tranid: 'CR-2569-0037', type: 'Receipt',    customer: 'XYZ Industries',     amount: '฿  92,400', status: 'Pending review' },
+    ],
+    total: 5,
+  });
+
+  document.getElementById('dash-audit').entries = [
+    { id:'5', timestamp:'2026-05-23T10:30:00Z', user:'Wichit',  action:'created',   label:'Receipt CR-2569-0042 created' },
+    { id:'4', timestamp:'2026-05-23T09:15:00Z', user:'Somchai', action:'approved',  label:'Sales order SO-2569-0042 approved' },
+    { id:'3', timestamp:'2026-05-23T08:50:00Z', user:'Apinya',  action:'submitted', label:'QT-2569-0042 submitted for approval' },
+    { id:'2', timestamp:'2026-05-22T16:20:00Z', user:'Wichit',  action:'updated',   label:'Customer C-0001 credit limit raised' },
+    { id:'1', timestamp:'2026-05-22T11:00:00Z', user:'Wichit',  action:'created',   label:'Quotation QT-2569-0042 created' },
+  ];
+
+  /* ── Screen switching ──────────────────────────────── */
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.dataset.screen === name));
+    document.querySelectorAll('tbt-sidebar-item[data-screen]').forEach(i => {
+      i.active = i.dataset.screen === name;
+    });
+    window.scrollTo({ top: 0 });
+  }
+  document.querySelectorAll('tbt-sidebar-item[data-screen]').forEach(item => {
+    item.addEventListener('click', e => {
+      e.preventDefault();
+      showScreen(item.dataset.screen);
+    });
+  });
+  document.querySelectorAll('[data-goto]').forEach(btn => {
+    btn.addEventListener('click', () => showScreen(btn.dataset.goto));
+  });
+
+  /* ── Theme toggle ──────────────────────────────────── */
+  const btn  = document.getElementById('theme-toggle');
+  const icon = document.getElementById('theme-icon');
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    icon.className = t === 'dark' ? 'ti ti-moon' : 'ti ti-sun';
+    localStorage.setItem('tbt-theme', t);
+  }
+  applyTheme(localStorage.getItem('tbt-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  btn.addEventListener('click', () =>
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+</script>
+
+</body>
+</html>

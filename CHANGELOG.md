@@ -9,6 +9,23 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.26.0] — 2026-05-23
+
+### Added
+- 3 new schemas in `components/tbt-doc-schemas.js`:
+  - `QUOTATION_SCHEMA` — doc info + lines + approval. Includes a "Convert to SO" submit action.
+  - `FULFILLMENT_SCHEMA` — references a sales order; doc info + shipping address + notes + approval. Special "picked items" line shape rendered per-demo (no `type:'lines'` section in the schema for now).
+  - `RECEIPT_SCHEMA` — customer payment receipt; doc info (customer, amount, payment method, bank account) + audit. "Apply to open invoices" table rendered per-demo.
+- `demo/sales-process.html` — full single-page workflow demo. App-shell + sidebar nav across 7 screens (Dashboard / Customer / Quotation / Sales Order / Fulfillment / Invoice / Receipt). Each transaction screen has a `tbt-stepper` showing position in the chain.
+- Dashboard layout — KPI strip + quick-action row + pending tasks (`tbt-data-table`) + recent activity (`tbt-audit-log`). No new component; pattern uses existing primitives + per-page CSS.
+- README "Sales process" composition section covering the workflow stepper, dashboard layout, and single-page screen-swap pattern.
+- Visual baseline for `sales-process.html` (dashboard view).
+
+### Lookup keys added to the JSDoc reference list
+`payment-methods`, `sales-orders`, `fulfillment-statuses`, `bank-accounts`.
+
+---
+
 ## [1.25.0] — 2026-05-23
 
 ### Added

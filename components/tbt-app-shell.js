@@ -1,6 +1,6 @@
 /**
  * @component tbt-app-shell
- * @version 1.25.0
+ * @version 1.26.0
  * @author Wichit Wongta
  *
  * Page-level layout wrapper. Provides menubar slot at top, optional

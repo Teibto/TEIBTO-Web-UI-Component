@@ -1,6 +1,6 @@
 /**
  * @component tbt-doc-form
- * @version 1.25.0
+ * @version 1.26.0
  * @author Wichit Wongta
  *
  * Schema-driven document form scaffold. Renders sections (fields, line items,
@@ -8,7 +8,7 @@
  * Pre-built schemas live in `components/tbt-doc-schemas.js`.
  *
  * Usage:
- *   import { PO_SCHEMA } from '/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-doc-schemas.js';
+ *   import { PO_SCHEMA } from '/sc/SuiteScripts/Teibto/ds/v1.26.0/tbt-doc-schemas.js';
  *   <tbt-doc-form
  *     id="po-form"
  *     .schema=${PO_SCHEMA}

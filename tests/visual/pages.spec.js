@@ -64,3 +64,9 @@ test('icon-svg.html — icon gallery', async ({ page }) => {
   await waitForDS(page);
   await snap(page, 'icon-svg.png');
 });
+
+test('sales-process.html — dashboard (default)', async ({ page }) => {
+  await page.goto('/demo/sales-process.html');
+  await waitForDS(page);
+  await snap(page, 'sales-process-dashboard.png');
+});

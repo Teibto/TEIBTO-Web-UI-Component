@@ -1,18 +1,20 @@
 /**
  * @module tbt-doc-schemas
- * @version 1.25.0
+ * @version 1.26.0
  * @author Wichit Wongta
  *
  * Pre-built schemas for tbt-doc-form. Drop one in and you have a working
  * ERP document page (lookup data goes through `optionLists`).
  *
  * Usage:
- *   import { PO_SCHEMA } from '/sc/SuiteScripts/Teibto/ds/v1.25.0/tbt-doc-schemas.js';
+ *   import { PO_SCHEMA } from '/sc/SuiteScripts/Teibto/ds/v1.26.0/tbt-doc-schemas.js';
  *   <tbt-doc-form .schema=${PO_SCHEMA} .optionLists=${refData} ...></tbt-doc-form>
  *
  * Lookup keys consumers should provide in `optionLists`:
  *   vendors, customers, subsidiaries, departments, currencies,
- *   payment-terms, ship-via, sales-reps, terms.
+ *   payment-terms, payment-methods, ship-via, sales-reps,
+ *   sales-orders, fulfillment-statuses, bank-accounts,
+ *   customer-categories.
  */
 
 /* ── Purchase Order ────────────────────────────────────────────── */
@@ -207,6 +209,142 @@ export const INVOICE_SCHEMA = {
     { name: 'cancel', label: 'Cancel', variant: 'secondary' },
     { name: 'print',  label: 'Print',  variant: 'secondary', icon: 'printer' },
     { name: 'email',  label: 'Email',  variant: 'secondary', icon: 'mail' },
+    { name: 'save',   label: 'Save',   variant: 'primary',   icon: 'device-floppy', submit: true },
+  ],
+};
+
+/* ── Quotation ─────────────────────────────────────────────────── */
+
+export const QUOTATION_SCHEMA = {
+  title: 'Quotation',
+  sections: [
+    {
+      title: 'Document info',
+      columns: 4,
+      fields: [
+        { name: 'tranid',     label: 'Quotation no.', type: 'text',     required: true },
+        { name: 'customer',   label: 'Customer',      type: 'dropdown', required: true, searchable: true, options: 'customers' },
+        { name: 'date',       label: 'Quote date',    type: 'date',     required: true },
+        { name: 'expirydate', label: 'Expiry date',   type: 'date',     required: true },
+        { name: 'salesrep',   label: 'Sales rep',     type: 'dropdown', searchable: true, options: 'sales-reps' },
+        { name: 'subsidiary', label: 'Subsidiary',    type: 'dropdown', options: 'subsidiaries' },
+        { name: 'currency',   label: 'Currency',      type: 'dropdown', options: 'currencies' },
+        { name: 'terms',      label: 'Payment terms', type: 'dropdown', options: 'payment-terms' },
+        { name: 'memo',       label: 'Memo',          type: 'textarea', rows: 3, span: 2 },
+      ],
+    },
+    {
+      title: 'Line items',
+      type: 'lines',
+      currency: '฿',
+      vatRate: 0.07,
+      maxHeight: '320px',
+    },
+    {
+      title: 'Approval flow',
+      type: 'approval',
+      orientation: 'horizontal',
+    },
+  ],
+  actions: [
+    { name: 'cancel',     label: 'Cancel',      variant: 'secondary' },
+    { name: 'save',       label: 'Save',        variant: 'primary',   icon: 'device-floppy' },
+    { name: 'print',      label: 'Print',       variant: 'secondary', icon: 'printer' },
+    { name: 'email',      label: 'Email',       variant: 'secondary', icon: 'mail' },
+    { name: 'convert',    label: 'Convert to SO', variant: 'primary', icon: 'arrow-right', submit: true },
+  ],
+};
+
+/* ── Item Fulfillment ──────────────────────────────────────────── */
+
+/**
+ * Note: the "Picked items" table has a different column shape from
+ * tbt-line-items (qty-ordered / qty-picked / qty-remaining instead
+ * of qty/unit/price/account). Until tbt-line-items supports
+ * configurable columns, fulfillment demos render this table inline
+ * via tbt-table inside the consumer page rather than via a
+ * type:'lines' section here.
+ */
+export const FULFILLMENT_SCHEMA = {
+  title: 'Item Fulfillment',
+  sections: [
+    {
+      title: 'Document info',
+      columns: 4,
+      fields: [
+        { name: 'tranid',      label: 'Fulfillment no.', type: 'text',     required: true },
+        { name: 'so_number',   label: 'Sales order',     type: 'dropdown', required: true, searchable: true, options: 'sales-orders' },
+        { name: 'customer',    label: 'Customer',        type: 'text',     readonly: true },
+        { name: 'date',        label: 'Ship date',       type: 'date',     required: true },
+        { name: 'ship_via',    label: 'Ship via',        type: 'dropdown', options: 'ship-via' },
+        { name: 'tracking',    label: 'Tracking no.',    type: 'text' },
+        { name: 'weight',      label: 'Weight (kg)',     type: 'number', min: '0', step: '0.01' },
+        { name: 'status',      label: 'Status',          type: 'dropdown', options: 'fulfillment-statuses' },
+      ],
+    },
+    {
+      title: 'Shipping address',
+      columns: 1,
+      fields: [
+        { name: 'ship_to', type: 'address', label: 'Ship to', readonly: true },
+      ],
+    },
+    {
+      title: 'Notes',
+      columns: 1,
+      fields: [
+        { name: 'memo', label: 'Shipping notes', type: 'textarea', rows: 3 },
+      ],
+    },
+    {
+      title: 'Approval flow',
+      type: 'approval',
+      orientation: 'horizontal',
+    },
+  ],
+  actions: [
+    { name: 'cancel', label: 'Cancel', variant: 'secondary' },
+    { name: 'save',   label: 'Save',   variant: 'primary',   icon: 'device-floppy' },
+    { name: 'ship',   label: 'Mark as shipped', variant: 'primary', icon: 'truck-delivery', submit: true },
+  ],
+};
+
+/* ── Customer Receipt (Payment) ────────────────────────────────── */
+
+/**
+ * The "Apply to invoice" section has a different shape from
+ * tbt-line-items (invoice-number / open-balance / apply-amount
+ * instead of qty/price/account). Demos render this via tbt-table
+ * inside the consumer page until tbt-line-items supports
+ * configurable columns.
+ */
+export const RECEIPT_SCHEMA = {
+  title: 'Customer Receipt',
+  sections: [
+    {
+      title: 'Document info',
+      columns: 4,
+      fields: [
+        { name: 'tranid',       label: 'Receipt no.',     type: 'text',     required: true },
+        { name: 'customer',     label: 'Customer',        type: 'dropdown', required: true, searchable: true, options: 'customers' },
+        { name: 'date',         label: 'Receipt date',    type: 'date',     required: true },
+        { name: 'payment_method', label: 'Payment method', type: 'dropdown', required: true, options: 'payment-methods' },
+        { name: 'amount',       label: 'Amount received', type: 'number',   required: true, min: '0', step: '0.01' },
+        { name: 'currency',     label: 'Currency',        type: 'dropdown', options: 'currencies' },
+        { name: 'reference',    label: 'Reference / Cheque no.', type: 'text' },
+        { name: 'bank_account', label: 'Deposit to',      type: 'dropdown', options: 'bank-accounts' },
+        { name: 'memo',         label: 'Memo',            type: 'textarea', rows: 2, span: 2 },
+      ],
+    },
+    {
+      title: 'Audit log',
+      type: 'audit',
+      maxHeight: '280px',
+    },
+  ],
+  actions: [
+    { name: 'cancel', label: 'Cancel', variant: 'secondary' },
+    { name: 'print',  label: 'Print receipt', variant: 'secondary', icon: 'printer' },
     { name: 'save',   label: 'Save',   variant: 'primary',   icon: 'device-floppy', submit: true },
   ],
 };

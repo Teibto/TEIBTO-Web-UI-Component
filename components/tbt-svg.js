@@ -1,6 +1,6 @@
 /**
  * @component tbt-svg
- * @version 1.25.0
+ * @version 1.26.0
  * @author Wichit Wongta
  *
  * SVG illustration component — built-in named illustrations, external URL fetch,

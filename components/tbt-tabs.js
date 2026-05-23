@@ -1,6 +1,6 @@
 /**
  * @component tbt-tabs
- * @version 1.25.0
+ * @version 1.26.0
  * @author Wichit Wongta
  *
  * Horizontal tab switcher with client-side panels.
