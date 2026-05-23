@@ -9,6 +9,16 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.24.0] — 2026-05-23
+
+### Added
+- `tbt-dropdown`: `searchable` boolean prop. When set, swaps the native `<select>` for a custom popover that includes a search input filtering options by label (case-insensitive). Existing non-searchable usage is unchanged.
+- `tbt-multiselect`: `searchable` boolean prop. Adds a search input at the top of the option panel; filters the checkbox list as you type. Selection logic unchanged.
+
+Both popovers reset the query when closed, focus the search input when opened, dismiss on Escape / outside click, and show an empty-state message when no options match.
+
+---
+
 ## [1.23.0] — 2026-05-23
 
 ### Added

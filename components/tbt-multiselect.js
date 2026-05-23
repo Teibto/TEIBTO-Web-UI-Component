@@ -1,6 +1,6 @@
 /**
  * @component tbt-multiselect
- * @version 1.23.0
+ * @version 1.24.0
  * @author Wichit Wongta
  *
  * Multi-select with chip display and dropdown checkbox list.
@@ -38,7 +38,9 @@ class TbtMultiselect extends LitElement {
     required:    { type: Boolean, reflect: true },
     disabled:    { type: Boolean, reflect: true },
     error:       { type: String, reflect: true },
-    _open:       { state: true }
+    searchable:  { type: Boolean },
+    _open:       { state: true },
+    _query:      { state: true },
   };
 
   constructor() {
@@ -48,6 +50,7 @@ class TbtMultiselect extends LitElement {
     this.value = [];
     this.placeholder = 'Select…';
     this._open = false;
+    this._query = '';
   }
 
   static styles = css`
@@ -110,6 +113,27 @@ class TbtMultiselect extends LitElement {
     .option:hover { background: var(--tbt-bg-hover); }
     .option.selected { background: var(--tbt-primary-bg); color: var(--tbt-primary-text); }
     input[type="checkbox"] { accent-color: var(--tbt-primary); width: 15px; height: 15px; flex-shrink: 0; }
+    .search {
+      position: sticky; top: 0; z-index: 1;
+      padding: var(--tbt-space-1) var(--tbt-space-2);
+      background: var(--tbt-bg-card);
+      border-bottom: 1px solid var(--tbt-border);
+    }
+    .search input {
+      width: 100%; box-sizing: border-box;
+      font-family: inherit; font-size: var(--tbt-size-sm);
+      color: var(--tbt-text-primary); background: var(--tbt-bg-page);
+      border: 1px solid var(--tbt-border); border-radius: var(--tbt-radius-sm);
+      padding: 5px var(--tbt-space-2); outline: 0;
+    }
+    .search input:focus {
+      border-color: var(--tbt-primary-light);
+      box-shadow: var(--tbt-shadow-focus);
+    }
+    .empty-msg {
+      padding: var(--tbt-space-3); font-size: var(--tbt-size-sm);
+      color: var(--tbt-text-muted); text-align: center;
+    }
     .error-msg { margin-top: var(--tbt-space-1); font-size: var(--tbt-size-xs);
       color: var(--tbt-danger-text); display: flex; align-items: center; gap: 4px; }
     .error-icon { font-size: 12px; }
@@ -131,6 +155,12 @@ class TbtMultiselect extends LitElement {
   updated(changed) {
     if (changed.has('_open')) {
       this.toggleAttribute('open', this._open);
+      if (this._open && this.searchable) {
+        this._query = '';
+        this.updateComplete.then(() => {
+          this.shadowRoot.querySelector('.search input')?.focus();
+        });
+      }
     }
   }
 
@@ -175,6 +205,10 @@ class TbtMultiselect extends LitElement {
 
   render() {
     const selected = this.options.filter(o => this.value.includes(String(o.value)));
+    const q = (this._query ?? '').toLowerCase();
+    const filtered = this.searchable && q
+      ? this.options.filter(o => String(o.label ?? '').toLowerCase().includes(q))
+      : this.options;
     return html`
       ${tablerLink}
       ${this.label ? html`
@@ -200,14 +234,24 @@ class TbtMultiselect extends LitElement {
         <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
       </div>
       <div class="dropdown" role="listbox" aria-multiselectable="true">
-        ${this.options.map(o => html`
-          <div class="option ${this.value.includes(String(o.value)) ? 'selected' : ''}"
-            role="option"
-            aria-selected=${this.value.includes(String(o.value)) ? 'true' : 'false'}
-            @click=${() => this._toggle(String(o.value))}>
-            <input type="checkbox" .checked=${this.value.includes(String(o.value))} tabindex="-1" readonly>
-            ${o.label}
-          </div>`)}
+        ${this.searchable ? html`
+          <div class="search" @click=${e => e.stopPropagation()}>
+            <input type="text"
+              placeholder="Search…"
+              .value=${this._query ?? ''}
+              @input=${e => { this._query = e.target.value; }}
+              @keydown=${e => { if (e.key === 'Escape') { e.preventDefault(); this._open = false; } }}>
+          </div>` : ''}
+        ${filtered.length === 0
+          ? html`<div class="empty-msg">No options match</div>`
+          : filtered.map(o => html`
+            <div class="option ${this.value.includes(String(o.value)) ? 'selected' : ''}"
+              role="option"
+              aria-selected=${this.value.includes(String(o.value)) ? 'true' : 'false'}
+              @click=${() => this._toggle(String(o.value))}>
+              <input type="checkbox" .checked=${this.value.includes(String(o.value))} tabindex="-1" readonly>
+              ${o.label}
+            </div>`)}
       </div>
       ${this.error ? html`
         <div class="error-msg">

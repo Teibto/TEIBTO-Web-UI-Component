@@ -388,6 +388,13 @@
   <tbt-dropdown id="dd3" label="With error" error="Department is required" required></tbt-dropdown>
   <tbt-dropdown id="dd4" label="Disabled" disabled></tbt-dropdown>
 </div>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">Searchable — type-ahead filter over a long list</div>
+<div class="form-grid">
+  <tbt-dropdown id="dd-search" searchable label="Vendor" placeholder="Choose a vendor..."></tbt-dropdown>
+  <tbt-dropdown id="dd-search-2" searchable label="Account" placeholder="Choose an account..."></tbt-dropdown>
+</div>
+
 <script type="module">
   const statuses = [
     {value:'A', label:'Approved'}, {value:'P', label:'Pending'},
@@ -399,6 +406,26 @@
   document.getElementById('dd2').options = currencies;
   document.getElementById('dd3').options = depts;
   document.getElementById('dd4').options = statuses;
+  document.getElementById('dd-search').options = [
+    {value:'V001', label:'บจก. เทสโต้ ซัพพลาย'},
+    {value:'V002', label:'บจก. กรุงเทพการพิมพ์ จำกัด'},
+    {value:'V003', label:'Acme Office Supplies'},
+    {value:'V004', label:'Global Logistics Co.'},
+    {value:'V005', label:'Pacific Print House'},
+    {value:'V006', label:'Sunrise IT Services'},
+    {value:'V007', label:'Bangkok Furniture House'},
+    {value:'V008', label:'Northern Lighting Ltd.'},
+  ];
+  document.getElementById('dd-search-2').options = [
+    {value:'1100', label:'1100 — Cash on hand'},
+    {value:'1200', label:'1200 — Accounts receivable'},
+    {value:'2100', label:'2100 — Accounts payable'},
+    {value:'4100', label:'4100 — Sales revenue'},
+    {value:'5100', label:'5100 — Office supplies expense'},
+    {value:'5200', label:'5200 — IT equipment expense'},
+    {value:'5300', label:'5300 — Marketing expense'},
+    {value:'5400', label:'5400 — Travel expense'},
+  ];
 </script>
 
 <!-- ─── MULTISELECT ─────────────────────────────────── -->
@@ -407,6 +434,12 @@
   <tbt-multiselect id="ms1" label="Subsidiary" placeholder="Select subsidiaries..."></tbt-multiselect>
   <tbt-multiselect id="ms2" label="Department (pre-selected)" placeholder="Select..."></tbt-multiselect>
 </div>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-6)">Searchable — filter chips list</div>
+<div class="form-grid">
+  <tbt-multiselect id="ms-search" searchable label="Tags" placeholder="Select tags..."></tbt-multiselect>
+</div>
+
 <div id="ms-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">Select subsidiaries above…</div>
 <script type="module">
   const subs = [
@@ -422,6 +455,16 @@
   const ms2 = document.getElementById('ms2');
   ms2.options = [{value:'ops', label:'Operations'},{value:'fin', label:'Finance'},{value:'mkt', label:'Marketing'}];
   ms2.value = ['ops', 'fin'];
+  document.getElementById('ms-search').options = [
+    {value:'urgent',     label:'Urgent'},
+    {value:'recurring',  label:'Recurring'},
+    {value:'verified',   label:'Verified'},
+    {value:'on-hold',    label:'On hold'},
+    {value:'priority',   label:'High priority'},
+    {value:'review',     label:'Needs review'},
+    {value:'archived',   label:'Archived'},
+    {value:'flagged',    label:'Flagged'},
+  ];
 </script>
 
 <!-- ─── DATEPICKER ─────────────────────────────────── -->
