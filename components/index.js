@@ -1,6 +1,6 @@
 /**
  * TBT-DS — component barrel
- * @version 1.26.1
+ * @version 1.26.2
  * @author Wichit Wongta
  *
  * Import this single file to register all tbt-* custom elements.

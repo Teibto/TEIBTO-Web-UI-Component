@@ -1,6 +1,6 @@
 /**
  * @component tbt-approval-flow
- * @version 1.26.1
+ * @version 1.26.2
  * @author Wichit Wongta
  *
  * Approval chain visualization showing each step's status, approver, and comment.
