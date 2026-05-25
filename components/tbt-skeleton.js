@@ -1,6 +1,6 @@
 /**
  * @component tbt-skeleton
- * @version 1.26.1
+ * @version 1.26.2
  * @author Wichit Wongta
  *
  * Animated loading placeholder. Use while fetching data to reduce
@@ -36,6 +36,12 @@ class TbtSkeleton extends LitElement {
     super();
     this.variant = 'text';
     this.lines   = 1;
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.setAttribute('role', 'status');
+    if (!this.hasAttribute('aria-label')) this.setAttribute('aria-label', 'Loading...');
   }
 
   static styles = css`
