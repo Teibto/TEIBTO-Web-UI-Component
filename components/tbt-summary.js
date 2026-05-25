@@ -1,6 +1,6 @@
 /**
  * @component tbt-summary
- * @version 1.26.0
+ * @version 1.26.1
  * @author Wichit Wongta
  *
  * Document totals block — subtotal, VAT, grand total.
