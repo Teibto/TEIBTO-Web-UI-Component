@@ -9,6 +9,33 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.26.1] — 2026-05-25
+
+### Fixed
+
+- **`tbt-search`** — debounce timer ไม่ถูก clear เมื่อ element ถูก unmount; เพิ่ม `disconnectedCallback` ด้วย `clearTimeout(this._timer)` ป้องกัน event ที่ค้างอยู่หลัง unmount
+- **`tbt-multiselect`** — outside-click ปิด dropdown ผิดเวลาเมื่อคลิกใน Shadow DOM ของ component อื่น; เปลี่ยนจาก `this.contains(e.target)` เป็น `e.composedPath().includes(this)`
+- **`tbt-dropdown`** — bug เดียวกับ `tbt-multiselect` ใน searchable mode; แก้ด้วย `composedPath()` เช่นกัน
+- **`tbt-menubar`** — `tbt-menu-group` outside-click; แก้ด้วย `composedPath()` เช่นกัน
+- **`tbt-input`** — error focus ring ใช้ hardcoded `rgb(239 68 68 / 0.18)` แทน token; เปลี่ยนเป็น `color-mix(in srgb, var(--tbt-danger) 18%, transparent)`
+- **`tbt-checkbox`** — error focus ring เดียวกัน; แก้ด้วย `color-mix()` เช่นกัน
+- **`tbt-textarea`** — error focus ring เดียวกัน; แก้ด้วย `color-mix()` เช่นกัน
+- **`tbt-approval-flow`** — `@keyframes tbt-flow-pulse` ใช้ hardcoded `rgb(13 17 113 / 0.30)`; เปลี่ยนเป็น `color-mix(in srgb, var(--tbt-primary) 30%, transparent)`
+- **`tbt-modal`** — (1) `querySelector('[slot="footer"]')` ใน `render()` ไม่ reactive กับ slot ที่เพิ่มทีหลัง; แก้ด้วย `slotchange` event + `_hasCustomFooter` reactive state — (2) backdrop ใช้ hardcoded `rgb(15 23 42 / 0.55)`; เปลี่ยนเป็น `var(--tbt-overlay)` — (3) focus ไม่กลับไปที่ element เดิมหลังปิด modal; เพิ่ม `_prevFocus` restore ใน `updated()`
+- **`tbt-app-shell`** — sidebar shadow และ mobile backdrop ใช้ hardcoded `rgb()`; เปลี่ยนเป็น `var(--tbt-shadow-sidebar)` และ `var(--tbt-overlay-sm)`
+- **`tbt-toggle`** — thumb shadow ใช้ hardcoded `rgb(0 0 0 / 0.18)`; เปลี่ยนเป็น `color-mix(in srgb, black 18%, transparent)`
+- **`tbt-form`** — (1) nested `tbt-form` ทำให้ submit button ของ inner form ยิง `_submit()` บน outer form ด้วย; แก้ด้วย closest-form boundary check — (2) `_collectData()` เก็บ inputs ของ nested form ซ้ำซ้อน; เพิ่ม `el.closest('tbt-form') !== this` filter
+- **`tbt-section`** — `role="button"` บน `<header>` element ทับ landmark semantics; `aria-expanded` อยู่ผิด element; แก้โดยใส่ `<button class="toggle-btn">` ไว้ใน `<header>` แทน พร้อม `aria-controls` และ `:focus-visible` ring
+- **`tbt-table`** — `_colWidths` ไม่ถูก reset เมื่อ `columns` prop เปลี่ยน; ทำให้ column width เก่าค้างอยู่; แก้ใน `updated()` ให้ clear และ re-measure เมื่อ `columns` เปลี่ยน
+
+### Added (theme tokens)
+
+- `--tbt-overlay` — `rgb(15 23 42 / 0.55)` สำหรับ modal backdrop
+- `--tbt-overlay-sm` — `rgb(15 23 42 / 0.45)` สำหรับ sidebar backdrop (mobile)
+- `--tbt-shadow-sidebar` — `4px 0 24px rgb(0 0 0 / 0.18)` สำหรับ sidebar slide-in shadow
+
+---
+
 ## [1.26.0] — 2026-05-23
 
 ### Added

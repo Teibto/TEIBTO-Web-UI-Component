@@ -1,6 +1,6 @@
 /**
  * @component tbt-skeleton
- * @version 1.26.0
+ * @version 1.26.1
  * @author Wichit Wongta
  *
  * Animated loading placeholder. Use while fetching data to reduce
