@@ -1,6 +1,6 @@
 /**
  * @component tbt-button
- * @version 1.26.1
+ * @version 1.26.2
  * @author Wichit Wongta
  *
  * Standard action button with brand variants.
@@ -25,13 +25,15 @@ class TbtButton extends LitElement {
     icon:     { type: String },
     loading:  { type: Boolean, reflect: true },
     disabled: { type: Boolean, reflect: true },
-    size:     { type: String, reflect: true }
+    size:     { type: String, reflect: true },
+    type:     { type: String },
   };
 
   constructor() {
     super();
     this.variant = 'primary';
-    this.size = 'md';
+    this.size    = 'md';
+    this.type    = 'button';
   }
 
   static styles = css`
@@ -163,6 +165,7 @@ class TbtButton extends LitElement {
     return html`
       ${tablerLink}
       <button
+        type=${this.type}
         ?disabled=${this.disabled || this.loading}
         @click=${this._handleClick}>
         ${this.loading
