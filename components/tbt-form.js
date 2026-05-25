@@ -103,7 +103,7 @@ class TbtForm extends LitElement {
     this.querySelectorAll(FORM_INPUTS).forEach(el => {
       const name = el.name || el.getAttribute('name');
       if (!name) return;
-      // multiselect returns array; everything else returns string
+      if (el.closest('tbt-form') !== this) return;
       data[name] = el.value ?? null;
     });
     return data;
