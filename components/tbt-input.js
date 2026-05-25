@@ -101,7 +101,7 @@ class TbtInput extends LitElement {
       border-color: var(--tbt-danger);
     }
     :host([error]) input:focus {
-      box-shadow: 0 0 0 3px rgb(239 68 68 / 0.18);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--tbt-danger) 18%, transparent);
     }
     :host([disabled]) input {
       background: var(--tbt-bg-hover);

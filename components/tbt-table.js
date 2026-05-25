@@ -295,7 +295,10 @@ class TbtTable extends LitElement {
       this.style.setProperty('--tbt-table-max-height', this.maxHeight || 'none');
       this.style.setProperty('--_scroll-y', this.maxHeight ? 'auto' : 'clip');
     }
-    if ((changed.has('columns') || changed.has('rows')) && this._colWidths.length === 0) {
+    if (changed.has('columns')) {
+      this._colWidths = [];
+      this._measureColWidths();
+    } else if (changed.has('rows') && this._colWidths.length === 0) {
       this._measureColWidths();
     }
   }

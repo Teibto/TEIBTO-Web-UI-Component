@@ -70,8 +70,8 @@ class TbtApprovalFlow extends LitElement {
     .dot.pending  { background: var(--tbt-bg-card);    color: var(--tbt-text-muted);   border-color: var(--tbt-border-strong); }
 
     @keyframes tbt-flow-pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgb(13 17 113 / 0.30); }
-      50%       { box-shadow: 0 0 0 7px rgb(13 17 113 / 0); }
+      0%, 100% { box-shadow: 0 0 0 0   color-mix(in srgb, var(--tbt-primary) 30%, transparent); }
+      50%       { box-shadow: 0 0 0 7px transparent; }
     }
 
     /* ══ Shared chip ══════════════════════════════════════ */

@@ -39,10 +39,11 @@ import { tablerLink } from './tbt-icons-css.js';
  */
 class TbtModal extends LitElement {
   static properties = {
-    open:    { type: Boolean, reflect: true },
-    title:   { type: String },
-    variant: { type: String, reflect: true },
-    size:    { type: String, reflect: true }
+    open:             { type: Boolean, reflect: true },
+    title:            { type: String },
+    variant:          { type: String, reflect: true },
+    size:             { type: String, reflect: true },
+    _hasCustomFooter: { state: true },
   };
 
   constructor() {
@@ -50,6 +51,8 @@ class TbtModal extends LitElement {
     this.open = false;
     this.variant = 'default';
     this.size = 'md';
+    this._hasCustomFooter = false;
+    this._prevFocus = null;
   }
 
   static styles = css`
@@ -149,10 +152,17 @@ class TbtModal extends LitElement {
     const dlg = this.shadowRoot?.querySelector('dialog');
     if (!dlg) return;
     if (this.open) {
+      this._prevFocus = document.activeElement;
       dlg.showModal();
     } else {
       dlg.close();
+      this._prevFocus?.focus();
+      this._prevFocus = null;
     }
+  }
+
+  _onFooterSlotChange(e) {
+    this._hasCustomFooter = e.target.assignedElements().length > 0;
   }
 
   _onBackdropClick(e) {
@@ -189,7 +199,6 @@ class TbtModal extends LitElement {
 
   render() {
     const icon = this._variantIcon();
-    const hasCustomFooter = this.querySelector('[slot="footer"]');
     return html`
       ${tablerLink}
       <dialog aria-labelledby="modal-title" @click=${this._onBackdropClick} @cancel=${this._onNativeCancel}>
@@ -205,17 +214,16 @@ class TbtModal extends LitElement {
           <slot></slot>
         </div>
         <div class="modal-footer">
-          ${hasCustomFooter
-            ? html`<slot name="footer"></slot>`
-            : html`
-              <div class="default-footer">
-                <tbt-button variant="secondary" @click=${this._cancel}>Cancel</tbt-button>
-                <tbt-button
-                  variant=${this.variant === 'danger' ? 'danger' : 'primary'}
-                  @click=${this._confirm}>
-                  ${this.variant === 'danger' ? 'Delete' : 'Confirm'}
-                </tbt-button>
-              </div>`}
+          <slot name="footer" @slotchange=${this._onFooterSlotChange}></slot>
+          ${!this._hasCustomFooter ? html`
+            <div class="default-footer">
+              <tbt-button variant="secondary" @click=${this._cancel}>Cancel</tbt-button>
+              <tbt-button
+                variant=${this.variant === 'danger' ? 'danger' : 'primary'}
+                @click=${this._confirm}>
+                ${this.variant === 'danger' ? 'Delete' : 'Confirm'}
+              </tbt-button>
+            </div>` : ''}
         </div>
       </dialog>
     `;
