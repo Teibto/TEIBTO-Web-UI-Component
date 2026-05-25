@@ -70,7 +70,7 @@ class TbtTextarea extends LitElement {
       box-shadow: var(--tbt-shadow-focus);
     }
     :host([error]) textarea { border-color: var(--tbt-danger); }
-    :host([error]) textarea:focus { box-shadow: 0 0 0 3px rgb(239 68 68 / 0.18); }
+    :host([error]) textarea:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--tbt-danger) 18%, transparent); }
     :host([disabled]) textarea {
       background: var(--tbt-bg-hover); color: var(--tbt-text-muted); cursor: not-allowed;
     }

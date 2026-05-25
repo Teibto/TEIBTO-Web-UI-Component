@@ -82,7 +82,7 @@ class TbtToggle extends LitElement {
       width: 16px; height: 16px;
       border-radius: 50%;
       background: white;
-      box-shadow: 0 1px 3px rgb(0 0 0 / 0.18);
+      box-shadow: 0 1px 3px color-mix(in srgb, black 18%, transparent);
       flex-shrink: 0;
       transition: transform var(--tbt-transition-base);
     }
