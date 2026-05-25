@@ -1,6 +1,6 @@
 /**
  * @component tbt-tabs
- * @version 1.26.1
+ * @version 1.26.2
  * @author Wichit Wongta
  *
  * Horizontal tab switcher with client-side panels.
@@ -38,9 +38,6 @@ class TbtTabsPanel extends LitElement {
     super.connectedCallback();
     this.setAttribute('role', 'tabpanel');
     if (!this.id) this.id = `tbt-tabs-panel-${++TbtTabsPanel._uid}`;
-    if (this.label && !this.hasAttribute('aria-label')) {
-      this.setAttribute('aria-label', this.label);
-    }
   }
 
   render() {
@@ -57,6 +54,8 @@ customElements.define('tbt-tabs-panel', TbtTabsPanel);
  * @slot - tbt-tab elements
  */
 class TbtTabs extends LitElement {
+  static _uid = 0;
+
   static properties = {
     active:  { type: Number, reflect: true },
     _labels: { state: true },
@@ -64,8 +63,9 @@ class TbtTabs extends LitElement {
 
   constructor() {
     super();
-    this.active  = 0;
-    this._labels = [];
+    this.active   = 0;
+    this._labels  = [];
+    this._tabsUid = ++TbtTabs._uid;
   }
 
   _tabs() {
@@ -95,7 +95,10 @@ class TbtTabs extends LitElement {
   }
 
   _sync() {
-    this._tabs().forEach((t, i) => { t.active = i === this.active; });
+    this._tabs().forEach((t, i) => {
+      t.active = i === this.active;
+      t.setAttribute('aria-labelledby', `tbt-tab-${this._tabsUid}-${i}`);
+    });
   }
 
   updated(changed) {
@@ -157,6 +160,7 @@ class TbtTabs extends LitElement {
       <div class="tab-bar" role="tablist" @keydown=${this._onKeydown}>
         ${this._labels.map((label, i) => html`
           <button
+            id="tbt-tab-${this._tabsUid}-${i}"
             class="tab"
             role="tab"
             tabindex=${this.active === i ? '0' : '-1'}

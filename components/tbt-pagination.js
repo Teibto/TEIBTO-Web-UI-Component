@@ -1,6 +1,6 @@
 /**
  * @component tbt-pagination
- * @version 1.26.1
+ * @version 1.26.2
  * @author Wichit Wongta
  *
  * Standalone pagination bar. Used internally by tbt-table and usable
@@ -103,7 +103,7 @@ class TbtPagination extends LitElement {
           <button class="page-btn" ?disabled=${this.page === 1}
             aria-label="Previous page" @click=${() => this._go(this.page - 1)}>‹</button>
           ${this._pageButtons().map(p => p === '…'
-            ? html`<span class="page-btn" style="border:none;cursor:default">…</span>`
+            ? html`<span class="page-btn" style="border:none;cursor:default" aria-hidden="true">…</span>`
             : html`<button class="page-btn ${p === this.page ? 'active' : ''}"
                 aria-label="Page ${p}" aria-current=${p === this.page ? 'true' : nothing}
                 @click=${() => this._go(p)}>${p}</button>`)}
