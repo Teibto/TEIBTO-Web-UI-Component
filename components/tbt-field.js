@@ -1,6 +1,6 @@
 /**
  * @component tbt-field
- * @version 1.26.1
+ * @version 1.26.2
  * @author Wichit Wongta
  *
  * Label + value pair for displaying record data.
@@ -23,8 +23,14 @@ class TbtField extends LitElement {
     label:    { type: String },
     value:    { type: String },
     required: { type: Boolean, reflect: true },
-    muted:    { type: Boolean, reflect: true }
+    muted:    { type: Boolean, reflect: true },
+    _hasSlot: { state: true },
   };
+
+  constructor() {
+    super();
+    this._hasSlot = false;
+  }
 
   static styles = css`
     :host {
@@ -57,13 +63,12 @@ class TbtField extends LitElement {
   `;
 
   render() {
-    const hasSlot = this._hasSlotContent();
     return html`
       <span class="label">
         ${this.label}${this.required ? html`<span class="required">*</span>` : ''}
       </span>
       <div class="value">
-        ${hasSlot
+        ${this._hasSlot
           ? html`<slot @slotchange=${this._onSlotChange}></slot>`
           : (this.value
               ? html`${this.value}<slot @slotchange=${this._onSlotChange} style="display:none"></slot>`
@@ -72,17 +77,10 @@ class TbtField extends LitElement {
     `;
   }
 
-  _hasSlotContent() {
-    const slot = this.shadowRoot?.querySelector('slot');
-    if (!slot) return false;
-    return slot.assignedNodes({ flatten: true }).some(n => {
-      if (n.nodeType === Node.TEXT_NODE) return n.textContent.trim().length > 0;
-      return true;
-    });
-  }
-
-  _onSlotChange() {
-    this.requestUpdate();
+  _onSlotChange(e) {
+    this._hasSlot = e.target.assignedNodes({ flatten: true }).some(n =>
+      n.nodeType === Node.TEXT_NODE ? n.textContent.trim().length > 0 : true
+    );
   }
 }
 
