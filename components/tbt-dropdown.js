@@ -57,7 +57,7 @@ class TbtDropdown extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this._onOutside = (e) => {
-      if (!this.contains(e.target)) this._open = false;
+      if (!e.composedPath().includes(this)) this._open = false;
     };
     document.addEventListener('click', this._onOutside);
   }
