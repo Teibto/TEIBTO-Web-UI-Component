@@ -1,6 +1,6 @@
 /**
  * @component tbt-line-items
- * @version 1.26.1
+ * @version 1.26.2
  * @author Wichit Wongta
  *
  * Self-contained inline-editable line items table with automatic totals.
@@ -189,6 +189,9 @@ class TbtLineItems extends LitElement {
     this._rows          = [];
     this._nextId        = 1;
     this._totals        = { subtotal:0, vat:0, total:0 };
+    this._boundInput    = e => this._onInput(e);
+    this._boundChange   = e => this._onChange(e);
+    this._boundClick    = e => this._onClick(e);
   }
 
   /* ── Public API ───────────────────────────────────────────── */
@@ -246,10 +249,17 @@ class TbtLineItems extends LitElement {
 
   firstUpdated() {
     this._renderTbody();
-    const tbody = this.shadowRoot.querySelector('tbody');
-    tbody?.addEventListener('input',  e => this._onInput(e));
-    tbody?.addEventListener('change', e => this._onChange(e));
-    tbody?.addEventListener('click',  e => this._onClick(e));
+    this._tbody = this.shadowRoot.querySelector('tbody');
+    this._tbody?.addEventListener('input',  this._boundInput);
+    this._tbody?.addEventListener('change', this._boundChange);
+    this._tbody?.addEventListener('click',  this._boundClick);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._tbody?.removeEventListener('input',  this._boundInput);
+    this._tbody?.removeEventListener('change', this._boundChange);
+    this._tbody?.removeEventListener('click',  this._boundClick);
   }
 
   render() {
