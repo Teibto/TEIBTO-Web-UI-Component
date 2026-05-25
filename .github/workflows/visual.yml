@@ -37,5 +37,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: visual-diffs
-          path: tests/visual/__snapshots__/**/*-diff.png
+          path: test-results/
+          retention-days: 7
+
+      - name: Upload new baselines (when no snapshot existed)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-baselines-linux
+          path: tests/visual/__snapshots__/
           retention-days: 7

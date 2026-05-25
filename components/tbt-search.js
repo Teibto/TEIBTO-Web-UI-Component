@@ -35,6 +35,11 @@ class TbtSearch extends LitElement {
     this._timer = null;
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    clearTimeout(this._timer);
+  }
+
   static styles = css`
     :host {
       display: inline-block;

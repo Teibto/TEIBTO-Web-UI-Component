@@ -52,10 +52,16 @@ class TbtForm extends LitElement {
     // Intercept tbt-button[type="submit"] clicks — shadow DOM buttons can't
     // natively submit a form outside their shadow root
     this._onFormClick = (e) => {
-      const isSubmit = e.composedPath().some(
+      const path = e.composedPath();
+      const btn = path.find(
         el => el.tagName === 'TBT-BUTTON' && el.getAttribute('type') === 'submit'
       );
-      if (isSubmit && !this.loading) this._submit();
+      if (!btn) return;
+      const closestForm = path.slice(path.indexOf(btn) + 1).find(
+        el => el.tagName === 'TBT-FORM'
+      );
+      if (closestForm !== this) return;
+      if (!this.loading) this._submit();
     };
     this.addEventListener('click', this._onFormClick);
   }

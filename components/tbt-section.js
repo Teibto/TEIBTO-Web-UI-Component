@@ -49,14 +49,31 @@ class TbtSection extends LitElement {
     header {
       display: flex;
       align-items: center;
-      gap: var(--tbt-space-2);
       padding: var(--tbt-space-4) var(--tbt-space-5);
-      cursor: pointer;
-      user-select: none;
       transition: background var(--tbt-transition-fast);
     }
     header:hover {
       background: var(--tbt-bg-hover);
+    }
+    .toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--tbt-space-2);
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      user-select: none;
+      text-align: left;
+      min-width: 0;
+      color: inherit;
+      font: inherit;
+    }
+    .toggle-btn:focus-visible {
+      outline: 2px solid var(--tbt-primary);
+      outline-offset: 2px;
+      border-radius: var(--tbt-radius-sm);
     }
     .chevron {
       font-size: 14px;
@@ -71,13 +88,14 @@ class TbtSection extends LitElement {
       font-size: 16px;
       color: var(--tbt-text-secondary);
     }
-    h3 {
+    .title-text {
       margin: 0;
       flex: 1;
       font-size: var(--tbt-size-base);
       font-weight: var(--tbt-weight-medium);
       color: var(--tbt-text-primary);
       line-height: 1.4;
+      min-width: 0;
     }
     .actions {
       display: flex;
@@ -104,15 +122,19 @@ class TbtSection extends LitElement {
   render() {
     return html`
       ${tablerLink}
-      <header @click=${this.toggle} role="button" aria-expanded=${!this.collapsed}>
-        <span class="chevron" aria-hidden="true">▾</span>
-        ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
-        <h3>${this.title}</h3>
+      <header>
+        <button class="toggle-btn" @click=${this.toggle}
+          aria-expanded=${!this.collapsed}
+          aria-controls="section-body">
+          <span class="chevron" aria-hidden="true">▾</span>
+          ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
+          <span class="title-text">${this.title}</span>
+        </button>
         <div class="actions" @click=${e => e.stopPropagation()}>
           <slot name="actions"></slot>
         </div>
       </header>
-      <div class="body">
+      <div id="section-body" class="body">
         <slot></slot>
       </div>
     `;
