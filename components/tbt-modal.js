@@ -80,7 +80,7 @@ class TbtModal extends LitElement {
 
     /* Backdrop */
     dialog::backdrop {
-      background: rgb(15 23 42 / 0.55);
+      background: var(--tbt-overlay);
       backdrop-filter: blur(2px);
     }
 

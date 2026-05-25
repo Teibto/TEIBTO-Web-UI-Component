@@ -136,7 +136,7 @@ class TbtAppShell extends LitElement {
     }
     :host([compact]) .sidebar-slot.open {
       transform: translateX(0);
-      box-shadow: 4px 0 24px rgb(0 0 0 / 0.18);
+      box-shadow: var(--tbt-shadow-sidebar);
     }
     :host([compact][no-sidebar]) .sidebar-slot {
       display: none;
@@ -145,7 +145,7 @@ class TbtAppShell extends LitElement {
       position: fixed;
       top: 56px; left: 0; right: 0; bottom: 0;
       z-index: 799;
-      background: rgb(15 23 42 / 0.45);
+      background: var(--tbt-overlay-sm);
       backdrop-filter: blur(2px);
       cursor: pointer;
     }

@@ -97,7 +97,7 @@ class TbtCheckbox extends LitElement {
     }
     :host([error]) .box { border-color: var(--tbt-danger); }
     :host([error]) input:focus-visible + .box {
-      box-shadow: 0 0 0 3px rgb(239 68 68 / 0.18);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--tbt-danger) 18%, transparent);
     }
 
     /* Checkmark (CSS-drawn — no icon font dependency) */
