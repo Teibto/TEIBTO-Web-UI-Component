@@ -9,6 +9,22 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.26.2] — 2026-05-25
+
+### Fixed
+
+- **`tbt-button`** — inner `<button>` ไม่มี `type` attribute ทำให้ browser default เป็น `type="submit"` และ submit native `<form>` โดยไม่ตั้งใจ; เพิ่ม `type` prop (default: `'button'`) และ forward ไปที่ inner button
+- **`tbt-line-items`** — `firstUpdated()` เพิ่ม event listeners ด้วย anonymous arrow functions ที่ลบด้วย `removeEventListener` ไม่ได้ ทำให้ listeners stack เมื่อ component reconnect; เปลี่ยนเป็น bound instance properties + เพิ่ม `disconnectedCallback` สำหรับ cleanup
+- **`tbt-field`** — `_hasSlotContent()` ถูกเรียกใน `render()` โดย query `shadowRoot?.querySelector('slot')` ซึ่งอาจเป็น `null` ใน first render; แก้โดยย้ายเป็น `_hasSlot` reactive state ที่ update ผ่าน `slotchange` event แทน
+
+### Accessibility
+
+- **`tbt-tabs`** — `TbtTabsPanel` ใช้ `aria-label` ผิด pattern; แก้โดยให้ tab buttons มี `id` และ panels ใช้ `aria-labelledby` ชี้ไปที่ button ID ตาม ARIA APG tab pattern
+- **`tbt-skeleton`** — ไม่มี `role="status"` ทำให้ screen reader ไม่ประกาศ loading state; เพิ่ม `role="status"` และ `aria-label="Loading..."` ใน `connectedCallback`
+- **`tbt-pagination`** — ellipsis `…` ไม่มี ARIA annotation ทำให้ screen reader อ่าน "dot dot dot"; เพิ่ม `aria-hidden="true"` บน ellipsis span
+
+---
+
 ## [1.26.1] — 2026-05-25
 
 ### Fixed
