@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-dropdown.js';
 
+const axe = window.axe;
+
 const OPTIONS = [
   { value: 'A', label: 'Apple' },
   { value: 'B', label: 'Banana' },
@@ -118,6 +120,18 @@ describe('tbt-dropdown a11y (searchable)', () => {
     el._open = true;
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('.trigger').hasAttribute('aria-activedescendant')).to.be.false;
+  });
+
+  it('passes axe (searchable, open)', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });
 

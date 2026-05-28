@@ -228,7 +228,6 @@ class TbtDropdown extends LitElement {
       background: var(--tbt-bg-card); border: 1px solid var(--tbt-border);
       border-radius: var(--tbt-radius-md); box-shadow: var(--tbt-shadow-md);
       z-index: var(--tbt-z-dropdown); max-height: 240px; overflow-y: auto;
-      padding: var(--tbt-space-1) 0;
     }
     :host([open]) .dropdown { display: block; }
     .option {
@@ -257,6 +256,7 @@ class TbtDropdown extends LitElement {
       border-color: var(--tbt-primary-light);
       box-shadow: var(--tbt-shadow-focus);
     }
+    [role="listbox"] { padding: var(--tbt-space-1) 0; }
     .empty-msg {
       padding: var(--tbt-space-3); font-size: var(--tbt-size-sm);
       color: var(--tbt-text-muted); text-align: center;
@@ -316,6 +316,7 @@ class TbtDropdown extends LitElement {
   _renderSearchable(isPlaceholder) {
     const selected = this.options.find(o => String(o.value) === String(this.value));
     const filtered = this._filteredOpts;
+    const listboxId = `${this._uid}-listbox`;
     const activeId = this._activeIdx >= 0 && this._activeIdx < filtered.length
       ? `${this._uid}-opt-${filtered[this._activeIdx].value}`
       : nothing;
@@ -326,6 +327,8 @@ class TbtDropdown extends LitElement {
           aria-haspopup="listbox"
           aria-expanded=${this._open ? 'true' : 'false'}
           aria-label=${this.label || this.placeholder}
+          aria-controls=${listboxId}
+          aria-owns=${listboxId}
           aria-activedescendant=${activeId}
           tabindex=${this.disabled ? '-1' : '0'}
           @click=${this._toggleOpen}
@@ -333,12 +336,12 @@ class TbtDropdown extends LitElement {
           ${selected ? selected.label : this.placeholder}
         </div>
         <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
-        <div class="dropdown" role="listbox">
+        <div class="dropdown">
           <div class="search" @click=${e => e.stopPropagation()}>
             <input type="text"
+              aria-label="Search options"
               placeholder="Search…"
               .value=${this._query ?? ''}
-              aria-activedescendant=${activeId}
               @input=${e => { this._query = e.target.value; this._activeIdx = -1; }}
               @keydown=${e => {
                 const fo = this._filteredOpts;
@@ -350,17 +353,19 @@ class TbtDropdown extends LitElement {
                 else if (e.key === 'Enter' && this._activeIdx >= 0) { e.preventDefault(); this._pick(fo[this._activeIdx].value); }
               }}>
           </div>
-          ${filtered.length === 0
-            ? html`<div class="empty-msg">No options match</div>`
-            : filtered.map((o, idx) => html`
-              <div id="${this._uid}-opt-${o.value}"
-                class="option ${String(o.value) === String(this.value) ? 'selected' : ''}"
-                role="option"
-                aria-selected=${String(o.value) === String(this.value) ? 'true' : 'false'}
-                ?data-kbd-active=${idx === this._activeIdx}
-                @click=${() => this._pick(o.value)}>
-                ${o.label}
-              </div>`)}
+          <div id=${listboxId} role="listbox" aria-label=${this.label || this.placeholder}>
+            ${filtered.length === 0
+              ? html`<div class="empty-msg">No options match</div>`
+              : filtered.map((o, idx) => html`
+                <div id="${this._uid}-opt-${o.value}"
+                  class="option ${String(o.value) === String(this.value) ? 'selected' : ''}"
+                  role="option"
+                  aria-selected=${String(o.value) === String(this.value) ? 'true' : 'false'}
+                  ?data-kbd-active=${idx === this._activeIdx}
+                  @click=${() => this._pick(o.value)}>
+                  ${o.label}
+                </div>`)}
+          </div>
         </div>
       </div>`;
   }

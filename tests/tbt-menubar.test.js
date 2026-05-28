@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-menubar.js';
 
+const axe = window.axe;
+
 describe('tbt-menubar', () => {
   it('renders <nav> in shadow DOM', async () => {
     const el = await fixture(html`<tbt-menubar title="Teibto ERP"></tbt-menubar>`);
@@ -101,6 +103,16 @@ describe('tbt-menu-item a11y', () => {
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('a').hasAttribute('aria-current')).to.be.false;
   });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-menu-item label="Dashboard" href="/dashboard"></tbt-menu-item>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
+  });
 });
 
 describe('tbt-menu-group a11y', () => {
@@ -128,5 +140,17 @@ describe('tbt-menu-group a11y', () => {
     const el = await fixture(html`<tbt-menu-group label="ขาย"></tbt-menu-group>`);
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('.dropdown').getAttribute('role')).to.equal('menu');
+  });
+
+  it('passes axe (open)', async () => {
+    const el = await fixture(html`<tbt-menu-group label="ขาย"></tbt-menu-group>`);
+    await el.updateComplete;
+    el._toggle();
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });
