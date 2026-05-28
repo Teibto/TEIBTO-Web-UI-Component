@@ -33,6 +33,7 @@ export * from './tbt-playground.js';
 /* Feedback */
 export * from './tbt-icon.js';
 export * from './tbt-badge.js';
+export * from './tbt-chip.js';
 export * from './tbt-alert.js';
 export * from './tbt-toast.js';
 

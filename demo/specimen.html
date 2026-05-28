@@ -467,6 +467,64 @@
   <tbt-badge variant="primary">Active</tbt-badge>
 </div>
 
+<!-- ─── CHIP ──────────────────────────────────────── -->
+<h2 id="chip">tbt-chip</h2>
+<div class="demo-label">Default — toggle</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)">
+  <tbt-chip id="ch-cat">All</tbt-chip>
+  <tbt-chip selected>Pending</tbt-chip>
+  <tbt-chip>Approved</tbt-chip>
+  <tbt-chip>Rejected</tbt-chip>
+</div>
+
+<div class="demo-label">Variants — selected</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)">
+  <tbt-chip variant="primary"  selected>Primary</tbt-chip>
+  <tbt-chip variant="success"  selected>Success</tbt-chip>
+  <tbt-chip variant="warning"  selected>Warning</tbt-chip>
+  <tbt-chip variant="danger"   selected>Danger</tbt-chip>
+  <tbt-chip variant="info"     selected>Info</tbt-chip>
+</div>
+
+<div class="demo-label">Sizes</div>
+<div style="display:flex;align-items:center;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)">
+  <tbt-chip size="sm">Small</tbt-chip>
+  <tbt-chip>Medium</tbt-chip>
+  <tbt-chip size="lg">Large</tbt-chip>
+</div>
+
+<div class="demo-label">With icon</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)">
+  <tbt-chip icon="circle-check" variant="success" selected>Approved</tbt-chip>
+  <tbt-chip icon="clock"        variant="warning" selected>Pending</tbt-chip>
+  <tbt-chip icon="x-circle"     variant="danger"  selected>Rejected</tbt-chip>
+</div>
+
+<div class="demo-label">Removable</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)" id="chip-removable-row">
+  <tbt-chip removable>design-system</tbt-chip>
+  <tbt-chip removable selected>web-components</tbt-chip>
+  <tbt-chip removable>lit</tbt-chip>
+</div>
+
+<div class="demo-label">Disabled</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2)">
+  <tbt-chip disabled>Disabled unselected</tbt-chip>
+  <tbt-chip disabled selected>Disabled selected</tbt-chip>
+</div>
+<div id="chip-output" style="margin-top:var(--tbt-space-3);font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">tbt-toggle → (click a chip)</div>
+<script type="module">
+  document.querySelectorAll('#chip-removable-row tbt-chip').forEach(chip => {
+    chip.addEventListener('tbt-remove', () => chip.remove());
+  });
+  document.querySelectorAll('tbt-chip:not([disabled])').forEach(chip => {
+    chip.addEventListener('tbt-toggle', e => {
+      document.getElementById('chip-output').textContent =
+        `tbt-toggle → selected: ${e.detail.selected}`;
+    });
+  });
+</script>
+
 <!-- ─── ALERT ─────────────────────────────────────── -->
 <h2 id="alert">tbt-alert</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-3)">

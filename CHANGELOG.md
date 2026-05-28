@@ -9,6 +9,18 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.37.0] — 2026-05-28
+
+### Added
+
+- **`tbt-chip`** — Toggleable chip / filter tag. ใช้สำหรับ filter bar, category selection, และ toggle-able tags.
+  - Props: `variant` (neutral|primary|success|warning|danger|info), `selected` (Boolean, reflect), `removable`, `disabled`, `icon` (Tabler icon name), `size` (sm|md|lg)
+  - Events: `tbt-toggle → { selected: boolean }`, `tbt-remove`
+  - Keyboard: Enter/Space toggles; remove button aria-labeled "Remove"
+  - Selected state ใช้ variant color (primary by default); unselected เป็น neutral
+
+---
+
 ## [1.36.0] — 2026-05-28
 
 ### Added
