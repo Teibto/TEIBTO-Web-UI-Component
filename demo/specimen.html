@@ -121,6 +121,7 @@
     <tbt-sidebar-item icon="toggle-right"        label="Toggle"        href="#toggle"></tbt-sidebar-item>
 
     <div class="nav-group">Display</div>
+    <tbt-sidebar-item icon="chart-bar"           label="Stat"          href="#stat"></tbt-sidebar-item>
     <tbt-sidebar-item icon="layout-list"         label="Field"         href="#field"></tbt-sidebar-item>
     <tbt-sidebar-item icon="section"             label="Section"       href="#section-comp"></tbt-sidebar-item>
     <tbt-sidebar-item icon="table"               label="Table"         href="#table"></tbt-sidebar-item>
@@ -918,6 +919,23 @@
       <tbt-badge variant="success">Released</tbt-badge>
     </tbt-list-item>
   </tbt-list>
+</div>
+
+<!-- ─── STAT ─────────────────────────────────────────── -->
+<h2 id="stat">tbt-stat</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-6)">
+  <tbt-stat label="Total revenue" value="฿1,200,000" trend="+12% vs last month" icon="cash" variant="primary"></tbt-stat>
+  <tbt-stat label="Orders" value="348" trend="+8 this week" icon="shopping-cart" variant="success"></tbt-stat>
+  <tbt-stat label="Overdue invoices" value="12" trend="-3 resolved" icon="file-invoice" variant="warning"></tbt-stat>
+  <tbt-stat label="Returns" value="5" trend="+2 vs last week" icon="arrow-back-up" variant="danger"></tbt-stat>
+  <tbt-stat label="Pending approvals" value="7" trend="0 change" icon="clock" variant="info"></tbt-stat>
+  <tbt-stat label="Customers" value="1,042" icon="users"></tbt-stat>
+</div>
+<div class="demo-label">No trend / no icon</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-stat label="Revenue" value="฿980,000"></tbt-stat>
+  <tbt-stat label="No data yet"></tbt-stat>
+  <tbt-stat label="Down this quarter" value="฿250K" trend="-18%" trend-variant="danger" icon="trending-down" variant="danger"></tbt-stat>
 </div>
 
 <!-- ─── FIELD + FIELD-GRID ─────────────────────────── -->

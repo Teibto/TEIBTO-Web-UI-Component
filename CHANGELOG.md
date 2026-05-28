@@ -9,6 +9,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.42.0] — 2026-05-29
+
+### Added
+
+- **`tbt-stat`** — Stat / KPI card สำหรับ dashboard metrics พร้อม trend indicator และ icon.
+  - Props: `value`, `label`, `trend` (ใส่ `+` หรือ `-` prefix เพื่อ auto-detect variant), `trend-variant` (success|danger|neutral override), `icon` (Tabler name), `variant` (primary|success|warning|danger|info)
+  - Grid layout: label/value/trend ใน column ซ้าย, icon span 2 rows ในคอลัมน์ขวา
+  - Accent line ด้านบน card ตาม `variant`
+  - Icon background/color ตาม `variant` อัตโนมัติ
+  - `value` fallback เป็น `—` เมื่อไม่มีค่า
+
+---
+
 ## [1.41.0] — 2026-05-29
 
 ### Added
