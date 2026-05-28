@@ -17,7 +17,7 @@
  *
  * @slot - tbt-tabs-panel elements
  */
-import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
 // ── Panel element ──────────────────────────────────────────────────────────────
 
@@ -97,7 +97,9 @@ class TbtTabs extends LitElement {
   _sync() {
     this._tabs().forEach((t, i) => {
       t.active = i === this.active;
-      t.setAttribute('aria-labelledby', `tbt-tab-${this._tabsUid}-${i}`);
+      const label = this._labels[i];
+      if (label) t.setAttribute('aria-label', label);
+      else t.removeAttribute('aria-label');
     });
   }
 
@@ -165,7 +167,6 @@ class TbtTabs extends LitElement {
             role="tab"
             tabindex=${this.active === i ? '0' : '-1'}
             aria-selected=${this.active === i ? 'true' : 'false'}
-            aria-controls=${tabs[i]?.id ?? ''}
             @click=${() => this._select(i)}>
             ${label}
           </button>`)}

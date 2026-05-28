@@ -371,13 +371,13 @@ class TbtLineItems extends LitElement {
 
     return `
       <tr data-id="${r.id}">
-        <td><input  class="li"      data-f="item"    value="${this._esc(r.item)}"  placeholder="Item name"></td>
-        <td><input  class="li"      data-f="desc"    value="${this._esc(r.desc)}"  placeholder="Description"></td>
-        <td><input  class="li num"  data-f="qty"     value="${r.qty}"  type="number" min="0.001" step="any"></td>
-        <td><select class="li nw"   data-f="unit">${uOpts}</select></td>
-        <td><input  class="li num"  data-f="price"   value="${r.price}" type="number" min="0" step="any"></td>
+        <td><input  class="li"      data-f="item"    aria-label="Item"         value="${this._esc(r.item)}"  placeholder="Item name"></td>
+        <td><input  class="li"      data-f="desc"    aria-label="Description"  value="${this._esc(r.desc)}"  placeholder="Description"></td>
+        <td><input  class="li num"  data-f="qty"     aria-label="Qty"          value="${r.qty}"  type="number" min="0.001" step="any"></td>
+        <td><select class="li nw"   data-f="unit"    aria-label="Unit">${uOpts}</select></td>
+        <td><input  class="li num"  data-f="price"   aria-label="Unit price"   value="${r.price}" type="number" min="0" step="any"></td>
         <td id="amt-${r.id}" class="amt">${this._fmt(r.qty * r.price)}</td>
-        <td><select class="li"      data-f="account">${aOpts}</select></td>
+        <td><select class="li"      data-f="account" aria-label="Account">${aOpts}</select></td>
         <td>
           <button class="del" data-id="${r.id}" title="Remove line">
             <i class="ti ti-x"></i>

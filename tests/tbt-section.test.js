@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-section.js';
 
+const axe = window.axe;
+
 describe('tbt-section', () => {
   it('renders without throwing', async () => {
     const el = await fixture(html`<tbt-section title="Line items"></tbt-section>`);
@@ -29,5 +31,15 @@ describe('tbt-section', () => {
   it('reflects collapsed attribute', async () => {
     const el = await fixture(html`<tbt-section title="Info" collapsed></tbt-section>`);
     expect(el.getAttribute('collapsed')).to.not.be.null;
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-section title="Document info"></tbt-section>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

@@ -298,6 +298,7 @@ class TbtDropdown extends LitElement {
       <div class="wrap">
         <select
           class=${isPlaceholder ? 'placeholder-selected' : ''}
+          aria-label=${this.label || this.placeholder || nothing}
           .value=${this.value}
           ?required=${this.required}
           ?disabled=${this.disabled}

@@ -1,6 +1,8 @@
 import { fixture, html, expect, waitUntil } from '@open-wc/testing';
 import '../components/tbt-toast.js';
 
+const axe = window.axe;
+
 describe('tbt-toast', () => {
   it('adds and renders a toast', async () => {
     const el = await fixture(html`<tbt-toast></tbt-toast>`);
@@ -43,5 +45,16 @@ describe('tbt-toast', () => {
     await el.updateComplete;
     el.shadowRoot.querySelector('.close').click();
     await waitUntil(() => !el.shadowRoot.querySelector('.toast--danger:not(.toast--out)'), 'Toast did not remove', { timeout: 500 });
+  });
+
+  it('passes axe with visible toast', async () => {
+    const el = await fixture(html`<tbt-toast></tbt-toast>`);
+    el.add('Document saved successfully', 'success', { duration: 60000 });
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

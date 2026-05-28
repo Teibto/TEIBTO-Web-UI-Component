@@ -1,6 +1,8 @@
 import { fixture, html, expect, waitUntil } from '@open-wc/testing';
 import '../components/tbt-data-table.js';
 
+const axe = window.axe;
+
 const COLS = [
   { key: 'id',   label: 'ID' },
   { key: 'name', label: 'Name', sortable: true },
@@ -61,5 +63,18 @@ describe('tbt-data-table', () => {
     el.refresh();
     await waitUntil(() => count >= 2, 'Refresh not triggered', { timeout: 500 });
     expect(count).to.be.at.least(2);
+  });
+
+  it('passes axe after load with rows', async () => {
+    const rows = [{ id: '1', name: 'Alpha' }, { id: '2', name: 'Beta' }];
+    const el = await fixture(html`<tbt-data-table></tbt-data-table>`);
+    el.columns = COLS;
+    el.fetch = async () => ({ rows, total: 2 });
+    await waitUntil(() => el.shadowRoot.querySelector('tbt-table'), 'Table not rendered', { timeout: 500 });
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

@@ -1,6 +1,8 @@
 import { fixture, html, expect } from '@open-wc/testing';
 import '../components/tbt-skeleton.js';
 
+const axe = window.axe;
+
 describe('tbt-skeleton', () => {
   it('renders a single text line by default', async () => {
     const el = await fixture(html`<tbt-skeleton></tbt-skeleton>`);
@@ -27,5 +29,15 @@ describe('tbt-skeleton', () => {
     expect(el.shadowRoot.querySelector('.card')).to.exist;
     expect(el.shadowRoot.querySelector('.card-avatar')).to.exist;
     expect(el.shadowRoot.querySelectorAll('.card-line').length).to.equal(3);
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-skeleton variant="text" lines="2"></tbt-skeleton>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

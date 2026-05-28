@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-address.js';
 
+const axe = window.axe;
+
 describe('tbt-address', () => {
   it('renders five inner tbt-input fields', async () => {
     const el = await fixture(html`<tbt-address label="Address"></tbt-address>`);
@@ -59,5 +61,15 @@ describe('tbt-address', () => {
     const msg = el.shadowRoot.querySelector('.error-msg');
     expect(msg).to.exist;
     expect(msg.textContent).to.include('Invalid');
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-address label="Shipping address"></tbt-address>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

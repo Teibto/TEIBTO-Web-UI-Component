@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-audit-log.js';
 
+const axe = window.axe;
+
 describe('tbt-audit-log', () => {
   it('renders without throwing', async () => {
     const el = await fixture(html`<tbt-audit-log></tbt-audit-log>`);
@@ -42,5 +44,20 @@ describe('tbt-audit-log', () => {
     const el = await fixture(html`<tbt-audit-log max-height="300px"></tbt-audit-log>`);
     await el.updateComplete;
     expect(el.maxHeight).to.equal('300px');
+  });
+
+  it('passes axe with entries', async () => {
+    const el = await fixture(html`<tbt-audit-log></tbt-audit-log>`);
+    el.entries = [
+      { action: 'created',  user: 'Alice', timestamp: '2026-05-20T09:00:00' },
+      { action: 'approved', user: 'Bob',   timestamp: '2026-05-21T10:30:00',
+        changes: [{ field: 'Status', from: 'Pending', to: 'Approved' }] },
+    ];
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

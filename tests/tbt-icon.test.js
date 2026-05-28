@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-icon.js';
 
+const axe = window.axe;
+
 describe('tbt-icon', () => {
   it('renders an <i> element with Tabler class in shadow DOM', async () => {
     const el = await fixture(html`<tbt-icon name="save"></tbt-icon>`);
@@ -44,5 +46,25 @@ describe('tbt-icon', () => {
     await el.updateComplete;
     const i = el.shadowRoot.querySelector('i');
     expect(i.getAttribute('aria-hidden')).to.equal('true');
+  });
+
+  it('passes axe with aria-hidden icon', async () => {
+    const el = await fixture(html`<tbt-icon name="save"></tbt-icon>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
+  });
+
+  it('passes axe with labelled icon', async () => {
+    const el = await fixture(html`<tbt-icon name="approve" label="Approved"></tbt-icon>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

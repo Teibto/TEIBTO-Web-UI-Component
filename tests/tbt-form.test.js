@@ -3,6 +3,8 @@ import '../components/tbt-form.js';
 import '../components/tbt-input.js';
 import '../components/tbt-button.js';
 
+const axe = window.axe;
+
 describe('tbt-form', () => {
   it('renders a <form> element in shadow DOM', async () => {
     const el = await fixture(html`<tbt-form></tbt-form>`);
@@ -76,5 +78,19 @@ describe('tbt-form', () => {
     el.querySelector('tbt-button').click();
     expect(detail.data.outer).to.equal('outer-val');
     expect(detail.data.inner).to.be.undefined;
+  });
+
+  it('passes axe with labeled input', async () => {
+    const el = await fixture(html`
+      <tbt-form>
+        <tbt-input name="vendor" label="Vendor" value="ABC Co."></tbt-input>
+        <tbt-button type="submit" variant="primary">Save</tbt-button>
+      </tbt-form>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

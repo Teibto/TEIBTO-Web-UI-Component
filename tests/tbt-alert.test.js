@@ -1,6 +1,8 @@
 import { html, fixture, expect, oneEvent } from '@open-wc/testing';
 import '../components/tbt-alert.js';
 
+const axe = window.axe;
+
 describe('tbt-alert', () => {
   it('renders message content', async () => {
     const el = await fixture(html`<tbt-alert variant="success">Saved</tbt-alert>`);
@@ -31,5 +33,15 @@ describe('tbt-alert', () => {
     btn.click();
     const event = await eventPromise;
     expect(event).to.exist;
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-alert variant="info" dismissible>Note about this action</tbt-alert>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

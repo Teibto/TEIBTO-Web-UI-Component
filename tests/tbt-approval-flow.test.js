@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-approval-flow.js';
 
+const axe = window.axe;
+
 const STEPS = [
   { id: '1', label: 'Requestor',  approver: 'Alice', status: 'approved', timestamp: '2026-05-20T09:00:00' },
   { id: '2', label: 'Manager',    approver: 'Bob',   status: 'current' },
@@ -58,5 +60,15 @@ describe('tbt-approval-flow', () => {
     const text = el.shadowRoot.textContent;
     expect(text).to.include('Requestor');
     expect(text).to.include('Manager');
+  });
+
+  it('passes axe (horizontal)', async () => {
+    const el = await fixture(html`<tbt-approval-flow .steps=${STEPS}></tbt-approval-flow>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

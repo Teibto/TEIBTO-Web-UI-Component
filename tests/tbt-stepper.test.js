@@ -1,6 +1,8 @@
 import { fixture, html, expect } from '@open-wc/testing';
 import '../components/tbt-stepper.js';
 
+const axe = window.axe;
+
 const STEPS = [
   { label: 'Draft' },
   { label: 'Review' },
@@ -55,5 +57,15 @@ describe('tbt-stepper', () => {
     expect(steps[1].getAttribute('aria-current')).to.equal('step');
     expect(steps[2].getAttribute('aria-current')).to.be.null;
     expect(steps[3].getAttribute('aria-current')).to.be.null;
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-stepper .steps=${STEPS} active="1"></tbt-stepper>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

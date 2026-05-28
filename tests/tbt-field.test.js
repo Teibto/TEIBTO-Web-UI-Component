@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-field.js';
 
+const axe = window.axe;
+
 describe('tbt-field', () => {
   it('renders without throwing', async () => {
     const el = await fixture(html`<tbt-field label="Vendor" value="ABC Co."></tbt-field>`);
@@ -25,5 +27,15 @@ describe('tbt-field', () => {
   it('renders with empty value without throwing', async () => {
     const el = await fixture(html`<tbt-field label="Notes"></tbt-field>`);
     expect(el.shadowRoot).to.exist;
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-field label="Vendor" value="ABC Co."></tbt-field>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

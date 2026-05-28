@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-line-items.js';
 
+const axe = window.axe;
+
 describe('tbt-line-items', () => {
   it('renders with empty rows by default', async () => {
     const el = await fixture(html`<tbt-line-items></tbt-line-items>`);
@@ -66,5 +68,27 @@ describe('tbt-line-items', () => {
     await el.updateComplete;
     expect(el.hasAttribute('loading')).to.be.true;
     expect(el.loading).to.be.true;
+  });
+
+  it('passes axe (empty)', async () => {
+    const el = await fixture(html`<tbt-line-items></tbt-line-items>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
+  });
+
+  it('passes axe (with rows)', async () => {
+    const el = await fixture(html`<tbt-line-items></tbt-line-items>`);
+    await el.updateComplete;
+    el.rows = [{ item: 'Laptop', desc: 'Dell', qty: 1, unit: 'Pcs', price: 30000, account: '' }];
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

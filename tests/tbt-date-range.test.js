@@ -1,6 +1,8 @@
 import { fixture, html, expect } from '@open-wc/testing';
 import '../components/tbt-date-range.js';
 
+const axe = window.axe;
+
 describe('tbt-date-range', () => {
   it('renders two tbt-datepicker inputs', async () => {
     const el = await fixture(html`<tbt-date-range label="Period"></tbt-date-range>`);
@@ -75,5 +77,15 @@ describe('tbt-date-range', () => {
       { detail: { value: '2026-12-31' }, bubbles: true, composed: true }));
     await el.updateComplete;
     expect(el._internals.validity.valueMissing).to.be.false;
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-date-range label="Period" from="2026-01-01" to="2026-12-31"></tbt-date-range>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

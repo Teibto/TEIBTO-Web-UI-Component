@@ -131,7 +131,7 @@ class TbtStepper extends LitElement {
           const status = this._status(i, step);
           return html`
             <div class="step ${status}" aria-current=${status === 'active' ? 'step' : nothing}>
-              <div class="circle" aria-label="${step.label}: ${status}">
+              <div class="circle" role="img" aria-label="${step.label}: ${status}">
                 ${status === 'complete'
                   ? html`<i class="ti ti-check check-icon" aria-hidden="true"></i>`
                   : status === 'error'

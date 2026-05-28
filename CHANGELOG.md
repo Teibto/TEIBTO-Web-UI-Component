@@ -9,6 +9,25 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.29.0] — 2026-05-28
+
+### Accessibility
+
+- **`tbt-line-items`** — เพิ่ม `aria-label` บน input/select ทุกช่องในแถว (Item, Description, Qty, Unit, Unit price, Account) เพื่อให้ AT อ่านออกเมื่อ user navigate ใน table
+- **`tbt-icon`** — เพิ่ม `role="img"` เมื่อ `label` prop ถูกตั้งค่า (ขจัด `aria-label` on role=generic violation ตาม ARIA 1.2)
+- **`tbt-dropdown`** — เพิ่ม `aria-label` บน native `<select>` ใน `_renderNative()` เพื่อให้มี accessible name
+- **`tbt-stepper`** — เพิ่ม `role="img"` บน `.circle` div เพื่อให้ `aria-label` valid
+- **`tbt-date-range`** — เพิ่ม `label="From"` และ `label="To"` บน inner `tbt-datepicker` elements
+- **`tbt-tabs`** — แทน cross-shadow `aria-labelledby` บน panels ด้วย `aria-label` โดยตรง; ลบ `aria-controls` ออกจาก shadow DOM tab buttons (cross-shadow IDREF ไม่สามารถ resolve ได้ตาม spec)
+
+### Test
+
+- เพิ่ม `axe.run()` assertions ครอบคลุม 28 test files ที่เหลือ: tbt-address, tbt-alert, tbt-app-shell, tbt-approval-flow, tbt-audit-log, tbt-badge, tbt-breadcrumb, tbt-confirm, tbt-data-table, tbt-date-range, tbt-doc-form, tbt-field-grid, tbt-field, tbt-file-upload, tbt-form, tbt-icon, tbt-line-items, tbt-lines-block, tbt-pagination, tbt-playground, tbt-section, tbt-sidebar, tbt-skeleton, tbt-stepper, tbt-summary, tbt-svg, tbt-tabs, tbt-toast
+- อัปเดต tbt-tabs: แทน `aria-controls` test ด้วย `aria-selected` state test
+- **365 tests, 0 failures** — axe coverage ครบ 100% ทุก component
+
+---
+
 ## [1.28.0] — 2026-05-28
 
 ### Accessibility

@@ -1,6 +1,8 @@
 import { fixture, html, expect } from '@open-wc/testing';
 import '../components/tbt-breadcrumb.js';
 
+const axe = window.axe;
+
 describe('tbt-breadcrumb', () => {
   it('renders links for non-last items', async () => {
     const el = await fixture(html`<tbt-breadcrumb></tbt-breadcrumb>`);
@@ -24,5 +26,16 @@ describe('tbt-breadcrumb', () => {
     const el = await fixture(html`<tbt-breadcrumb></tbt-breadcrumb>`);
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('nav')).to.not.exist;
+  });
+
+  it('passes axe with items', async () => {
+    const el = await fixture(html`<tbt-breadcrumb></tbt-breadcrumb>`);
+    el.items = [{ label: 'Home', href: '/home' }, { label: 'Sales', href: '/sales' }, { label: 'Current' }];
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

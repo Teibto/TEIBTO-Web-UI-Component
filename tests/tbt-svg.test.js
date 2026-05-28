@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-svg.js';
 
+const axe = window.axe;
+
 describe('tbt-svg', () => {
   it('renders .wrap div', async () => {
     const el = await fixture(html`<tbt-svg></tbt-svg>`);
@@ -56,5 +58,25 @@ describe('tbt-svg', () => {
       await el.updateComplete;
       expect(el.shadowRoot.querySelector('.wrap').innerHTML).to.include('<svg');
     }
+  });
+
+  it('passes axe (aria-hidden)', async () => {
+    const el = await fixture(html`<tbt-svg name="empty"></tbt-svg>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
+  });
+
+  it('passes axe (labelled)', async () => {
+    const el = await fixture(html`<tbt-svg name="success" label="Operation succeeded"></tbt-svg>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

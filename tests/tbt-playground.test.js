@@ -2,6 +2,8 @@ import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-playground.js';
 import '../components/tbt-button.js';
 
+const axe = window.axe;
+
 describe('tbt-playground', () => {
   it('renders .pg wrapper', async () => {
     const el = await fixture(html`<tbt-playground></tbt-playground>`);
@@ -71,5 +73,22 @@ describe('tbt-playground', () => {
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('.pg-preview')).to.exist;
     expect(el.shadowRoot.querySelector('.pg-preview slot')).to.exist;
+  });
+
+  it('passes axe with schema controls', async () => {
+    const schema = [
+      { key: 'variant', label: 'Variant', type: 'select', options: ['primary', 'secondary'] },
+      { key: 'disabled', label: 'Disabled', type: 'boolean' },
+    ];
+    const el = await fixture(html`
+      <tbt-playground label="Button demo" .schema=${schema}>
+        <tbt-button>Click</tbt-button>
+      </tbt-playground>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

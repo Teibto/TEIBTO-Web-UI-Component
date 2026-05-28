@@ -1,6 +1,8 @@
 import { fixture, html, expect } from '@open-wc/testing';
 import '../components/tbt-tabs.js';
 
+const axe = window.axe;
+
 describe('tbt-tabs', () => {
   it('renders a tab button for each tbt-tabs-panel child', async () => {
     const el = await fixture(html`
@@ -83,17 +85,16 @@ describe('tbt-tabs', () => {
     expect(panels[0].id).to.not.equal(panels[1].id);
   });
 
-  it('wires aria-controls from each tab button to its panel id', async () => {
+  it('tab buttons have correct aria-selected state', async () => {
     const el = await fixture(html`
       <tbt-tabs>
         <tbt-tabs-panel label="A">A</tbt-tabs-panel>
         <tbt-tabs-panel label="B">B</tbt-tabs-panel>
       </tbt-tabs>`);
     await el.updateComplete;
-    const panels = el.querySelectorAll('tbt-tabs-panel');
     const buttons = el.shadowRoot.querySelectorAll('[role="tab"]');
-    expect(buttons[0].getAttribute('aria-controls')).to.equal(panels[0].id);
-    expect(buttons[1].getAttribute('aria-controls')).to.equal(panels[1].id);
+    expect(buttons[0].getAttribute('aria-selected')).to.equal('true');
+    expect(buttons[1].getAttribute('aria-selected')).to.equal('false');
   });
 
   it('moves focus to the newly active tab button on click', async () => {
@@ -123,5 +124,19 @@ describe('tbt-tabs', () => {
     el.removeChild(el.querySelectorAll('tbt-tabs-panel')[1]);
     await el.updateComplete;
     expect(el.active).to.equal(0);
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`
+      <tbt-tabs>
+        <tbt-tabs-panel label="General">General info</tbt-tabs-panel>
+        <tbt-tabs-panel label="Details">Details content</tbt-tabs-panel>
+      </tbt-tabs>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

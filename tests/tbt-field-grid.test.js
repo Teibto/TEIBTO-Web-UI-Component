@@ -1,5 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-field-grid.js';
+import '../components/tbt-field.js';
+
+const axe = window.axe;
 
 describe('tbt-field-grid', () => {
   it('renders a slot element in shadow DOM', async () => {
@@ -36,5 +39,19 @@ describe('tbt-field-grid', () => {
     await el.updateComplete;
     expect(el.querySelector('#a')).to.exist;
     expect(el.querySelector('#b')).to.exist;
+  });
+
+  it('passes axe with tbt-field children', async () => {
+    const el = await fixture(html`
+      <tbt-field-grid columns="2">
+        <tbt-field label="Vendor" value="ABC Co."></tbt-field>
+        <tbt-field label="Status" value="Approved"></tbt-field>
+      </tbt-field-grid>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

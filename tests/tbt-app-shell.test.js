@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-app-shell.js';
 
+const axe = window.axe;
+
 describe('tbt-app-shell', () => {
   it('renders menubar, sidebar and content named slots', async () => {
     const el = await fixture(html`<tbt-app-shell></tbt-app-shell>`);
@@ -57,5 +59,15 @@ describe('tbt-app-shell', () => {
     el.shadowRoot.querySelector('.backdrop').click();
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('.backdrop')).to.not.exist;
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-app-shell></tbt-app-shell>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

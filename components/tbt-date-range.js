@@ -126,6 +126,7 @@ class TbtDateRange extends LitElement {
       <div class="range-row">
         <tbt-datepicker
           name=${this.nameFrom || nothing}
+          label="From"
           .value=${this.from}
           ?required=${this.required}
           ?disabled=${this.disabled}
@@ -135,6 +136,7 @@ class TbtDateRange extends LitElement {
         <span class="sep">—</span>
         <tbt-datepicker
           name=${this.nameTo || nothing}
+          label="To"
           .value=${this.to}
           ?required=${this.required}
           ?disabled=${this.disabled}

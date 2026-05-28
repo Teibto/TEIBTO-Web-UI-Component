@@ -237,6 +237,7 @@ class TbtIcon extends LitElement {
     return html`
       ${tablerLink}
       <i class="ti ti-${icon}"
+         role=${this.label ? 'img' : nothing}
          aria-hidden=${this.label ? nothing : 'true'}
          aria-label=${this.label || nothing}></i>`;
   }

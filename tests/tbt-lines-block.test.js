@@ -1,6 +1,8 @@
 import { fixture, html, expect } from '@open-wc/testing';
 import '../components/tbt-lines-block.js';
 
+const axe = window.axe;
+
 describe('tbt-lines-block', () => {
   it('renders tbt-section with given title', async () => {
     const el = await fixture(html`<tbt-lines-block title="My items"></tbt-lines-block>`);
@@ -61,5 +63,15 @@ describe('tbt-lines-block', () => {
     await el.updateComplete;
     expect(emitted).to.deep.equal(mockDetail);
     expect(el._totals).to.deep.equal({ subtotal: 1000, vat: 70, total: 1070 });
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-lines-block title="Line items"></tbt-lines-block>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

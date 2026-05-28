@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-doc-form.js';
 
+const axe = window.axe;
+
 const SIMPLE = {
   title: 'Test',
   sections: [
@@ -126,5 +128,15 @@ describe('tbt-doc-form', () => {
     const el = await fixture(html`<tbt-doc-form .schema=${schema}></tbt-doc-form>`);
     await el.updateComplete;
     expect(el.shadowRoot.textContent).to.include('unknown field type');
+  });
+
+  it('passes axe with schema', async () => {
+    const el = await fixture(html`<tbt-doc-form .schema=${SIMPLE}></tbt-doc-form>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });
