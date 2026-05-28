@@ -55,6 +55,7 @@ export * from './tbt-address.js';
 export * from './tbt-approval-flow.js';
 export * from './tbt-audit-log.js';
 export * from './tbt-timeline.js';
+export * from './tbt-empty-state.js';
 export * from './tbt-field.js';
 export * from './tbt-field-grid.js';
 export * from './tbt-section.js';

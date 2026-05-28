@@ -1151,6 +1151,38 @@
   document.getElementById('tl-compact').entries = tlEntries;
 </script>
 
+<!-- ─── EMPTY STATE ──────────────────────────────────────── -->
+<h2 id="empty-state">tbt-empty-state</h2>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--tbt-space-4)">
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">Default (no props)</div>
+    <tbt-empty-state></tbt-empty-state>
+  </div>
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">Custom icon + description</div>
+    <tbt-empty-state
+      icon="file-search"
+      title="No documents found"
+      description="Try adjusting your filters or create a new document.">
+    </tbt-empty-state>
+  </div>
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">With actions slot</div>
+    <tbt-empty-state icon="plus-circle" title="No items yet" description="Start by creating your first item.">
+      <tbt-button slot="actions" variant="primary" icon="plus">Create new</tbt-button>
+      <tbt-button slot="actions" variant="secondary">Import</tbt-button>
+    </tbt-empty-state>
+  </div>
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">Size sm</div>
+    <tbt-empty-state icon="search" title="No results" description="Try a different search term." size="sm"></tbt-empty-state>
+  </div>
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">Size lg</div>
+    <tbt-empty-state icon="database-off" title="No records" description="Your database is empty." size="lg"></tbt-empty-state>
+  </div>
+</div>
+
 <!-- ─── BREADCRUMB ──────────────────────────────────────── -->
 <h2 id="breadcrumb">tbt-breadcrumb</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-3)">

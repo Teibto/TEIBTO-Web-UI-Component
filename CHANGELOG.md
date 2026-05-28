@@ -9,6 +9,17 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.36.0] — 2026-05-28
+
+### Added
+
+- **`tbt-empty-state`** — Empty state display สำหรับ table, list, search result ที่ไม่มีข้อมูล. รองรับ icon, title, description, actions slot, และ 3 sizes.
+  - Props: `icon` (Tabler icon name, default: 'inbox'), `title` (default: 'No data'), `description`, `size` (sm|md|lg)
+  - Slot: `actions` สำหรับ CTA buttons
+  - Icon wrap มี `aria-hidden="true"` เพื่อไม่ให้ screen reader อ่านซ้ำ
+
+---
+
 ## [1.35.0] — 2026-05-28
 
 ### Added
