@@ -19,6 +19,7 @@ export * from './tbt-pagination.js';
 
 /* Actions */
 export * from './tbt-button.js';
+export * from './tbt-split-button.js';
 export * from './tbt-modal.js';
 export * from './tbt-confirm.js';
 

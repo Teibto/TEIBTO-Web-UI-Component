@@ -411,6 +411,51 @@
   <tbt-button variant="primary" disabled>Disabled</tbt-button>
 </div>
 
+<!-- ─── SPLIT BUTTON ──────────────────────────────── -->
+<h2 id="split-button">tbt-split-button</h2>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-3);padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-split-button id="sb1" label="Save" icon="device-floppy"
+    .actions=${[
+      { value: 'submit', label: 'Save & Submit', icon: 'circle-check' },
+      { value: 'print',  label: 'Save & Print',  icon: 'printer' },
+      { value: 'draft',  label: 'Save as Draft', icon: 'file' },
+    ]}>
+  </tbt-split-button>
+  <tbt-split-button label="Submit" variant="secondary"
+    .actions=${[{ value: 'reject', label: 'Reject' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="Delete" variant="danger" icon="trash"
+    .actions=${[{ value: 'archive', label: 'Archive instead' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="More" variant="ghost"
+    .actions=${[
+      { value: 'export', label: 'Export CSV' },
+      { value: 'copy',   label: 'Copy link' },
+    ]}>
+  </tbt-split-button>
+  <tbt-split-button label="Small" size="sm"
+    .actions=${[{ value: 'x', label: 'Option' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="Large" size="lg"
+    .actions=${[{ value: 'x', label: 'Option' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="Loading" loading
+    .actions=${[{ value: 'x', label: 'Option' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="Disabled" disabled
+    .actions=${[{ value: 'x', label: 'Option' }]}>
+  </tbt-split-button>
+  <div id="sb1-output" style="width:100%;font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">tbt-click / tbt-action → (click a button)</div>
+</div>
+<script>
+  (function () {
+    const sb = document.getElementById('sb1');
+    const out = document.getElementById('sb1-output');
+    sb.addEventListener('tbt-click',  () => { out.textContent = 'tbt-click → main action (Save)'; });
+    sb.addEventListener('tbt-action', e => { out.textContent = `tbt-action → ${e.detail.value} — "${e.detail.label}"`; });
+  })();
+</script>
+
 <!-- ─── BADGE ─────────────────────────────────────── -->
 <h2 id="badge">tbt-badge</h2>
 <div class="demo-row">

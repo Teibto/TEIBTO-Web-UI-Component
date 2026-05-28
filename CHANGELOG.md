@@ -9,6 +9,16 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.31.0] — 2026-05-28
+
+### Added
+
+- **`tbt-split-button`** — Split button สำหรับ ERP document workflows (Save / Save & Submit / Save & Print ฯลฯ). Primary action + dropdown secondary actions ในปุ่มเดียว, รองรับ variant/size/icon/loading/disabled, keyboard nav ครบ (Arrow, Esc, Tab), axe-clean.
+  - Props: `label`, `variant` (primary|secondary|danger|ghost), `icon`, `actions` (Array), `loading`, `disabled`, `size` (sm|md|lg)
+  - Events: `tbt-click` (main button), `tbt-action → { value, label }` (secondary action)
+
+---
+
 ## [1.30.0] — 2026-05-28
 
 ### Added
