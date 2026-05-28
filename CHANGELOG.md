@@ -9,6 +9,16 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.34.0] — 2026-05-28
+
+### Added
+
+- **`tbt-progress`** — Horizontal progress bar สำหรับ upload, import batch, และ processing feedback. รองรับ determinate (0–100%), indeterminate (sliding animation), 4 variants, 3 sizes, label + show-value display.
+  - Props: `value` (0–100), `label`, `variant` (primary|success|warning|danger), `size` (sm|md|lg), `show-value`, `indeterminate`
+  - Accessible: `role="progressbar"` + `aria-valuenow` / `aria-valuemin` / `aria-valuemax` / `aria-busy`
+
+---
+
 ## [1.33.0] — 2026-05-28
 
 ### Added

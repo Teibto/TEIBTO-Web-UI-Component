@@ -1162,6 +1162,28 @@
   p.addEventListener('tbt-page-change', e => { p.page = e.detail.page; });
 </script>
 
+<!-- ─── PROGRESS ─────────────────────────────────────────── -->
+<h2 id="progress">tbt-progress</h2>
+<div style="display:flex;flex-direction:column;gap:var(--tbt-space-4);max-width:520px;padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-progress id="prog-demo" value="65" label="Uploading attachment…" show-value></tbt-progress>
+  <tbt-progress value="100" variant="success" label="Import complete" show-value></tbt-progress>
+  <tbt-progress value="40"  variant="warning" label="Storage almost full" show-value></tbt-progress>
+  <tbt-progress value="20"  variant="danger"  label="Validation failed"  show-value></tbt-progress>
+  <tbt-progress indeterminate label="Processing batch…"></tbt-progress>
+  <tbt-progress value="50" size="sm" label="Small" show-value></tbt-progress>
+  <tbt-progress value="50" size="md" label="Medium (default)" show-value></tbt-progress>
+  <tbt-progress value="50" size="lg" label="Large" show-value></tbt-progress>
+</div>
+<script>
+  (function () {
+    let v = 65;
+    setInterval(() => {
+      v = v >= 100 ? 0 : v + 5;
+      document.getElementById('prog-demo').value = v;
+    }, 600);
+  })();
+</script>
+
 <!-- ─── SKELETON ─────────────────────────────────────────── -->
 <h2 id="skeleton">tbt-skeleton</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-4);max-width:480px">

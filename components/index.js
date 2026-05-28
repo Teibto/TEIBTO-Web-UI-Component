@@ -25,6 +25,7 @@ export * from './tbt-confirm.js';
 
 /* Loading */
 export * from './tbt-skeleton.js';
+export * from './tbt-progress.js';
 
 /* Dev tooling */
 export * from './tbt-playground.js';
