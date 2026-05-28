@@ -9,6 +9,17 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.39.0] — 2026-05-28
+
+### Added
+
+- **`tbt-tooltip`** — Tooltip แสดงเมื่อ hover หรือ focus บน trigger element. Wrapper component — slotted content คือ trigger, `content` prop คือข้อความที่แสดง.
+  - Props: `content` (String), `placement` (top|bottom|left|right, default: top), `delay` (ms, default: 200)
+  - ARIA: `role="tooltip"` + `aria-describedby` ใน shadow root
+  - ไม่แสดงเมื่อ `content` ว่าง; ยกเลิก timer อัตโนมัติเมื่อ disconnect
+
+---
+
 ## [1.38.0] — 2026-05-28
 
 ### Added

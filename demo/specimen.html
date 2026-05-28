@@ -456,6 +456,47 @@
   })();
 </script>
 
+<!-- ─── TOOLTIP ──────────────────────────────────── -->
+<h2 id="tooltip">tbt-tooltip</h2>
+<div class="demo-label">Placements</div>
+<div class="demo-row" style="padding:var(--tbt-space-8) var(--tbt-space-4)">
+  <tbt-tooltip content="Top tooltip (default)" placement="top">
+    <tbt-button variant="secondary">Top</tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Bottom tooltip" placement="bottom">
+    <tbt-button variant="secondary">Bottom</tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Left tooltip" placement="left">
+    <tbt-button variant="secondary">Left</tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Right tooltip" placement="right">
+    <tbt-button variant="secondary">Right</tbt-button>
+  </tbt-tooltip>
+</div>
+
+<div class="demo-label">Icon buttons with tooltip</div>
+<div class="demo-row">
+  <tbt-tooltip content="Save document (Ctrl+S)">
+    <tbt-button variant="primary" icon="device-floppy"></tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Print document">
+    <tbt-button variant="secondary" icon="printer"></tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Export as PDF">
+    <tbt-button variant="secondary" icon="file-type-pdf"></tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Delete record" placement="bottom">
+    <tbt-button variant="danger" icon="trash"></tbt-button>
+  </tbt-tooltip>
+</div>
+
+<div class="demo-label">No delay</div>
+<div class="demo-row">
+  <tbt-tooltip content="Instant tooltip — delay=0" delay="0">
+    <tbt-button variant="ghost">Hover me</tbt-button>
+  </tbt-tooltip>
+</div>
+
 <!-- ─── BADGE ─────────────────────────────────────── -->
 <h2 id="badge">tbt-badge</h2>
 <div class="demo-row">
