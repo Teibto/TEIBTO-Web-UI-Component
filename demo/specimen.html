@@ -497,6 +497,47 @@
   </tbt-tooltip>
 </div>
 
+<!-- ─── POPOVER ──────────────────────────────────── -->
+<h2 id="popover">tbt-popover</h2>
+<div class="demo-label">Action menu</div>
+<div class="demo-row" style="padding-bottom:var(--tbt-space-8)">
+  <tbt-popover>
+    <tbt-button variant="secondary" icon="dots-vertical">More</tbt-button>
+    <div slot="content" style="padding:var(--tbt-space-1)">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <tbt-button variant="ghost" icon="edit" size="sm" style="justify-content:flex-start;width:100%">Edit</tbt-button>
+        <tbt-button variant="ghost" icon="copy" size="sm" style="justify-content:flex-start;width:100%">Duplicate</tbt-button>
+        <tbt-button variant="ghost" icon="printer" size="sm" style="justify-content:flex-start;width:100%">Print</tbt-button>
+        <hr style="border:none;border-top:1px solid var(--tbt-border);margin:4px 0">
+        <tbt-button variant="ghost" icon="trash" size="sm" style="justify-content:flex-start;width:100%;color:var(--tbt-danger)">Delete</tbt-button>
+      </div>
+    </div>
+  </tbt-popover>
+
+  <tbt-popover placement="top">
+    <tbt-button variant="secondary" icon="info-circle">Info</tbt-button>
+    <div slot="content" style="padding:var(--tbt-space-4)">
+      <p style="font-size:var(--tbt-size-sm);font-weight:var(--tbt-weight-semibold);color:var(--tbt-text-primary);margin:0 0 4px">About this field</p>
+      <p style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary);margin:0;max-width:240px">Calculated automatically based on the exchange rate at the time of document creation.</p>
+    </div>
+  </tbt-popover>
+
+  <tbt-popover placement="right">
+    <tbt-button variant="ghost" icon="filter">Quick filter</tbt-button>
+    <div slot="content" style="padding:var(--tbt-space-4);display:flex;flex-direction:column;gap:var(--tbt-space-3)">
+      <tbt-dropdown id="pop-dd" label="Status" placeholder="All statuses"></tbt-dropdown>
+      <tbt-button variant="primary" size="sm" icon="check">Apply</tbt-button>
+    </div>
+  </tbt-popover>
+</div>
+<script type="module">
+  document.getElementById('pop-dd').options = [
+    { value: 'all', label: 'All statuses' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'pending', label: 'Pending' },
+  ];
+</script>
+
 <!-- ─── BADGE ─────────────────────────────────────── -->
 <h2 id="badge">tbt-badge</h2>
 <div class="demo-row">

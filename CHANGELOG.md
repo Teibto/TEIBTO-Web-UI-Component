@@ -9,6 +9,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.40.0] — 2026-05-29
+
+### Added
+
+- **`tbt-popover`** — Click-triggered floating panel สำหรับ action menu, info card, และ quick form. Wrapper component — default slot คือ trigger, `content` slot คือเนื้อหา popup.
+  - Props: `open` (Boolean, reflect), `placement` (top|bottom|left|right, default: bottom)
+  - Events: `tbt-open`, `tbt-close`
+  - ปิดอัตโนมัติเมื่อคลิกนอก popover หรือกด Escape
+  - Set `aria-expanded` + `aria-haspopup` บน slotted trigger อัตโนมัติ
+  - `aria-hidden="true"` เมื่อปิด; `role="dialog"` บน panel
+
+---
+
 ## [1.39.0] — 2026-05-28
 
 ### Added

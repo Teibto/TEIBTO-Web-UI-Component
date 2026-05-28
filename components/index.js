@@ -23,6 +23,7 @@ export * from './tbt-split-button.js';
 export * from './tbt-modal.js';
 export * from './tbt-confirm.js';
 export * from './tbt-drawer.js';
+export * from './tbt-popover.js';
 
 /* Loading */
 export * from './tbt-skeleton.js';
