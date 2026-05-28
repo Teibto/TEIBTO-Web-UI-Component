@@ -1105,6 +1105,34 @@
   document.getElementById('subtab-audit').entries = sampleLog;
 </script>
 
+<!-- ─── TIMELINE ─────────────────────────────────────────── -->
+<h2 id="timeline">tbt-timeline</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--tbt-space-6)">
+  <div>
+    <div class="demo-label">Full detail</div>
+    <tbt-timeline id="tl-full" max-height="380px"></tbt-timeline>
+  </div>
+  <div>
+    <div class="demo-label">Compact</div>
+    <tbt-timeline id="tl-compact" compact max-height="380px"></tbt-timeline>
+  </div>
+</div>
+<script type="module">
+  const tlEntries = [
+    { label: 'Document created',    timestamp: new Date(Date.now() - 3*86400000).toISOString(), user: 'Wichit Wongta',  icon: 'file-plus',    variant: 'primary' },
+    { label: 'Vendor updated',      timestamp: new Date(Date.now() - 2*86400000).toISOString(), user: 'Wichit Wongta',  icon: 'edit',         variant: 'neutral',
+      content: 'Vendor changed from ABC Co. to XYZ Co., Ltd.' },
+    { label: 'Submitted',           timestamp: new Date(Date.now() - 28*3600000).toISOString(), user: 'Wichit Wongta',  icon: 'send',         variant: 'info' },
+    { label: 'Revision requested',  timestamp: new Date(Date.now() - 6*3600000).toISOString(),  user: 'Manager Somchai', icon: 'arrow-back-up', variant: 'warning',
+      content: 'Please clarify line item 3 unit price' },
+    { label: 'Resubmitted',         timestamp: new Date(Date.now() - 3*3600000).toISOString(),  user: 'Wichit Wongta',  icon: 'send',         variant: 'info' },
+    { label: 'Approved',            timestamp: new Date(Date.now() - 60*60000).toISOString(),   user: 'Manager Somchai', icon: 'circle-check', variant: 'success',
+      content: 'Approved — proceed with payment' },
+  ];
+  document.getElementById('tl-full').entries    = tlEntries;
+  document.getElementById('tl-compact').entries = tlEntries;
+</script>
+
 <!-- ─── BREADCRUMB ──────────────────────────────────────── -->
 <h2 id="breadcrumb">tbt-breadcrumb</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-3)">

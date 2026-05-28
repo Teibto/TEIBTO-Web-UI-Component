@@ -9,6 +9,17 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.33.0] — 2026-05-28
+
+### Added
+
+- **`tbt-timeline`** — Vertical event timeline สำหรับ document history, process flow, audit trail. แต่ละ entry มี label, timestamp, user, icon, variant, content. รองรับ `compact` mode และ `max-height` scrollable container.
+  - Entry fields: `label`, `timestamp`, `user`, `icon`, `variant` (primary|success|warning|danger|info|neutral), `content`
+  - Props: `entries` (Array), `compact` (Boolean), `max-height` (CSS string)
+  - Accessible: `<ol aria-label="Timeline">` + `<li>` structure
+
+---
+
 ## [1.32.0] — 2026-05-28
 
 ### Added
