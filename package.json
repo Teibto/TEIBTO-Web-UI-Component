@@ -1,6 +1,6 @@
 {
   "name": "@teibto/tbt-ds",
-  "version": "1.37.0",
+  "version": "1.38.0",
   "description": "Teibto Design System — Lit Web Components for NetSuite Suitelet custom HTML pages",
   "author": "Wichit Wongta",
   "license": "UNLICENSED",
@@ -45,9 +45,9 @@
     "netsuite"
   ],
   "tbt": {
-    "ds-version": "1.37.0",
-    "file-cabinet-path": "/SuiteScripts/Teibto/ds/v1.37.0/",
-    "skill-version": "1.37.0"
+    "ds-version": "1.38.0",
+    "file-cabinet-path": "/SuiteScripts/Teibto/ds/v1.38.0/",
+    "skill-version": "1.38.0"
   },
   "customElements": "custom-elements.json"
 }

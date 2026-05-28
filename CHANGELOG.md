@@ -9,6 +9,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.38.0] — 2026-05-28
+
+### Added
+
+- **`tbt-drawer`** — Slide-in drawer panel สำหรับ filter panel, detail view, และ side form. ใช้ `<dialog>` + `showModal()` พร้อม focus trap อัตโนมัติ.
+  - Props: `open` (Boolean, reflect), `placement` (right|left|bottom, default: right), `title`, `size` (sm|md|lg|full, default: md), `closable` (Boolean, default: true)
+  - Slots: default body slot, `footer` slot
+  - Events: `tbt-close` — fired เมื่อกด ×, คลิก backdrop, หรือกด Escape
+  - CSS transition: slide-in/out 280ms cubic-bezier
+  - Responsive sizes: sm=320px, md=420px, lg=560px, full=100% (right/left); sm=30%, md=50%, lg=70% height (bottom)
+
+---
+
 ## [1.37.0] — 2026-05-28
 
 ### Added

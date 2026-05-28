@@ -22,6 +22,7 @@ export * from './tbt-button.js';
 export * from './tbt-split-button.js';
 export * from './tbt-modal.js';
 export * from './tbt-confirm.js';
+export * from './tbt-drawer.js';
 
 /* Loading */
 export * from './tbt-skeleton.js';

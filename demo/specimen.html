@@ -1007,6 +1007,76 @@
   });
 </script>
 
+<!-- ─── DRAWER ──────────────────────────────────────── -->
+<h2 id="drawer">tbt-drawer</h2>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-3)">
+  <tbt-button variant="secondary" icon="layout-sidebar-right" id="open-drawer-right">Right (default)</tbt-button>
+  <tbt-button variant="secondary" icon="layout-sidebar"      id="open-drawer-left">Left</tbt-button>
+  <tbt-button variant="secondary" icon="layout-bottombar"    id="open-drawer-bottom">Bottom</tbt-button>
+  <tbt-button variant="secondary" icon="arrows-maximize"     id="open-drawer-lg">Large</tbt-button>
+</div>
+
+<tbt-drawer id="drawer-right" title="Filter options">
+  <div style="display:flex;flex-direction:column;gap:var(--tbt-space-4)">
+    <tbt-dropdown id="drawer-status" label="Status" placeholder="All statuses"></tbt-dropdown>
+    <tbt-datepicker label="Date from"></tbt-datepicker>
+    <tbt-datepicker label="Date to"></tbt-datepicker>
+  </div>
+  <tbt-button slot="footer" variant="primary" icon="filter">Apply filters</tbt-button>
+  <tbt-button slot="footer" variant="secondary" id="drawer-right-close">Cancel</tbt-button>
+</tbt-drawer>
+
+<tbt-drawer id="drawer-left" title="Navigation" placement="left" size="sm">
+  <div style="display:flex;flex-direction:column;gap:var(--tbt-space-2)">
+    <tbt-button variant="ghost" icon="home">Dashboard</tbt-button>
+    <tbt-button variant="ghost" icon="file-invoice">Invoices</tbt-button>
+    <tbt-button variant="ghost" icon="shopping-cart">Sales orders</tbt-button>
+  </div>
+</tbt-drawer>
+
+<tbt-drawer id="drawer-bottom" title="Quick actions" placement="bottom" size="sm">
+  <div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2)">
+    <tbt-button variant="primary" icon="printer">Print</tbt-button>
+    <tbt-button variant="secondary" icon="mail">Email</tbt-button>
+    <tbt-button variant="secondary" icon="download">Export PDF</tbt-button>
+  </div>
+</tbt-drawer>
+
+<tbt-drawer id="drawer-lg" title="Document details" size="lg">
+  <tbt-field-grid columns="2">
+    <tbt-field label="Document No." value="PO-2569-0042"></tbt-field>
+    <tbt-field label="Vendor" value="บจก. เทสโต้ ซัพพลาย"></tbt-field>
+    <tbt-field label="Date" value="21 May 2026"></tbt-field>
+    <tbt-field label="Status"><tbt-badge variant="warning">Pending approval</tbt-badge></tbt-field>
+    <tbt-field label="Amount" value="฿107,000.00"></tbt-field>
+  </tbt-field-grid>
+  <tbt-button slot="footer" variant="primary" icon="circle-check">Approve</tbt-button>
+  <tbt-button slot="footer" variant="danger"  icon="x">Reject</tbt-button>
+  <tbt-button slot="footer" variant="secondary" id="drawer-lg-close">Close</tbt-button>
+</tbt-drawer>
+
+<script type="module">
+  const drawers = {
+    right:  document.getElementById('drawer-right'),
+    left:   document.getElementById('drawer-left'),
+    bottom: document.getElementById('drawer-bottom'),
+    lg:     document.getElementById('drawer-lg'),
+  };
+  document.getElementById('open-drawer-right').addEventListener('click',  () => drawers.right.open  = true);
+  document.getElementById('open-drawer-left').addEventListener('click',   () => drawers.left.open   = true);
+  document.getElementById('open-drawer-bottom').addEventListener('click', () => drawers.bottom.open = true);
+  document.getElementById('open-drawer-lg').addEventListener('click',     () => drawers.lg.open     = true);
+  document.getElementById('drawer-right-close').addEventListener('click', () => drawers.right.open  = false);
+  document.getElementById('drawer-lg-close').addEventListener('click',    () => drawers.lg.open     = false);
+  Object.values(drawers).forEach(d => d.addEventListener('tbt-close', () => d.open = false));
+  document.getElementById('drawer-status').options = [
+    { value: 'all', label: 'All statuses' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'rejected', label: 'Rejected' },
+  ];
+</script>
+
 <!-- ─── MENUBAR ─────────────────────────────────────── -->
 <h2 id="menubar">tbt-menubar</h2>
 <div style="border-radius:var(--tbt-radius-lg);overflow:hidden;box-shadow:var(--tbt-shadow-md)">
