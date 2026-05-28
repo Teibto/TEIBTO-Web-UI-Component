@@ -88,3 +88,45 @@ describe('tbt-menu-group', () => {
     expect(el.hasAttribute('open')).to.be.true;
   });
 });
+
+describe('tbt-menu-item a11y', () => {
+  it('has aria-current="page" when active', async () => {
+    const el = await fixture(html`<tbt-menu-item label="Dashboard" active></tbt-menu-item>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('a').getAttribute('aria-current')).to.equal('page');
+  });
+
+  it('no aria-current attribute when not active', async () => {
+    const el = await fixture(html`<tbt-menu-item label="Dashboard"></tbt-menu-item>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('a').hasAttribute('aria-current')).to.be.false;
+  });
+});
+
+describe('tbt-menu-group a11y', () => {
+  it('trigger has aria-haspopup="true"', async () => {
+    const el = await fixture(html`<tbt-menu-group label="ขาย"></tbt-menu-group>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.trigger').getAttribute('aria-haspopup')).to.equal('true');
+  });
+
+  it('aria-expanded="false" when closed', async () => {
+    const el = await fixture(html`<tbt-menu-group label="ขาย"></tbt-menu-group>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.trigger').getAttribute('aria-expanded')).to.equal('false');
+  });
+
+  it('aria-expanded="true" after _toggle()', async () => {
+    const el = await fixture(html`<tbt-menu-group label="ขาย"></tbt-menu-group>`);
+    await el.updateComplete;
+    el._toggle();
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.trigger').getAttribute('aria-expanded')).to.equal('true');
+  });
+
+  it('dropdown div has role="menu"', async () => {
+    const el = await fixture(html`<tbt-menu-group label="ขาย"></tbt-menu-group>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.dropdown').getAttribute('role')).to.equal('menu');
+  });
+});

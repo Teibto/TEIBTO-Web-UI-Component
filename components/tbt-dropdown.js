@@ -21,7 +21,7 @@
  *
  * Event: tbt-change → { value, label }
  */
-import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
 /**
@@ -42,6 +42,7 @@ class TbtDropdown extends LitElement {
     searchable:  { type: Boolean },
     _open:       { state: true },
     _query:      { state: true },
+    _activeIdx:  { state: true },
   };
 
   constructor() {
@@ -52,6 +53,8 @@ class TbtDropdown extends LitElement {
     this.placeholder = 'Select…';
     this._open = false;
     this._query = '';
+    this._activeIdx = -1;
+    this._uid = `dd${Math.random().toString(36).slice(2, 8)}`;
   }
 
   connectedCallback() {
@@ -72,10 +75,12 @@ class TbtDropdown extends LitElement {
       this.toggleAttribute('open', this._open);
       if (this._open && this.searchable) {
         this._query = '';
+        this._activeIdx = -1;
         this.updateComplete.then(() => {
           this.shadowRoot.querySelector('.search input')?.focus();
         });
       }
+      if (!this._open) this._activeIdx = -1;
     }
   }
 
@@ -93,19 +98,45 @@ class TbtDropdown extends LitElement {
       composed: true,
     }));
     this._open = false;
+    this._activeIdx = -1;
   }
 
   _onTriggerKeydown(e) {
+    const opts = this._filteredOpts;
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      this._toggleOpen();
+      if (this._open && this._activeIdx >= 0) {
+        this._pick(opts[this._activeIdx].value);
+      } else {
+        this._toggleOpen();
+      }
     } else if (e.key === 'Escape' && this._open) {
       e.preventDefault();
       this._open = false;
-    } else if (e.key === 'ArrowDown' && !this._open) {
+    } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      this._open = true;
+      if (!this._open) {
+        this._open = true;
+      } else {
+        this._activeIdx = Math.min(this._activeIdx + 1, opts.length - 1);
+      }
+    } else if (e.key === 'ArrowUp' && this._open) {
+      e.preventDefault();
+      this._activeIdx = Math.max(this._activeIdx - 1, 0);
+    } else if (e.key === 'Home' && this._open) {
+      e.preventDefault();
+      this._activeIdx = 0;
+    } else if (e.key === 'End' && this._open) {
+      e.preventDefault();
+      this._activeIdx = opts.length - 1;
     }
+  }
+
+  get _filteredOpts() {
+    const q = (this._query ?? '').toLowerCase();
+    return q
+      ? this.options.filter(o => String(o.label ?? '').toLowerCase().includes(q))
+      : this.options;
   }
 
   static styles = css`
@@ -207,6 +238,7 @@ class TbtDropdown extends LitElement {
       transition: background var(--tbt-transition-fast);
     }
     .option:hover { background: var(--tbt-bg-hover); }
+    .option[data-kbd-active] { background: var(--tbt-bg-active); }
     .option.selected { background: var(--tbt-primary-bg); color: var(--tbt-primary-text); }
     .search {
       position: sticky; top: 0; z-index: 1;
@@ -283,10 +315,10 @@ class TbtDropdown extends LitElement {
 
   _renderSearchable(isPlaceholder) {
     const selected = this.options.find(o => String(o.value) === String(this.value));
-    const q = (this._query ?? '').toLowerCase();
-    const filtered = q
-      ? this.options.filter(o => String(o.label ?? '').toLowerCase().includes(q))
-      : this.options;
+    const filtered = this._filteredOpts;
+    const activeId = this._activeIdx >= 0 && this._activeIdx < filtered.length
+      ? `${this._uid}-opt-${filtered[this._activeIdx].value}`
+      : nothing;
     return html`
       <div class="wrap">
         <div class="trigger ${isPlaceholder ? 'is-placeholder' : ''}"
@@ -294,6 +326,7 @@ class TbtDropdown extends LitElement {
           aria-haspopup="listbox"
           aria-expanded=${this._open ? 'true' : 'false'}
           aria-label=${this.label || this.placeholder}
+          aria-activedescendant=${activeId}
           tabindex=${this.disabled ? '-1' : '0'}
           @click=${this._toggleOpen}
           @keydown=${this._onTriggerKeydown}>
@@ -305,15 +338,26 @@ class TbtDropdown extends LitElement {
             <input type="text"
               placeholder="Search…"
               .value=${this._query ?? ''}
-              @input=${e => { this._query = e.target.value; }}
-              @keydown=${e => { if (e.key === 'Escape') { e.preventDefault(); this._open = false; } }}>
+              aria-activedescendant=${activeId}
+              @input=${e => { this._query = e.target.value; this._activeIdx = -1; }}
+              @keydown=${e => {
+                const fo = this._filteredOpts;
+                if (e.key === 'Escape') { e.preventDefault(); this._open = false; }
+                else if (e.key === 'ArrowDown') { e.preventDefault(); this._activeIdx = Math.min(this._activeIdx + 1, fo.length - 1); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); this._activeIdx = Math.max(this._activeIdx - 1, 0); }
+                else if (e.key === 'Home') { e.preventDefault(); this._activeIdx = 0; }
+                else if (e.key === 'End') { e.preventDefault(); this._activeIdx = fo.length - 1; }
+                else if (e.key === 'Enter' && this._activeIdx >= 0) { e.preventDefault(); this._pick(fo[this._activeIdx].value); }
+              }}>
           </div>
           ${filtered.length === 0
             ? html`<div class="empty-msg">No options match</div>`
-            : filtered.map(o => html`
-              <div class="option ${String(o.value) === String(this.value) ? 'selected' : ''}"
+            : filtered.map((o, idx) => html`
+              <div id="${this._uid}-opt-${o.value}"
+                class="option ${String(o.value) === String(this.value) ? 'selected' : ''}"
                 role="option"
                 aria-selected=${String(o.value) === String(this.value) ? 'true' : 'false'}
+                ?data-kbd-active=${idx === this._activeIdx}
                 @click=${() => this._pick(o.value)}>
                 ${o.label}
               </div>`)}

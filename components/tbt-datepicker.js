@@ -90,25 +90,28 @@ class TbtDatepicker extends LitElement {
       ${tablerLink}
       ${this.label ? html`
         <div class="label-row">
-          <label>${this.label}</label>
+          <label for="dp-input">${this.label}</label>
           ${this.required ? html`<span class="required">*</span>` : ''}
         </div>` : ''}
       <div class="wrap">
         <input
+          id="dp-input"
           type="date"
           .value=${this.value}
           min=${this.min || nothing}
           max=${this.max || nothing}
+          aria-invalid=${this.error ? 'true' : 'false'}
+          aria-describedby=${this.error ? 'dp-error' : this.helper ? 'dp-helper' : nothing}
           ?required=${this.required}
           ?disabled=${this.disabled}
           @change=${this._onChange}>
       </div>
       ${this.error ? html`
-        <div class="error-msg">
-          <i class="ti ti-alert-circle error-icon"></i>
+        <div id="dp-error" class="error-msg">
+          <i class="ti ti-alert-circle error-icon" aria-hidden="true"></i>
           ${this.error}
         </div>` : ''}
-      ${this.helper && !this.error ? html`<div class="helper">${this.helper}</div>` : ''}
+      ${this.helper && !this.error ? html`<div id="dp-helper" class="helper">${this.helper}</div>` : ''}
     `;
   }
 }

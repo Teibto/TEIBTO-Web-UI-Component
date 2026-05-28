@@ -54,3 +54,17 @@ describe('tbt-sidebar-item', () => {
     expect(el.shadowRoot.querySelector('a').getAttribute('href')).to.equal('#');
   });
 });
+
+describe('tbt-sidebar-item a11y', () => {
+  it('has aria-current="page" when active', async () => {
+    const el = await fixture(html`<tbt-sidebar-item label="Dashboard" active></tbt-sidebar-item>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('a').getAttribute('aria-current')).to.equal('page');
+  });
+
+  it('no aria-current attribute when not active', async () => {
+    const el = await fixture(html`<tbt-sidebar-item label="Dashboard"></tbt-sidebar-item>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('a').hasAttribute('aria-current')).to.be.false;
+  });
+});

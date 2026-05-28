@@ -12,7 +12,7 @@
  *     <tbt-sidebar-item icon="shopping-cart" label="Purchase"  href="/po"></tbt-sidebar-item>
  *   </tbt-sidebar>
  */
-import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
 /**
@@ -174,7 +174,8 @@ class TbtSidebarItem extends LitElement {
   render() {
     return html`
       ${tablerLink}
-      <a href=${this.href || '#'} title=${this.label || ''}>
+      <a href=${this.href || '#'} title=${this.label || ''}
+         aria-current=${this.active ? 'page' : nothing}>
         ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
         <span class="lbl">${this.label}</span>
       </a>

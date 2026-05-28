@@ -69,3 +69,148 @@ describe('tbt-dropdown', () => {
     expect(el._open).to.be.false;
   });
 });
+
+describe('tbt-dropdown a11y (searchable)', () => {
+  it('trigger has role="combobox" and aria-haspopup="listbox"', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    const trigger = el.shadowRoot.querySelector('.trigger');
+    expect(trigger.getAttribute('role')).to.equal('combobox');
+    expect(trigger.getAttribute('aria-haspopup')).to.equal('listbox');
+  });
+
+  it('aria-expanded reflects open state', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.trigger').getAttribute('aria-expanded')).to.equal('false');
+    el._open = true;
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.trigger').getAttribute('aria-expanded')).to.equal('true');
+  });
+
+  it('options have role="option", aria-selected, and id', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    const opts = el.shadowRoot.querySelectorAll('[role="option"]');
+    expect(opts.length).to.equal(OPTIONS.length);
+    opts.forEach(opt => {
+      expect(opt.id).to.match(/^dd[a-z0-9]+-opt-/);
+      expect(opt.hasAttribute('aria-selected')).to.be.true;
+    });
+  });
+
+  it('aria-activedescendant matches highlighted option id', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    el._activeIdx = 1;
+    await el.updateComplete;
+    const opts = el.shadowRoot.querySelectorAll('[role="option"]');
+    expect(el.shadowRoot.querySelector('.trigger').getAttribute('aria-activedescendant')).to.equal(opts[1].id);
+  });
+
+  it('no aria-activedescendant when _activeIdx is -1', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.trigger').hasAttribute('aria-activedescendant')).to.be.false;
+  });
+});
+
+describe('tbt-dropdown keyboard navigation (searchable)', () => {
+  const kd = key => new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+
+  it('ArrowDown opens dropdown when closed', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.trigger').dispatchEvent(kd('ArrowDown'));
+    await el.updateComplete;
+    expect(el._open).to.be.true;
+  });
+
+  it('ArrowDown moves _activeIdx from -1 to 0', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.trigger').dispatchEvent(kd('ArrowDown'));
+    await el.updateComplete;
+    expect(el._activeIdx).to.equal(0);
+  });
+
+  it('ArrowDown advances to next option', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    el._activeIdx = 1;
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.trigger').dispatchEvent(kd('ArrowDown'));
+    await el.updateComplete;
+    expect(el._activeIdx).to.equal(2);
+  });
+
+  it('ArrowUp clamps at 0', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    el._activeIdx = 0;
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.trigger').dispatchEvent(kd('ArrowUp'));
+    await el.updateComplete;
+    expect(el._activeIdx).to.equal(0);
+  });
+
+  it('Home moves to first option', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    el._activeIdx = 3;
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.trigger').dispatchEvent(kd('Home'));
+    await el.updateComplete;
+    expect(el._activeIdx).to.equal(0);
+  });
+
+  it('End moves to last option', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.trigger').dispatchEvent(kd('End'));
+    await el.updateComplete;
+    expect(el._activeIdx).to.equal(OPTIONS.length - 1);
+  });
+
+  it('Enter commits highlighted option and closes', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    el._activeIdx = 2;
+    await el.updateComplete;
+    let detail = null;
+    el.addEventListener('tbt-change', e => { detail = e.detail; });
+    el.shadowRoot.querySelector('.trigger').dispatchEvent(kd('Enter'));
+    await el.updateComplete;
+    expect(el.value).to.equal('C');
+    expect(detail.label).to.equal('Cherry');
+    expect(el._open).to.be.false;
+  });
+
+  it('Escape closes dropdown', async () => {
+    const el = await fixture(html`<tbt-dropdown searchable .options=${OPTIONS}></tbt-dropdown>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.trigger').dispatchEvent(kd('Escape'));
+    await el.updateComplete;
+    expect(el._open).to.be.false;
+  });
+});

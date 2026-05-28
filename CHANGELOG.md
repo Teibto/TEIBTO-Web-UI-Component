@@ -9,6 +9,24 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.27.0] — 2026-05-28
+
+### Accessibility
+
+- **`tbt-datepicker`** — เพิ่ม `id="dp-input"` + `for="dp-input"` เชื่อม label กับ input, `aria-invalid`, `aria-describedby` ชี้ไป error/helper element
+- **`tbt-dropdown`** (searchable) — เพิ่ม keyboard navigation สมบูรณ์: Arrow Up/Down เลื่อน highlight, Home/End ไปปลาย, Enter commit ตัวเลือกที่ highlight อยู่; เพิ่ม `aria-activedescendant` บน trigger + search input, `id` บนแต่ละ option element, CSS visual state `[data-kbd-active]`
+- **`tbt-menu-group`** — เพิ่ม `aria-haspopup="true"` + `aria-expanded` บน trigger button, `role="menu"` บน dropdown div
+- **`tbt-menu-item`** — เพิ่ม `aria-current="page"` บน anchor เมื่อ `active`
+- **`tbt-sidebar-item`** — เพิ่ม `aria-current="page"` บน anchor เมื่อ `active`
+
+### Test
+
+- ติดตั้ง `axe-core` เป็น devDependency และ inject `axe.min.js` เป็น global ใน WTR test HTML
+- เพิ่ม `describe('a11y')` blocks ใน test files ของ tbt-datepicker, tbt-dropdown, tbt-menubar, tbt-sidebar
+- เพิ่ม keyboard navigation tests ใน tbt-dropdown
+
+---
+
 ## [1.26.2] — 2026-05-25
 
 ### Fixed

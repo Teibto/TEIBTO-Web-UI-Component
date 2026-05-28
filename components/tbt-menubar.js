@@ -17,7 +17,7 @@
  *     </tbt-menu-group>
  *   </tbt-menubar>
  */
-import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
 /**
@@ -182,7 +182,8 @@ class TbtMenuItem extends LitElement {
   render() {
     return html`
       ${tablerLink}
-      <a href=${this.href || '#'}>
+      <a href=${this.href || '#'}
+         aria-current=${this.active ? 'page' : nothing}>
         ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
         ${this.label}
       </a>
@@ -285,12 +286,15 @@ class TbtMenuGroup extends LitElement {
   render() {
     return html`
       ${tablerLink}
-      <button class="trigger" @click=${this._toggle}>
+      <button class="trigger"
+        aria-haspopup="true"
+        aria-expanded=${this._open ? 'true' : 'false'}
+        @click=${this._toggle}>
         ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
         ${this.label}
         <span class="chevron" aria-hidden="true">▾</span>
       </button>
-      <div class="dropdown">
+      <div class="dropdown" role="menu">
         <slot></slot>
       </div>
     `;

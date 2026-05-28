@@ -26,6 +26,7 @@ export default {
     <html>
       <head>
         <script type="importmap">${JSON.stringify(importMap)}</script>
+        <script src="/node_modules/axe-core/axe.min.js"></script>
       </head>
       <body>
         <script type="module" src="${testFramework}"></script>
