@@ -45,6 +45,7 @@ export * from './tbt-multiselect.js';
 export * from './tbt-datepicker.js';
 export * from './tbt-search.js';
 export * from './tbt-color-picker.js';
+export * from './tbt-number-input.js';
 export * from './tbt-form.js';
 export * from './tbt-address.js';
 

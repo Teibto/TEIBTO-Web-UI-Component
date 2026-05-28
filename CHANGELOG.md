@@ -9,6 +9,17 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.32.0] — 2026-05-28
+
+### Added
+
+- **`tbt-number-input`** — Formatted number input สำหรับ ERP financial fields. แสดง comma thousands separator โดยอัตโนมัติ, prefix/suffix สำหรับ currency/unit, Arrow key increment/decrement, min/max clamping, form-associated.
+  - Props: `value`, `label`, `name`, `min`, `max`, `step`, `decimal`, `prefix`, `suffix`, `placeholder`, `required`, `disabled`, `readonly`, `error`, `helper`
+  - Event: `tbt-change → { value: number | null }` (null เมื่อ clear)
+  - พฤติกรรม: focus → raw number, blur → formatted (comma-separated), Enter → commit
+
+---
+
 ## [1.31.0] — 2026-05-28
 
 ### Added
