@@ -9,6 +9,24 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.28.0] — 2026-05-28
+
+### Accessibility
+
+- **`tbt-input`** — เพิ่ม `aria-invalid`, `aria-describedby` บน native input; เพิ่ม `id` บน error-msg และ helper div
+- **`tbt-textarea`** — เพิ่ม `aria-invalid`, `aria-describedby`; เพิ่ม `id` บน error-msg และ helper div (pattern เดียวกับ tbt-input)
+- **`tbt-multiselect`** — เพิ่ม `_uid`, `aria-controls`, `aria-owns` บน trigger; แยก `role="listbox"` เป็น inner div พร้อม `id` + `aria-label`; เพิ่ม `aria-label="Search options"` บน search input; แทน `<input type="checkbox">` ด้วย CSS-only `.cb-visual` span เพื่อขจัด nested-interactive violation
+- **`tbt-subtab`** — `_syncTabs()` เพิ่ม `role="tabpanel"`, `aria-label`, `tabindex` บน `tbt-tab` host elements
+- **`tbt-modal`** — เพิ่ม `aria-modal="true"` บน `<dialog>`
+
+### Test
+
+- เพิ่ม `axe.run()` assertions (critical/serious filter) ใน: tbt-input, tbt-textarea, tbt-multiselect, tbt-subtab, tbt-modal, tbt-checkbox, tbt-toggle, tbt-search, tbt-table, tbt-button
+- เพิ่ม structural a11y tests สำหรับ tbt-subtab tabpanel roles และ tbt-modal aria-modal
+- **334 tests, 0 failures**
+
+---
+
 ## [1.27.0] — 2026-05-28
 
 ### Accessibility

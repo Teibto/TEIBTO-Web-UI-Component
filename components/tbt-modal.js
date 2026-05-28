@@ -201,7 +201,7 @@ class TbtModal extends LitElement {
     const icon = this._variantIcon();
     return html`
       ${tablerLink}
-      <dialog aria-labelledby="modal-title" @click=${this._onBackdropClick} @cancel=${this._onNativeCancel}>
+      <dialog aria-labelledby="modal-title" aria-modal="true" @click=${this._onBackdropClick} @cancel=${this._onNativeCancel}>
         <div class="modal-header">
           ${icon ? html`<i class="ti ti-${icon} modal-icon" aria-hidden="true"></i>` : ''}
           <h3 id="modal-title">${this.title}</h3>

@@ -123,6 +123,9 @@ class TbtTextarea extends LitElement {
 
   render() {
     const id = this._uid();
+    const errId = `${id}-error`;
+    const helperId = `${id}-helper`;
+    const describedBy = this.error ? errId : this.helper ? helperId : nothing;
     return html`
       ${tablerLink}
       ${this.label ? html`
@@ -135,6 +138,8 @@ class TbtTextarea extends LitElement {
         .value=${this.value}
         placeholder=${this.placeholder}
         rows=${this.rows}
+        aria-invalid=${this.error ? 'true' : 'false'}
+        aria-describedby=${describedBy}
         ?required=${this.required}
         ?disabled=${this.disabled}
         ?readonly=${this.readonly}
@@ -142,12 +147,12 @@ class TbtTextarea extends LitElement {
         @input=${this._onInput}
         @change=${this._onChange}></textarea>
       ${this.error ? html`
-        <div class="error-msg">
+        <div id=${errId} class="error-msg">
           <i class="ti ti-alert-circle error-icon" aria-hidden="true"></i>
           ${this.error}
         </div>` : ''}
       ${this.helper && !this.error ? html`
-        <div class="helper">${this.helper}</div>` : ''}
+        <div id=${helperId} class="helper">${this.helper}</div>` : ''}
     `;
   }
 }

@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-multiselect.js';
 
+const axe = window.axe;
+
 const OPTIONS = [
   { value: '1', label: 'Apple' },
   { value: '2', label: 'Banana' },
@@ -65,5 +67,29 @@ describe('tbt-multiselect — search', () => {
     await el.updateComplete;
     el.shadowRoot.querySelector('.option').click();
     expect(el.value).to.deep.equal(['3']);
+  });
+
+  it('passes axe (open)', async () => {
+    const el = await fixture(html`<tbt-multiselect label="Fruits" .options=${OPTIONS}></tbt-multiselect>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
+  });
+
+  it('passes axe (searchable, open)', async () => {
+    const el = await fixture(html`<tbt-multiselect label="Fruits" searchable .options=${OPTIONS}></tbt-multiselect>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

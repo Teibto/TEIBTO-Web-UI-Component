@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-input.js';
 
+const axe = window.axe;
+
 describe('tbt-input', () => {
   it('renders a native input in shadow DOM', async () => {
     const el = await fixture(html`<tbt-input></tbt-input>`);
@@ -84,5 +86,25 @@ describe('tbt-input', () => {
     const el = await fixture(html`<tbt-input readonly></tbt-input>`);
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('input').readOnly).to.be.true;
+  });
+
+  it('passes axe with label', async () => {
+    const el = await fixture(html`<tbt-input label="Vendor name" required></tbt-input>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
+  });
+
+  it('passes axe with error state', async () => {
+    const el = await fixture(html`<tbt-input label="Email" error="Email is required"></tbt-input>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-subtab.js';
 
+const axe = window.axe;
+
 describe('tbt-subtab', () => {
   it('renders a button for each tbt-tab child', async () => {
     const el = await fixture(html`
@@ -72,5 +74,33 @@ describe('tbt-subtab', () => {
       </tbt-subtab>`);
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('[role="tablist"]')).to.exist;
+  });
+
+  it('tbt-tab elements get role="tabpanel" and aria-label from _syncTabs', async () => {
+    const el = await fixture(html`
+      <tbt-subtab active="a">
+        <tbt-tab name="a" label="Tab A">A</tbt-tab>
+        <tbt-tab name="b" label="Tab B">B</tbt-tab>
+      </tbt-subtab>`);
+    await el.updateComplete;
+    const panels = el.querySelectorAll('tbt-tab');
+    expect(panels[0].getAttribute('role')).to.equal('tabpanel');
+    expect(panels[0].getAttribute('aria-label')).to.equal('Tab A');
+    expect(panels[1].getAttribute('role')).to.equal('tabpanel');
+    expect(panels[1].getAttribute('aria-label')).to.equal('Tab B');
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`
+      <tbt-subtab active="a">
+        <tbt-tab name="a" label="Tab A">Content A</tbt-tab>
+        <tbt-tab name="b" label="Tab B">Content B</tbt-tab>
+      </tbt-subtab>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

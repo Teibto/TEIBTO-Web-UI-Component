@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-toggle.js';
 
+const axe = window.axe;
+
 describe('tbt-toggle', () => {
   it('renders a checkbox input with role="switch" in shadow DOM', async () => {
     const el = await fixture(html`<tbt-toggle></tbt-toggle>`);
@@ -74,5 +76,15 @@ describe('tbt-toggle', () => {
     const el = await fixture(html`<tbt-toggle disabled></tbt-toggle>`);
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('input').disabled).to.be.true;
+  });
+
+  it('passes axe with label', async () => {
+    const el = await fixture(html`<tbt-toggle label="Active" checked></tbt-toggle>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

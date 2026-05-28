@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-textarea.js';
 
+const axe = window.axe;
+
 describe('tbt-textarea', () => {
   it('renders a textarea in shadow DOM', async () => {
     const el = await fixture(html`<tbt-textarea label="Notes"></tbt-textarea>`);
@@ -49,5 +51,15 @@ describe('tbt-textarea', () => {
     const msg = el.shadowRoot.querySelector('.error-msg');
     expect(msg).to.exist;
     expect(msg.textContent).to.include('Required');
+  });
+
+  it('passes axe with label', async () => {
+    const el = await fixture(html`<tbt-textarea label="Notes" required></tbt-textarea>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

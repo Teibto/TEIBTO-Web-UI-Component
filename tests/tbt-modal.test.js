@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-modal.js';
 
+const axe = window.axe;
+
 describe('tbt-modal', () => {
   it('renders a <dialog> element in shadow DOM', async () => {
     const el = await fixture(html`<tbt-modal title="Test"></tbt-modal>`);
@@ -68,5 +70,21 @@ describe('tbt-modal', () => {
     const dialog = el.shadowRoot.querySelector('dialog');
     const h3 = el.shadowRoot.querySelector('h3');
     expect(dialog.getAttribute('aria-labelledby')).to.equal(h3.id);
+  });
+
+  it('dialog has aria-modal="true"', async () => {
+    const el = await fixture(html`<tbt-modal title="Test"></tbt-modal>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('dialog').getAttribute('aria-modal')).to.equal('true');
+  });
+
+  it('passes axe (open)', async () => {
+    const el = await fixture(html`<tbt-modal title="Confirm action" open></tbt-modal>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

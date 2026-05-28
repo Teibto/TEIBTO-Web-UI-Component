@@ -1,6 +1,8 @@
 import { html, fixture, expect, oneEvent } from '@open-wc/testing';
 import '../components/tbt-button.js';
 
+const axe = window.axe;
+
 describe('tbt-button', () => {
   it('renders a button element in shadow DOM', async () => {
     const el = await fixture(html`<tbt-button>Save</tbt-button>`);
@@ -35,5 +37,15 @@ describe('tbt-button', () => {
     el.addEventListener('click', () => { fired = true; });
     el.shadowRoot.querySelector('button').click();
     expect(fired).to.be.false;
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-button variant="primary">Save</tbt-button>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

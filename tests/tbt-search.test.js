@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-search.js';
 
+const axe = window.axe;
+
 describe('tbt-search', () => {
   it('renders a text input in shadow DOM', async () => {
     const el = await fixture(html`<tbt-search></tbt-search>`);
@@ -60,5 +62,15 @@ describe('tbt-search', () => {
     const el = await fixture(html`<tbt-search disabled></tbt-search>`);
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('input').disabled).to.be.true;
+  });
+
+  it('passes axe', async () => {
+    const el = await fixture(html`<tbt-search placeholder="Search documents..."></tbt-search>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

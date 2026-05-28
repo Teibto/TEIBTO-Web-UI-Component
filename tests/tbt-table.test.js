@@ -1,6 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import '../components/tbt-table.js';
 
+const axe = window.axe;
+
 const COLS = [
   { key: 'id',   label: 'ID',   sortable: true },
   { key: 'name', label: 'Name', sortable: true },
@@ -74,5 +76,15 @@ describe('tbt-table', () => {
     const el = await fixture(html`<tbt-table .columns=${COLS} .rows=${manyRows} paginate page-size="5"></tbt-table>`);
     await el.updateComplete;
     expect(el.shadowRoot.querySelectorAll('tbody tr')).to.have.length(5);
+  });
+
+  it('passes axe with data', async () => {
+    const el = await fixture(html`<tbt-table .columns=${COLS} .rows=${ROWS}></tbt-table>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });

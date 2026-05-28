@@ -82,7 +82,12 @@ class TbtSubtab extends LitElement {
 
   _syncTabs() {
     this.querySelectorAll('tbt-tab').forEach(t => {
-      t.toggleAttribute('active', t.getAttribute('name') === this.active);
+      const name = t.getAttribute('name');
+      t.toggleAttribute('active', name === this.active);
+      t.setAttribute('role', 'tabpanel');
+      t.setAttribute('tabindex', name === this.active ? '0' : '-1');
+      const label = t.getAttribute('label');
+      if (label) t.setAttribute('aria-label', label);
     });
   }
 
