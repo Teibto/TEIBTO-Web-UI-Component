@@ -44,6 +44,22 @@
           "name": "*",
           "declaration": {
             "name": "*",
+            "module": "components/tbt-breadcrumb.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-pagination.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
             "module": "components/tbt-button.js"
           }
         },
@@ -53,6 +69,30 @@
           "declaration": {
             "name": "*",
             "module": "components/tbt-modal.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-confirm.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-skeleton.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-playground.js"
           }
         },
         {
@@ -84,6 +124,14 @@
           "name": "*",
           "declaration": {
             "name": "*",
+            "module": "components/tbt-toast.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
             "module": "components/tbt-checkbox.js"
           }
         },
@@ -101,6 +149,14 @@
           "declaration": {
             "name": "*",
             "module": "components/tbt-input.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-textarea.js"
           }
         },
         {
@@ -141,6 +197,14 @@
           "declaration": {
             "name": "*",
             "module": "components/tbt-form.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-address.js"
           }
         },
         {
@@ -204,6 +268,14 @@
           "name": "*",
           "declaration": {
             "name": "*",
+            "module": "components/tbt-data-table.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
             "module": "components/tbt-summary.js"
           }
         },
@@ -213,6 +285,253 @@
           "declaration": {
             "name": "*",
             "module": "components/tbt-line-items.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-lines-block.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-tabs.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-stepper.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-date-range.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-file-upload.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-doc-form.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-doc-schemas.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-address.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtAddress",
+          "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "method",
+              "name": "_onField",
+              "parameters": [
+                {
+                  "name": "key"
+                },
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_emit"
+            },
+            {
+              "kind": "method",
+              "name": "_syncValidity"
+            },
+            {
+              "kind": "field",
+              "name": "_internals"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "privacy": "public",
+              "type": {
+                "text": "object"
+              },
+              "default": "{ ...EMPTY }",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "name"
+            },
+            {
+              "kind": "field",
+              "name": "required",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "required",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "readonly",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "readonly",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "error",
+              "reflects": true
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-change",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when any sub-field changes; detail: { value: object }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "name"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "object"
+              },
+              "default": "{ ...EMPTY }",
+              "fieldName": "value"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "required"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "disabled"
+            },
+            {
+              "name": "readonly",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "readonly"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "error"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-address",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-address",
+          "declaration": {
+            "name": "TbtAddress",
+            "module": "components/tbt-address.js"
           }
         }
       ]
@@ -831,6 +1150,55 @@
     },
     {
       "kind": "javascript-module",
+      "path": "components/tbt-breadcrumb.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtBreadcrumb",
+          "members": [
+            {
+              "kind": "field",
+              "name": "items",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "items"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "items",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "items"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-breadcrumb",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-breadcrumb",
+          "declaration": {
+            "name": "TbtBreadcrumb",
+            "module": "components/tbt-breadcrumb.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "components/tbt-button.js",
       "declarations": [
         {
@@ -874,6 +1242,16 @@
               "default": "'md'",
               "attribute": "size",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "type",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'button'",
+              "attribute": "type"
             },
             {
               "kind": "field",
@@ -942,6 +1320,14 @@
               },
               "default": "'md'",
               "fieldName": "size"
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "string"
+              },
+              "default": "'button'",
+              "fieldName": "type"
             }
           ],
           "superclass": {
@@ -974,6 +1360,15 @@
           "members": [
             {
               "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "field",
               "name": "value"
             },
             {
@@ -984,6 +1379,10 @@
                   "name": "e"
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "_internals"
             },
             {
               "kind": "field",
@@ -1149,6 +1548,531 @@
           "declaration": {
             "name": "TbtCheckbox",
             "module": "components/tbt-checkbox.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-confirm.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "confirm",
+          "parameters": [
+            {
+              "name": "{\n  title        = 'Confirm',\n  message      = '',\n  confirmLabel = 'Confirm',\n  cancelLabel  = 'Cancel',\n  variant      = 'default',\n  size         = 'sm',\n}",
+              "default": "{}"
+            },
+            {
+              "name": "opts",
+              "type": {
+                "text": "@param {string} [opts.title='Confirm']\n * @param {string} [opts.message='']           May contain HTML (e.g. <strong>)\n * @param {string} [opts.confirmLabel='Confirm']\n * @param {string} [opts.cancelLabel='Cancel']\n * @param {'default'|'confirm'|'danger'} [opts.variant='default']\n * @param {'sm'|'md'|'lg'} [opts.size='sm']\n * "
+              }
+            }
+          ],
+          "return": {
+            "type": {
+              "text": "Promise<boolean>"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "confirm",
+          "declaration": {
+            "name": "confirm",
+            "module": "components/tbt-confirm.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-data-table.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtDataTable",
+          "members": [
+            {
+              "kind": "method",
+              "name": "_load"
+            },
+            {
+              "kind": "method",
+              "name": "refresh",
+              "description": "Re-fetch the current page — call after a create/update/delete operation."
+            },
+            {
+              "kind": "method",
+              "name": "_onSort",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onPageChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "columns",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "columns"
+            },
+            {
+              "kind": "field",
+              "name": "fetch",
+              "privacy": "public",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "pageSize",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "50",
+              "attribute": "page-size"
+            },
+            {
+              "kind": "field",
+              "name": "emptyMessage",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'No records found'",
+              "attribute": "empty-message"
+            },
+            {
+              "kind": "field",
+              "name": "maxHeight",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "max-height"
+            },
+            {
+              "kind": "field",
+              "name": "_rows",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "_rows"
+            },
+            {
+              "kind": "field",
+              "name": "_total",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "_total"
+            },
+            {
+              "kind": "field",
+              "name": "_page",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "attribute": "_page"
+            },
+            {
+              "kind": "field",
+              "name": "_sort",
+              "privacy": "public",
+              "type": {
+                "text": "null"
+              },
+              "default": "null",
+              "attribute": "_sort"
+            },
+            {
+              "kind": "field",
+              "name": "_order",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'asc'",
+              "attribute": "_order"
+            },
+            {
+              "kind": "field",
+              "name": "_loading",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "_loading"
+            },
+            {
+              "kind": "field",
+              "name": "_error",
+              "privacy": "public",
+              "type": {
+                "text": "null"
+              },
+              "default": "null",
+              "attribute": "_error"
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-load-error",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the fetch function throws; detail: { error }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "columns",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "columns"
+            },
+            {
+              "name": "page-size",
+              "type": {
+                "text": "number"
+              },
+              "default": "50",
+              "fieldName": "pageSize"
+            },
+            {
+              "name": "empty-message",
+              "type": {
+                "text": "string"
+              },
+              "default": "'No records found'",
+              "fieldName": "emptyMessage"
+            },
+            {
+              "name": "max-height",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "maxHeight"
+            },
+            {
+              "name": "_rows",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "_rows"
+            },
+            {
+              "name": "_total",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "_total"
+            },
+            {
+              "name": "_page",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "fieldName": "_page"
+            },
+            {
+              "name": "_sort",
+              "type": {
+                "text": "null"
+              },
+              "default": "null",
+              "fieldName": "_sort"
+            },
+            {
+              "name": "_order",
+              "type": {
+                "text": "string"
+              },
+              "default": "'asc'",
+              "fieldName": "_order"
+            },
+            {
+              "name": "_loading",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "_loading"
+            },
+            {
+              "name": "_error",
+              "type": {
+                "text": "null"
+              },
+              "default": "null",
+              "fieldName": "_error"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-data-table",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-data-table",
+          "declaration": {
+            "name": "TbtDataTable",
+            "module": "components/tbt-data-table.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-date-range.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtDateRange",
+          "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "method",
+              "name": "_onFromChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onToChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_emit"
+            },
+            {
+              "kind": "method",
+              "name": "_syncValidity"
+            },
+            {
+              "kind": "field",
+              "name": "_internals"
+            },
+            {
+              "kind": "field",
+              "name": "from",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "from"
+            },
+            {
+              "kind": "field",
+              "name": "to",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "to"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "nameFrom",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "name-from"
+            },
+            {
+              "kind": "field",
+              "name": "nameTo",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "name-to"
+            },
+            {
+              "kind": "field",
+              "name": "required",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "required",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "error",
+              "reflects": true
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-change",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when either date changes; detail: { from: string, to: string }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            },
+            {
+              "name": "name-from",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "nameFrom"
+            },
+            {
+              "name": "name-to",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "nameTo"
+            },
+            {
+              "name": "from",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "from"
+            },
+            {
+              "name": "to",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "to"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "required"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "disabled"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "error"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-date-range",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-date-range",
+          "declaration": {
+            "name": "TbtDateRange",
+            "module": "components/tbt-date-range.js"
           }
         }
       ]
@@ -1353,6 +2277,393 @@
     },
     {
       "kind": "javascript-module",
+      "path": "components/tbt-doc-form.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtDocForm",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "privacy": "public",
+              "type": {
+                "text": "object"
+              },
+              "default": "{}",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "lines",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "lines"
+            },
+            {
+              "kind": "method",
+              "name": "_lb"
+            },
+            {
+              "kind": "method",
+              "name": "_collectData"
+            },
+            {
+              "kind": "method",
+              "name": "_applyValueToFields"
+            },
+            {
+              "kind": "method",
+              "name": "_onFieldChange",
+              "parameters": [
+                {
+                  "name": "name"
+                },
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onLinesChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onAction",
+              "parameters": [
+                {
+                  "name": "action"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_resolveOptions",
+              "parameters": [
+                {
+                  "name": "opts"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_renderSection",
+              "parameters": [
+                {
+                  "name": "s"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_renderField",
+              "parameters": [
+                {
+                  "name": "f"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "schema",
+              "privacy": "public",
+              "type": {
+                "text": "null"
+              },
+              "default": "null",
+              "attribute": "schema"
+            },
+            {
+              "kind": "field",
+              "name": "approvalSteps",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "approval-steps"
+            },
+            {
+              "kind": "field",
+              "name": "auditEntries",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "audit-entries"
+            },
+            {
+              "kind": "field",
+              "name": "optionLists",
+              "privacy": "public",
+              "type": {
+                "text": "object"
+              },
+              "default": "{}",
+              "attribute": "option-lists"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "readonly",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "readonly",
+              "reflects": true
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-change",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "On any field edit; detail: { name, value, data }"
+            },
+            {
+              "name": "tbt-action",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "On any footer button click; detail: { action, data }"
+            },
+            {
+              "name": "tbt-submit",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "On submit action click; detail: { data }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "schema",
+              "type": {
+                "text": "null"
+              },
+              "default": "null",
+              "fieldName": "schema"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "object"
+              },
+              "default": "{}",
+              "fieldName": "value"
+            },
+            {
+              "name": "lines",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "lines"
+            },
+            {
+              "name": "approval-steps",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "approvalSteps"
+            },
+            {
+              "name": "audit-entries",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "auditEntries"
+            },
+            {
+              "name": "option-lists",
+              "type": {
+                "text": "object"
+              },
+              "default": "{}",
+              "fieldName": "optionLists"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "disabled"
+            },
+            {
+              "name": "readonly",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "readonly"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-doc-form",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-doc-form",
+          "declaration": {
+            "name": "TbtDocForm",
+            "module": "components/tbt-doc-form.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-doc-schemas.js",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "PO_SCHEMA",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ title: 'Purchase Order', sections: [ { title: 'Document info', columns: 4, fields: [ { name: 'tranid', label: 'Document no.', type: 'text', required: true }, { name: 'vendor', label: 'Vendor', type: 'dropdown', required: true, searchable: true, options: 'vendors' }, { name: 'date', label: 'Date', type: 'date', required: true }, { name: 'due', label: 'Expected delivery', type: 'date' }, { name: 'subsidiary', label: 'Subsidiary', type: 'dropdown', options: 'subsidiaries' }, { name: 'department', label: 'Department', type: 'dropdown', options: 'departments' }, { name: 'currency', label: 'Currency', type: 'dropdown', options: 'currencies' }, { name: 'terms', label: 'Payment terms', type: 'dropdown', options: 'payment-terms' }, { name: 'memo', label: 'Memo', type: 'textarea', rows: 3, span: 2 }, ], }, { title: 'Line items', type: 'lines', currency: '฿', vatRate: 0.07, maxHeight: '320px', }, { title: 'Approval flow', type: 'approval', orientation: 'horizontal', }, { title: 'Audit log', type: 'audit', maxHeight: '280px', }, ], actions: [ { name: 'delete', label: 'Delete', variant: 'danger', icon: 'trash' }, { name: 'cancel', label: 'Cancel', variant: 'secondary' }, { name: 'save', label: 'Save', variant: 'primary', icon: 'device-floppy' }, { name: 'submit', label: 'Submit', variant: 'primary', icon: 'send', submit: true }, ], }"
+        },
+        {
+          "kind": "variable",
+          "name": "CUSTOMER_SCHEMA",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ title: 'Customer', sections: [ { title: 'Profile', columns: 4, fields: [ { name: 'entityid', label: 'Customer ID', type: 'text', required: true }, { name: 'companyname',label: 'Company name', type: 'text', required: true, span: 2 }, { name: 'taxid', label: 'Tax ID', type: 'text' }, { name: 'category', label: 'Category', type: 'dropdown', options: 'customer-categories' }, { name: 'subsidiary', label: 'Subsidiary', type: 'dropdown', options: 'subsidiaries' }, { name: 'salesrep', label: 'Sales rep', type: 'dropdown', searchable: true, options: 'sales-reps' }, { name: 'currency', label: 'Currency', type: 'dropdown', options: 'currencies' }, ], }, { title: 'Contact', columns: 2, fields: [ { name: 'email', label: 'Email', type: 'email' }, { name: 'phone', label: 'Phone', type: 'text' }, { name: 'contactname',label:'Primary contact', type: 'text' }, { name: 'website', label: 'Website', type: 'text' }, ], }, { title: 'Billing address', columns: 1, fields: [ { name: 'bill_to', type: 'address', required: true }, ], }, { title: 'Shipping address', columns: 1, fields: [ { name: 'ship_to', type: 'address' }, ], }, { title: 'Terms & notes', columns: 2, fields: [ { name: 'terms', label: 'Payment terms', type: 'dropdown', options: 'payment-terms' }, { name: 'creditlimit',label: 'Credit limit', type: 'number', min: '0', step: '1000' }, { name: 'tax_exempt', label: 'Tax-exempt', type: 'toggle' }, { name: 'notes', label: 'Notes', type: 'textarea', rows: 3, span: 2 }, ], }, ], actions: [ { name: 'cancel', label: 'Cancel', variant: 'secondary' }, { name: 'save', label: 'Save', variant: 'primary', icon: 'device-floppy', submit: true }, ], }"
+        },
+        {
+          "kind": "variable",
+          "name": "SALES_ORDER_SCHEMA",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ title: 'Sales Order', sections: [ { title: 'Document info', columns: 4, fields: [ { name: 'tranid', label: 'Document no.', type: 'text', required: true }, { name: 'customer', label: 'Customer', type: 'dropdown', required: true, searchable: true, options: 'customers' }, { name: 'date', label: 'Date', type: 'date', required: true }, { name: 'expected', label: 'Expected ship', type: 'date' }, { name: 'salesrep', label: 'Sales rep', type: 'dropdown', searchable: true, options: 'sales-reps' }, { name: 'subsidiary', label: 'Subsidiary', type: 'dropdown', options: 'subsidiaries' }, { name: 'currency', label: 'Currency', type: 'dropdown', options: 'currencies' }, { name: 'terms', label: 'Payment terms', type: 'dropdown', options: 'payment-terms' }, { name: 'po_number', label: 'Customer PO', type: 'text' }, ], }, { title: 'Shipping', columns: 2, fields: [ { name: 'ship_to', type: 'address', label: 'Ship to', required: true }, { name: 'ship_via', label: 'Ship via', type: 'dropdown', options: 'ship-via' }, { name: 'memo', label: 'Shipping memo', type: 'textarea', rows: 2 }, ], }, { title: 'Line items', type: 'lines', currency: '฿', vatRate: 0.07, maxHeight: '320px', }, { title: 'Approval flow', type: 'approval', orientation: 'horizontal', }, ], actions: [ { name: 'cancel', label: 'Cancel', variant: 'secondary' }, { name: 'save', label: 'Save', variant: 'primary', icon: 'device-floppy' }, { name: 'submit', label: 'Submit', variant: 'primary', icon: 'send', submit: true }, ], }"
+        },
+        {
+          "kind": "variable",
+          "name": "INVOICE_SCHEMA",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ title: 'Invoice', sections: [ { title: 'Document info', columns: 4, fields: [ { name: 'tranid', label: 'Invoice no.', type: 'text', required: true }, { name: 'customer', label: 'Customer', type: 'dropdown', required: true, searchable: true, options: 'customers' }, { name: 'date', label: 'Invoice date', type: 'date', required: true }, { name: 'duedate', label: 'Due date', type: 'date', required: true }, { name: 'po_number', label: 'Customer PO', type: 'text' }, { name: 'salesrep', label: 'Sales rep', type: 'dropdown', searchable: true, options: 'sales-reps' }, { name: 'subsidiary', label: 'Subsidiary', type: 'dropdown', options: 'subsidiaries' }, { name: 'currency', label: 'Currency', type: 'dropdown', options: 'currencies' }, { name: 'terms', label: 'Payment terms', type: 'dropdown', options: 'payment-terms' }, { name: 'memo', label: 'Memo', type: 'textarea', rows: 3, span: 2 }, ], }, { title: 'Line items', type: 'lines', currency: '฿', vatRate: 0.07, maxHeight: '320px', }, { title: 'Audit log', type: 'audit', maxHeight: '280px', }, ], actions: [ { name: 'cancel', label: 'Cancel', variant: 'secondary' }, { name: 'print', label: 'Print', variant: 'secondary', icon: 'printer' }, { name: 'email', label: 'Email', variant: 'secondary', icon: 'mail' }, { name: 'save', label: 'Save', variant: 'primary', icon: 'device-floppy', submit: true }, ], }"
+        },
+        {
+          "kind": "variable",
+          "name": "QUOTATION_SCHEMA",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ title: 'Quotation', sections: [ { title: 'Document info', columns: 4, fields: [ { name: 'tranid', label: 'Quotation no.', type: 'text', required: true }, { name: 'customer', label: 'Customer', type: 'dropdown', required: true, searchable: true, options: 'customers' }, { name: 'date', label: 'Quote date', type: 'date', required: true }, { name: 'expirydate', label: 'Expiry date', type: 'date', required: true }, { name: 'salesrep', label: 'Sales rep', type: 'dropdown', searchable: true, options: 'sales-reps' }, { name: 'subsidiary', label: 'Subsidiary', type: 'dropdown', options: 'subsidiaries' }, { name: 'currency', label: 'Currency', type: 'dropdown', options: 'currencies' }, { name: 'terms', label: 'Payment terms', type: 'dropdown', options: 'payment-terms' }, { name: 'memo', label: 'Memo', type: 'textarea', rows: 3, span: 2 }, ], }, { title: 'Line items', type: 'lines', currency: '฿', vatRate: 0.07, maxHeight: '320px', }, { title: 'Approval flow', type: 'approval', orientation: 'horizontal', }, ], actions: [ { name: 'cancel', label: 'Cancel', variant: 'secondary' }, { name: 'save', label: 'Save', variant: 'primary', icon: 'device-floppy' }, { name: 'print', label: 'Print', variant: 'secondary', icon: 'printer' }, { name: 'email', label: 'Email', variant: 'secondary', icon: 'mail' }, { name: 'convert', label: 'Convert to SO', variant: 'primary', icon: 'arrow-right', submit: true }, ], }"
+        },
+        {
+          "kind": "variable",
+          "name": "FULFILLMENT_SCHEMA",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ title: 'Item Fulfillment', sections: [ { title: 'Document info', columns: 4, fields: [ { name: 'tranid', label: 'Fulfillment no.', type: 'text', required: true }, { name: 'so_number', label: 'Sales order', type: 'dropdown', required: true, searchable: true, options: 'sales-orders' }, { name: 'customer', label: 'Customer', type: 'text', readonly: true }, { name: 'date', label: 'Ship date', type: 'date', required: true }, { name: 'ship_via', label: 'Ship via', type: 'dropdown', options: 'ship-via' }, { name: 'tracking', label: 'Tracking no.', type: 'text' }, { name: 'weight', label: 'Weight (kg)', type: 'number', min: '0', step: '0.01' }, { name: 'status', label: 'Status', type: 'dropdown', options: 'fulfillment-statuses' }, ], }, { title: 'Shipping address', columns: 1, fields: [ { name: 'ship_to', type: 'address', label: 'Ship to', readonly: true }, ], }, { title: 'Notes', columns: 1, fields: [ { name: 'memo', label: 'Shipping notes', type: 'textarea', rows: 3 }, ], }, { title: 'Approval flow', type: 'approval', orientation: 'horizontal', }, ], actions: [ { name: 'cancel', label: 'Cancel', variant: 'secondary' }, { name: 'save', label: 'Save', variant: 'primary', icon: 'device-floppy' }, { name: 'ship', label: 'Mark as shipped', variant: 'primary', icon: 'truck-delivery', submit: true }, ], }",
+          "description": "Note: the \"Picked items\" table has a different column shape from\ntbt-line-items (qty-ordered / qty-picked / qty-remaining instead\nof qty/unit/price/account). Until tbt-line-items supports\nconfigurable columns, fulfillment demos render this table inline\nvia tbt-table inside the consumer page rather than via a\ntype:'lines' section here."
+        },
+        {
+          "kind": "variable",
+          "name": "RECEIPT_SCHEMA",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ title: 'Customer Receipt', sections: [ { title: 'Document info', columns: 4, fields: [ { name: 'tranid', label: 'Receipt no.', type: 'text', required: true }, { name: 'customer', label: 'Customer', type: 'dropdown', required: true, searchable: true, options: 'customers' }, { name: 'date', label: 'Receipt date', type: 'date', required: true }, { name: 'payment_method', label: 'Payment method', type: 'dropdown', required: true, options: 'payment-methods' }, { name: 'amount', label: 'Amount received', type: 'number', required: true, min: '0', step: '0.01' }, { name: 'currency', label: 'Currency', type: 'dropdown', options: 'currencies' }, { name: 'reference', label: 'Reference / Cheque no.', type: 'text' }, { name: 'bank_account', label: 'Deposit to', type: 'dropdown', options: 'bank-accounts' }, { name: 'memo', label: 'Memo', type: 'textarea', rows: 2, span: 2 }, ], }, { title: 'Audit log', type: 'audit', maxHeight: '280px', }, ], actions: [ { name: 'cancel', label: 'Cancel', variant: 'secondary' }, { name: 'print', label: 'Print receipt', variant: 'secondary', icon: 'printer' }, { name: 'save', label: 'Save', variant: 'primary', icon: 'device-floppy', submit: true }, ], }",
+          "description": "The \"Apply to invoice\" section has a different shape from\ntbt-line-items (invoice-number / open-balance / apply-amount\ninstead of qty/price/account). Demos render this via tbt-table\ninside the consumer page until tbt-line-items supports\nconfigurable columns."
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "PO_SCHEMA",
+          "declaration": {
+            "name": "PO_SCHEMA",
+            "module": "components/tbt-doc-schemas.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CUSTOMER_SCHEMA",
+          "declaration": {
+            "name": "CUSTOMER_SCHEMA",
+            "module": "components/tbt-doc-schemas.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "SALES_ORDER_SCHEMA",
+          "declaration": {
+            "name": "SALES_ORDER_SCHEMA",
+            "module": "components/tbt-doc-schemas.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "INVOICE_SCHEMA",
+          "declaration": {
+            "name": "INVOICE_SCHEMA",
+            "module": "components/tbt-doc-schemas.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "QUOTATION_SCHEMA",
+          "declaration": {
+            "name": "QUOTATION_SCHEMA",
+            "module": "components/tbt-doc-schemas.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "FULFILLMENT_SCHEMA",
+          "declaration": {
+            "name": "FULFILLMENT_SCHEMA",
+            "module": "components/tbt-doc-schemas.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RECEIPT_SCHEMA",
+          "declaration": {
+            "name": "RECEIPT_SCHEMA",
+            "module": "components/tbt-doc-schemas.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "components/tbt-dropdown.js",
       "declarations": [
         {
@@ -1361,6 +2672,37 @@
           "name": "TbtDropdown",
           "members": [
             {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "method",
+              "name": "_toggleOpen"
+            },
+            {
+              "kind": "method",
+              "name": "_pick",
+              "parameters": [
+                {
+                  "name": "val"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onTriggerKeydown",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
               "kind": "method",
               "name": "_onChange",
               "parameters": [
@@ -1368,6 +2710,28 @@
                   "name": "e"
                 }
               ]
+            },
+            {
+              "kind": "method",
+              "name": "_renderNative",
+              "parameters": [
+                {
+                  "name": "isPlaceholder"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_renderSearchable",
+              "parameters": [
+                {
+                  "name": "isPlaceholder"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "_internals"
             },
             {
               "kind": "field",
@@ -1398,6 +2762,26 @@
               },
               "default": "'Select…'",
               "attribute": "placeholder"
+            },
+            {
+              "kind": "field",
+              "name": "_open",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "_open"
+            },
+            {
+              "kind": "field",
+              "name": "_query",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "_query"
             },
             {
               "kind": "field",
@@ -1446,6 +2830,15 @@
               },
               "attribute": "error",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "searchable",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "searchable"
             }
           ],
           "events": [
@@ -1516,6 +2909,29 @@
                 "text": "string"
               },
               "fieldName": "error"
+            },
+            {
+              "name": "searchable",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "searchable"
+            },
+            {
+              "name": "_open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "_open"
+            },
+            {
+              "name": "_query",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "_query"
             }
           ],
           "superclass": {
@@ -1610,11 +3026,22 @@
           "members": [
             {
               "kind": "method",
-              "name": "_hasSlotContent"
+              "name": "_onSlotChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
             },
             {
-              "kind": "method",
-              "name": "_onSlotChange"
+              "kind": "field",
+              "name": "_hasSlot",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "_hasSlot"
             },
             {
               "kind": "field",
@@ -1683,6 +3110,14 @@
                 "text": "boolean"
               },
               "fieldName": "muted"
+            },
+            {
+              "name": "_hasSlot",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "_hasSlot"
             }
           ],
           "superclass": {
@@ -1700,6 +3135,334 @@
           "declaration": {
             "name": "TbtField",
             "module": "components/tbt-field.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-file-upload.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtFileUpload",
+          "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "files",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "_onDragover",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onDragleave",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onDrop",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onInputChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_openBrowser"
+            },
+            {
+              "kind": "method",
+              "name": "_addFiles",
+              "parameters": [
+                {
+                  "name": "fileList"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_remove",
+              "parameters": [
+                {
+                  "name": "i"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_emitChange"
+            },
+            {
+              "kind": "method",
+              "name": "_syncValidity"
+            },
+            {
+              "kind": "method",
+              "name": "_fmtSize",
+              "parameters": [
+                {
+                  "name": "bytes"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_fileIcon",
+              "parameters": [
+                {
+                  "name": "name"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "_internals"
+            },
+            {
+              "kind": "field",
+              "name": "_files",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "_files"
+            },
+            {
+              "kind": "field",
+              "name": "_dragover",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "_dragover"
+            },
+            {
+              "kind": "field",
+              "name": "_sizeError",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "_sizeError"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "name"
+            },
+            {
+              "kind": "field",
+              "name": "accept",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "accept"
+            },
+            {
+              "kind": "field",
+              "name": "multiple",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "multiple",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "maxSize",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "attribute": "max-size"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "required",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "required",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "error",
+              "reflects": true
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-change",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when file selection changes; detail: { files: File[] }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "name"
+            },
+            {
+              "name": "accept",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "accept"
+            },
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "multiple"
+            },
+            {
+              "name": "max-size",
+              "type": {
+                "text": "number"
+              },
+              "fieldName": "maxSize"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "disabled"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "required"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "error"
+            },
+            {
+              "name": "_files",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "_files"
+            },
+            {
+              "name": "_dragover",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "_dragover"
+            },
+            {
+              "name": "_sizeError",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "_sizeError"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-file-upload",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-file-upload",
+          "declaration": {
+            "name": "TbtFileUpload",
+            "module": "components/tbt-file-upload.js"
           }
         }
       ]
@@ -1959,6 +3722,15 @@
           "name": "TbtInput",
           "members": [
             {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
               "kind": "method",
               "name": "_uid"
             },
@@ -1979,6 +3751,10 @@
                   "name": "e"
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "_internals"
             },
             {
               "kind": "field",
@@ -2449,6 +4225,27 @@
               },
               "default": "{ subtotal:0, vat:0, total:0 }",
               "attribute": "_totals"
+            },
+            {
+              "kind": "field",
+              "name": "_boundInput"
+            },
+            {
+              "kind": "field",
+              "name": "_boundChange"
+            },
+            {
+              "kind": "field",
+              "name": "_boundClick"
+            },
+            {
+              "kind": "field",
+              "name": "maxHeight",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "max-height"
             }
           ],
           "events": [
@@ -2518,6 +4315,13 @@
               "fieldName": "loading"
             },
             {
+              "name": "max-height",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "maxHeight"
+            },
+            {
               "name": "_totals",
               "type": {
                 "text": "object"
@@ -2541,6 +4345,217 @@
           "declaration": {
             "name": "TbtLineItems",
             "module": "components/tbt-line-items.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-lines-block.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtLinesBlock",
+          "members": [
+            {
+              "kind": "field",
+              "name": "rows"
+            },
+            {
+              "kind": "method",
+              "name": "getTotal"
+            },
+            {
+              "kind": "method",
+              "name": "_li"
+            },
+            {
+              "kind": "method",
+              "name": "_onLiChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_fmt",
+              "parameters": [
+                {
+                  "name": "n"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "addLabel",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Add line'",
+              "attribute": "add-label"
+            },
+            {
+              "kind": "field",
+              "name": "currency",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'฿'",
+              "attribute": "currency"
+            },
+            {
+              "kind": "field",
+              "name": "vatRate",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.07",
+              "attribute": "vat-rate"
+            },
+            {
+              "kind": "field",
+              "name": "showSummary",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "attribute": "show-summary"
+            },
+            {
+              "kind": "field",
+              "name": "maxHeight",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'320px'",
+              "attribute": "max-height"
+            },
+            {
+              "kind": "field",
+              "name": "_totals",
+              "privacy": "public",
+              "type": {
+                "text": "object"
+              },
+              "default": "{ subtotal: 0, vat: 0, total: 0 }",
+              "attribute": "_totals"
+            },
+            {
+              "kind": "field",
+              "name": "title",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "title"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "disabled",
+              "reflects": true
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-change",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Forwarded from tbt-line-items on every row edit/add/delete; detail: { rows: Array, subtotal: number, vat: number, total: number }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "title",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "title"
+            },
+            {
+              "name": "add-label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Add line'",
+              "fieldName": "addLabel"
+            },
+            {
+              "name": "currency",
+              "type": {
+                "text": "string"
+              },
+              "default": "'฿'",
+              "fieldName": "currency"
+            },
+            {
+              "name": "vat-rate",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.07",
+              "fieldName": "vatRate"
+            },
+            {
+              "name": "show-summary",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "fieldName": "showSummary"
+            },
+            {
+              "name": "max-height",
+              "type": {
+                "text": "string"
+              },
+              "default": "'320px'",
+              "fieldName": "maxHeight"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "disabled"
+            },
+            {
+              "name": "_totals",
+              "type": {
+                "text": "object"
+              },
+              "default": "{ subtotal: 0, vat: 0, total: 0 }",
+              "fieldName": "_totals"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-lines-block",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-lines-block",
+          "declaration": {
+            "name": "TbtLinesBlock",
+            "module": "components/tbt-lines-block.js"
           }
         }
       ]
@@ -2846,6 +4861,15 @@
           "members": [
             {
               "kind": "method",
+              "name": "_onFooterSlotChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
               "name": "_onBackdropClick",
               "parameters": [
                 {
@@ -2913,6 +4937,24 @@
             },
             {
               "kind": "field",
+              "name": "_hasCustomFooter",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "_hasCustomFooter"
+            },
+            {
+              "kind": "field",
+              "name": "_prevFocus",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
               "name": "title",
               "privacy": "public",
               "type": {
@@ -2975,6 +5017,14 @@
               },
               "default": "'md'",
               "fieldName": "size"
+            },
+            {
+              "name": "_hasCustomFooter",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "_hasCustomFooter"
             }
           ],
           "superclass": {
@@ -3005,6 +5055,15 @@
           "description": "",
           "name": "TbtMultiselect",
           "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
             {
               "kind": "method",
               "name": "_toggleOpen"
@@ -3038,6 +5097,10 @@
                   "name": "e"
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "_internals"
             },
             {
               "kind": "field",
@@ -3078,6 +5141,16 @@
               },
               "default": "false",
               "attribute": "_open"
+            },
+            {
+              "kind": "field",
+              "name": "_query",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "_query"
             },
             {
               "kind": "field",
@@ -3126,6 +5199,15 @@
               },
               "attribute": "error",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "searchable",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "searchable"
             }
           ],
           "events": [
@@ -3198,12 +5280,27 @@
               "fieldName": "error"
             },
             {
+              "name": "searchable",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "searchable"
+            },
+            {
               "name": "_open",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
               "fieldName": "_open"
+            },
+            {
+              "name": "_query",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "_query"
             }
           ],
           "superclass": {
@@ -3221,6 +5318,254 @@
           "declaration": {
             "name": "TbtMultiselect",
             "module": "components/tbt-multiselect.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-pagination.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtPagination",
+          "members": [
+            {
+              "kind": "field",
+              "name": "_totalPages",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "_go",
+              "parameters": [
+                {
+                  "name": "p"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_pageButtons"
+            },
+            {
+              "kind": "field",
+              "name": "total",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "total"
+            },
+            {
+              "kind": "field",
+              "name": "page",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "attribute": "page",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "pageSize",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "50",
+              "attribute": "page-size"
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-page-change",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when user navigates to a new page; detail: { page: number }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "total",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "total"
+            },
+            {
+              "name": "page",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "fieldName": "page"
+            },
+            {
+              "name": "page-size",
+              "type": {
+                "text": "number"
+              },
+              "default": "50",
+              "fieldName": "pageSize"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-pagination",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-pagination",
+          "declaration": {
+            "name": "TbtPagination",
+            "module": "components/tbt-pagination.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-playground.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtPlayground",
+          "members": [
+            {
+              "kind": "method",
+              "name": "_target"
+            },
+            {
+              "kind": "method",
+              "name": "_applyAll"
+            },
+            {
+              "kind": "method",
+              "name": "_applyOne",
+              "parameters": [
+                {
+                  "name": "el"
+                },
+                {
+                  "name": "key"
+                },
+                {
+                  "name": "val"
+                },
+                {
+                  "name": "type"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onChange",
+              "parameters": [
+                {
+                  "name": "key"
+                },
+                {
+                  "name": "type"
+                },
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_renderControl",
+              "parameters": [
+                {
+                  "name": "s"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "schema",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "schema"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "_vals",
+              "privacy": "public",
+              "type": {
+                "text": "object"
+              },
+              "default": "{}",
+              "attribute": "_vals"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "schema",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "schema"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "label"
+            },
+            {
+              "name": "_vals",
+              "type": {
+                "text": "object"
+              },
+              "default": "{}",
+              "fieldName": "_vals"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-playground",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-playground",
+          "declaration": {
+            "name": "TbtPlayground",
+            "module": "components/tbt-playground.js"
           }
         }
       ]
@@ -3632,6 +5977,195 @@
           "declaration": {
             "name": "TbtSidebarItem",
             "module": "components/tbt-sidebar.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-skeleton.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtSkeleton",
+          "slots": [
+            {
+              "description": "(variant=\"card\" only) Extra content appended after the card skeleton",
+              "name": ""
+            }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "_sizeStyle"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'text'",
+              "attribute": "variant",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "lines",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "attribute": "lines"
+            },
+            {
+              "kind": "field",
+              "name": "width",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "width"
+            },
+            {
+              "kind": "field",
+              "name": "height",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "height"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'text'",
+              "fieldName": "variant"
+            },
+            {
+              "name": "width",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "width"
+            },
+            {
+              "name": "height",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "height"
+            },
+            {
+              "name": "lines",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "fieldName": "lines"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-skeleton",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-skeleton",
+          "declaration": {
+            "name": "TbtSkeleton",
+            "module": "components/tbt-skeleton.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-stepper.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtStepper",
+          "members": [
+            {
+              "kind": "method",
+              "name": "_status",
+              "parameters": [
+                {
+                  "name": "i"
+                },
+                {
+                  "name": "step"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "steps",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "steps"
+            },
+            {
+              "kind": "field",
+              "name": "active",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "active"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "steps",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "steps"
+            },
+            {
+              "name": "active",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "active"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-stepper",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-stepper",
+          "declaration": {
+            "name": "TbtStepper",
+            "module": "components/tbt-stepper.js"
           }
         }
       ]
@@ -4404,6 +6938,36 @@
             },
             {
               "kind": "field",
+              "name": "serverSort",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "server-sort"
+            },
+            {
+              "kind": "field",
+              "name": "sortKey",
+              "privacy": "public",
+              "type": {
+                "text": "null"
+              },
+              "default": "null",
+              "attribute": "sort-key"
+            },
+            {
+              "kind": "field",
+              "name": "sortAsc",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "attribute": "sort-asc"
+            },
+            {
+              "kind": "field",
               "name": "_sortKey",
               "privacy": "public",
               "type": {
@@ -4451,6 +7015,14 @@
               },
               "default": "false",
               "attribute": "_isMobile"
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-sort",
+              "type": {
+                "text": "CustomEvent"
+              }
             }
           ],
           "attributes": [
@@ -4519,6 +7091,30 @@
               "fieldName": "emptyMessage"
             },
             {
+              "name": "server-sort",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "serverSort"
+            },
+            {
+              "name": "sort-key",
+              "type": {
+                "text": "null"
+              },
+              "default": "null",
+              "fieldName": "sortKey"
+            },
+            {
+              "name": "sort-asc",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "fieldName": "sortAsc"
+            },
+            {
               "name": "_sortKey",
               "type": {
                 "text": "null"
@@ -4580,6 +7176,603 @@
     },
     {
       "kind": "javascript-module",
+      "path": "components/tbt-tabs.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtTabsPanel",
+          "members": [
+            {
+              "kind": "field",
+              "name": "_uid",
+              "type": {
+                "text": "number"
+              },
+              "static": true,
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "active",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "active",
+              "reflects": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            },
+            {
+              "name": "active",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "active"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-tabs-panel",
+          "customElement": true
+        },
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtTabs",
+          "slots": [
+            {
+              "description": "tbt-tab elements",
+              "name": ""
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "_uid",
+              "type": {
+                "text": "number"
+              },
+              "static": true,
+              "default": "0"
+            },
+            {
+              "kind": "method",
+              "name": "_tabs"
+            },
+            {
+              "kind": "method",
+              "name": "_onSlotChange"
+            },
+            {
+              "kind": "method",
+              "name": "_select",
+              "parameters": [
+                {
+                  "name": "i"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_sync"
+            },
+            {
+              "kind": "method",
+              "name": "_onKeydown",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "active",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "active",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "_labels",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "_labels"
+            },
+            {
+              "kind": "field",
+              "name": "_tabsUid",
+              "type": {
+                "text": "number"
+              },
+              "default": "++TbtTabs._uid"
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-change",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when active tab changes; detail: { active: number, label: string }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "active",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "active"
+            },
+            {
+              "name": "_labels",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "_labels"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-tabs",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-tabs-panel",
+          "declaration": {
+            "name": "TbtTabsPanel",
+            "module": "components/tbt-tabs.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-tabs",
+          "declaration": {
+            "name": "TbtTabs",
+            "module": "components/tbt-tabs.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-textarea.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtTextarea",
+          "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "method",
+              "name": "_uid"
+            },
+            {
+              "kind": "method",
+              "name": "_syncValidity"
+            },
+            {
+              "kind": "method",
+              "name": "_onInput",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "_internals"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "placeholder"
+            },
+            {
+              "kind": "field",
+              "name": "rows",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "3",
+              "attribute": "rows"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "name"
+            },
+            {
+              "kind": "field",
+              "name": "maxlength",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "attribute": "maxlength"
+            },
+            {
+              "kind": "field",
+              "name": "required",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "required",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "readonly",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "readonly",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "error",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "helper",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "helper"
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-input",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired on every keystroke; detail: { value: string }"
+            },
+            {
+              "name": "tbt-change",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired on blur; detail: { value: string }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "name"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "value"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "rows",
+              "type": {
+                "text": "number"
+              },
+              "default": "3",
+              "fieldName": "rows"
+            },
+            {
+              "name": "maxlength",
+              "type": {
+                "text": "number"
+              },
+              "fieldName": "maxlength"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "required"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "disabled"
+            },
+            {
+              "name": "readonly",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "readonly"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "error"
+            },
+            {
+              "name": "helper",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "helper"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-textarea",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-textarea",
+          "declaration": {
+            "name": "TbtTextarea",
+            "module": "components/tbt-textarea.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "components/tbt-toast.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TbtToast",
+          "members": [
+            {
+              "kind": "method",
+              "name": "add",
+              "parameters": [
+                {
+                  "name": "message",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "variant",
+                  "default": "'info'",
+                  "type": {
+                    "text": "'success'|'warning'|'danger'|'info'"
+                  }
+                },
+                {
+                  "name": "opts",
+                  "default": "{}",
+                  "optional": true,
+                  "type": {
+                    "text": "{ duration?: number, persistent?: boolean }"
+                  }
+                }
+              ],
+              "description": "Add a toast notification."
+            },
+            {
+              "kind": "method",
+              "name": "_dismiss",
+              "parameters": [
+                {
+                  "name": "id"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "position",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'top-right'",
+              "attribute": "position",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "_items",
+              "privacy": "public",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "attribute": "_items"
+            }
+          ],
+          "events": [
+            {
+              "name": "tbt-dismiss",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired after a toast is removed; detail: { id }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "position",
+              "type": {
+                "text": "string"
+              },
+              "default": "'top-right'",
+              "fieldName": "position"
+            },
+            {
+              "name": "_items",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "fieldName": "_items"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "https://cdn.jsdelivr.net/npm/lit@3/+esm"
+          },
+          "tagName": "tbt-toast",
+          "customElement": true
+        },
+        {
+          "kind": "variable",
+          "name": "toast",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ success: (msg, opts) => _getInstance().add(msg, 'success', opts), danger: (msg, opts) => _getInstance().add(msg, 'danger', opts), info: (msg, opts) => _getInstance().add(msg, 'info', opts), warning: (msg, opts) => _getInstance().add(msg, 'warning', opts), }"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "tbt-toast",
+          "declaration": {
+            "name": "TbtToast",
+            "module": "components/tbt-toast.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "toast",
+          "declaration": {
+            "name": "toast",
+            "module": "components/tbt-toast.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "components/tbt-toggle.js",
       "declarations": [
         {
@@ -4587,6 +7780,15 @@
           "description": "",
           "name": "TbtToggle",
           "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
             {
               "kind": "field",
               "name": "value"
@@ -4599,6 +7801,10 @@
                   "name": "e"
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "_internals"
             },
             {
               "kind": "field",
