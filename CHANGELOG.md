@@ -9,6 +9,25 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.30.0] — 2026-05-28
+
+### Added
+
+- **`tbt-color-picker`** — Color swatch picker for ERP category/tag coloring. 20-color default palette (4×5 grid), optional custom hex input (`allow-custom`), full keyboard navigation (Arrow keys / Enter / Esc), form-associated, accessible labels/roles.
+  - Props: `value`, `label`, `name`, `palette`, `allow-custom`, `disabled`, `required`, `error`
+  - Event: `tbt-change → { value: string }` (hex string, e.g. `#0D1171`)
+
+### Chore
+
+- `scripts/lint-governance.js` — เพิ่ม `HEX_EXEMPT` set เพื่อ exempt `tbt-color-picker.js` จาก Rule 1 (palette hex data ไม่ใช่ CSS styling)
+- `components/index.js` — register `tbt-color-picker`
+
+### Test
+
+- เพิ่ม `tests/tbt-color-picker.test.js` — 14 cases รวม axe pass
+
+---
+
 ## [1.29.0] — 2026-05-28
 
 ### Accessibility

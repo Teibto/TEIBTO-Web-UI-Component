@@ -51,12 +51,15 @@ function getLines(src) {
 }
 
 // ─── Rule 1: No hex colors in components/**/*.js ───────────────────────────
+// Exempt: tbt-color-picker.js — its DEFAULT_PALETTE is intentional hex data, not CSS styling.
+const HEX_EXEMPT = new Set(['tbt-color-picker.js']);
 const HEX_RE = /#[0-9a-fA-F]{3,8}\b/;
 const componentsDir = path.join(ROOT, 'components');
 const componentFiles = fs.readdirSync(componentsDir).filter(f => f.endsWith('.js'));
 
 let rule1Violations = 0;
 for (const file of componentFiles) {
+  if (HEX_EXEMPT.has(file)) continue;
   const filePath = path.join(componentsDir, file);
   const src = stripComments(fs.readFileSync(filePath, 'utf8'));
   const lines = getLines(src);
