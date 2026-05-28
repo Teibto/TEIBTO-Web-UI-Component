@@ -515,6 +515,24 @@
   <tbt-number-input label="Disabled" prefix="฿" value="1000" disabled></tbt-number-input>
 </div>
 
+<!-- ─── TAG INPUT ────────────────────────────────────── -->
+<h2 id="tag-input">tbt-tag-input</h2>
+<div class="form-grid">
+  <tbt-tag-input id="ti1" label="Keywords" placeholder="Add keyword…" helper="Press Enter to add a tag"></tbt-tag-input>
+  <tbt-tag-input id="ti2" label="Labels (pre-filled)" placeholder="Add label…"></tbt-tag-input>
+  <tbt-tag-input label="Max 3 tags" max="3" placeholder="Up to 3 tags…" helper="Maximum 3 tags allowed"></tbt-tag-input>
+  <tbt-tag-input label="Required" required error="At least one tag is required"></tbt-tag-input>
+  <tbt-tag-input label="Disabled" disabled></tbt-tag-input>
+</div>
+<div id="ti1-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">tbt-change → (add or remove a tag)</div>
+<script type="module">
+  const ti2 = document.getElementById('ti2');
+  ti2.value = ['design-system', 'web-components', 'lit'];
+  document.getElementById('ti1').addEventListener('tbt-change', e => {
+    document.getElementById('ti1-output').textContent = `tbt-change → values: [${e.detail.values.join(', ')}]`;
+  });
+</script>
+
 <!-- ─── TEXTAREA ─────────────────────────────────────── -->
 <h2 id="textarea">tbt-textarea</h2>
 <div class="form-grid">

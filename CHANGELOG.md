@@ -9,6 +9,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.35.0] — 2026-05-28
+
+### Added
+
+- **`tbt-tag-input`** — Tag / chip input สำหรับ keywords, labels, และ multi-value text entry. พิมพ์แล้วกด Enter เพื่อเพิ่ม tag, ลบด้วย × button หรือ Backspace เมื่อ input ว่าง. Form-associated รองรับ required validation.
+  - Props: `label`, `name`, `placeholder`, `required`, `disabled`, `error`, `helper`, `max` (จำนวน tag สูงสุด, 0 = ไม่จำกัด)
+  - Value: property `.value` รับ/คืน `string[]`; form value เป็น comma-separated string
+  - Event: `tbt-change → { values: string[] }`
+  - Keyboard: Enter เพิ่ม tag, Backspace ลบ tag สุดท้ายเมื่อ input ว่าง, Escape ล้าง input
+  - ไม่เพิ่ม tag ซ้ำ; focus กลับ input อัตโนมัติหลังลบ tag
+
+---
+
 ## [1.34.0] — 2026-05-28
 
 ### Added
