@@ -874,6 +874,52 @@
   });
 </script>
 
+<!-- ─── LIST ─────────────────────────────────────── -->
+<h2 id="list">tbt-list + tbt-list-item</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--tbt-space-6)">
+  <div>
+    <div class="demo-label">Default with icons</div>
+    <div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:0 var(--tbt-space-5)">
+      <tbt-list divided>
+        <tbt-list-item icon="user"        label="Name"       value="Wichit Wongta"></tbt-list-item>
+        <tbt-list-item icon="mail"        label="Email"      value="wichit@teibto.com"></tbt-list-item>
+        <tbt-list-item icon="phone"       label="Phone"      value="+66 81 234 5678"></tbt-list-item>
+        <tbt-list-item icon="building"    label="Department" value="Finance"></tbt-list-item>
+        <tbt-list-item icon="map-pin"     label="Location"   value="Bangkok, Thailand"></tbt-list-item>
+      </tbt-list>
+    </div>
+  </div>
+
+  <div>
+    <div class="demo-label">Rich values + actions</div>
+    <div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:0 var(--tbt-space-5)">
+      <tbt-list divided>
+        <tbt-list-item label="Document No." value="PO-2569-0042"></tbt-list-item>
+        <tbt-list-item label="Status">
+          <tbt-badge variant="warning">Pending approval</tbt-badge>
+        </tbt-list-item>
+        <tbt-list-item label="Amount" value="฿107,000.00"></tbt-list-item>
+        <tbt-list-item label="Created by" value="Wichit Wongta">
+          <tbt-button slot="action" variant="ghost" icon="external-link" size="sm"></tbt-button>
+        </tbt-list-item>
+        <tbt-list-item label="Notes" value="—" muted></tbt-list-item>
+      </tbt-list>
+    </div>
+  </div>
+</div>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-5)">Compact</div>
+<div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:0 var(--tbt-space-5);max-width:360px">
+  <tbt-list compact divided>
+    <tbt-list-item label="Script ID"  value="customscript_tbt_po_sl"></tbt-list-item>
+    <tbt-list-item label="Deploy"     value="customdeploy_tbt_po_sl"></tbt-list-item>
+    <tbt-list-item label="Type"       value="Suitelet"></tbt-list-item>
+    <tbt-list-item label="Status">
+      <tbt-badge variant="success">Released</tbt-badge>
+    </tbt-list-item>
+  </tbt-list>
+</div>
+
 <!-- ─── FIELD + FIELD-GRID ─────────────────────────── -->
 <h2 id="field">tbt-field + tbt-field-grid</h2>
 <tbt-field-grid columns="4" style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5)">

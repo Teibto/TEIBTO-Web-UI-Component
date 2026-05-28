@@ -9,6 +9,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.41.0] — 2026-05-29
+
+### Added
+
+- **`tbt-list` + `tbt-list-item`** — Vertical data list สำหรับแสดง key/value rows พร้อม icon และ action slot. เหมาะสำหรับ profile card, drawer detail, settings panel.
+  - `tbt-list` props: `compact` (Boolean, ลด padding), `divided` (Boolean, เพิ่ม border ระหว่าง items)
+  - `tbt-list-item` props: `label`, `value` (fallback text), `icon` (Tabler name), `muted`
+  - `tbt-list-item` slots: default slot สำหรับ rich value (เช่น `<tbt-badge>`), `action` slot สำหรับ button ขวามือ
+  - CSS custom properties: `--tbt-list-label-width` (default 140px), รับ `compact`/`divided` จาก parent ผ่าน CSS inheritance
+  - `tbt-list-item` มี `role="listitem"` อัตโนมัติ
+
+---
+
 ## [1.40.0] — 2026-05-29
 
 ### Added
