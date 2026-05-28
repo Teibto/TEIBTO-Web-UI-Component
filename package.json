@@ -20,7 +20,8 @@
     "version:sync": "node scripts/sync-version.js",
     "test": "wtr",
     "test:visual": "playwright test",
-    "analyze": "cem analyze --globs \"components/**/*.js\" --litelement"
+    "analyze": "cem analyze --globs \"components/**/*.js\" --litelement",
+    "sync:sdf": "node scripts/sync-sdf.js"
   },
   "dependencies": {
     "lit": "^3.0.0"
