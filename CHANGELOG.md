@@ -9,6 +9,18 @@ Format: [Semantic Versioning](https://semver.org)
 
 ---
 
+## [1.42.1] — 2026-05-29
+
+### Fixed
+
+- **`tbt-icons-css`** — Icons rendered as tofu (empty squares) in deployed Suitelets despite Tabler CSS loading 200 OK.
+  - Root cause: Chromium does NOT fetch font files for `@font-face` declared only inside shadow DOM stylesheets. Codepoints got set on `::before` pseudo-elements but glyphs were missing.
+  - Fix: inject Tabler `<link>` into `document.head` once on module load (idempotent via `data-tbt-tabler` marker). `@font-face` now registers at document level → browser actually fetches `.woff2`.
+  - Existing per-component `${tablerLink}` retained — class rules (`.ti-*:before { content }`) do not cross shadow boundaries.
+  - Verified end-to-end via deployed `tbt-sidebar-item` in SDB Suitelet.
+
+---
+
 ## [1.42.0] — 2026-05-29
 
 ### Added
