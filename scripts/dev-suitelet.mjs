@@ -44,6 +44,31 @@ const SS = {
       return { getContents: () => contents };
     },
   },
+  // URL resolver — returns a plausible scriptlet URL (real value irrelevant locally).
+  'N/url': {
+    resolveScript: ({ scriptId, deploymentId }) =>
+      `/app/site/hosting/scriptlet.nl?script=${scriptId}&deploy=${deploymentId || 1}`,
+  },
+  // Data-access modules: there is no NetSuite DB locally, so these throw. The
+  // page Suitelets catch that and render demo data (data.demo=true) — which is
+  // exactly the production fallback path, so the local preview exercises it.
+  'N/query': {
+    runSuiteQL() { throw new Error('SuiteQL unavailable in local preview'); },
+  },
+  'N/record': {
+    load()   { throw new Error('record.load unavailable in local preview'); },
+    create() { throw new Error('record.create unavailable in local preview'); },
+    delete() { throw new Error('record.delete unavailable in local preview'); },
+  },
+  'N/search': { create() { throw new Error('search unavailable in local preview'); } },
+  'N/runtime': { getCurrentUser: () => ({ id: -4, role: 3, name: 'Local Preview' }) },
+};
+
+// SuiteScript exposes `log` as a global; mirror it for locally-loaded modules.
+const SS_LOG = {
+  debug: (o) => console.log('[ns:debug]', o && o.title),
+  audit: (o) => console.log('[ns:audit]', o && o.title),
+  error: (o) => console.log('[ns:error]', o && o.title),
 };
 
 /**
@@ -77,9 +102,9 @@ function loadAmd(modulePath) {
     });
     result = factory(...resolved);
   };
-  // Wrap in IIFE so any internal `return` would be inside the function.
-  const wrapper = new Function('define', code + '\n//# sourceURL=' + modulePath);
-  wrapper(define);
+  // Wrap so any internal `return` is inside the function; inject `log` global.
+  const wrapper = new Function('define', 'log', code + '\n//# sourceURL=' + modulePath);
+  wrapper(define, SS_LOG);
   return result;
 }
 

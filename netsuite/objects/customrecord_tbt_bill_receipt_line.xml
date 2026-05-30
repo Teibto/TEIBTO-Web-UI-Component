@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Vendor bill receipt LINE record (one row per vendor invoice; N per voucher).
+  Linked to the header via custrecord_tbt_brl_parent.
+  Field ids MUST match netsuite/bill_receipt_meta.js (LF.*).
+-->
+<customrecordtype scriptid="customrecord_tbt_bill_receipt_line">
+  <recordname>TBT Bill Receipt Line</recordname>
+  <includename>F</includename>
+  <includenumber>T</includenumber>
+  <showid>F</showid>
+  <allowattachments>F</allowattachments>
+  <allowinlineediting>F</allowinlineediting>
+  <enablesystemnotes>T</enablesystemnotes>
+  <hierarchical>F</hierarchical>
+  <customrecordcustomfields>
+    <customrecordcustomfield scriptid="custrecord_tbt_brl_parent">
+      <label>Bill receipt</label>
+      <fieldtype>SELECT</fieldtype>
+      <selectrecordtype>[scriptid=customrecord_tbt_bill_receipt]</selectrecordtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_brl_invoice_no">
+      <label>Invoice no.</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_brl_invoice_date">
+      <label>Invoice date</label>
+      <fieldtype>DATE</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_brl_po_no">
+      <label>PO reference</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_brl_amount">
+      <label>Amount (pre-tax)</label>
+      <fieldtype>CURRENCY</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_brl_vat">
+      <label>VAT</label>
+      <fieldtype>CURRENCY</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_brl_memo">
+      <label>Memo</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+    </customrecordcustomfield>
+  </customrecordcustomfields>
+</customrecordtype>

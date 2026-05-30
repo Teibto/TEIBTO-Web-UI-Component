@@ -36,6 +36,7 @@
 </tbt-section>
 
 <div class="tbt-page-alerts">
+  <tbt-alert id="demo-alert" variant="warning" hidden>กำลังแสดงข้อมูลตัวอย่าง — ยังไม่ได้ติดตั้ง custom record (ดู netsuite/DEPLOY.md)</tbt-alert>
   <tbt-alert id="ok-alert"  variant="success" dismissible hidden></tbt-alert>
   <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
 </div>
@@ -110,6 +111,8 @@
   const d  = window.__DATA__;
   const rt = window.tbtPageRuntime;
   const v  = d.voucher;
+
+  if (d.demo) { const da = document.getElementById('demo-alert'); if (da) da.hidden = false; }
   const vatRate = d.vatRate == null ? 0.07 : d.vatRate;
 
   const STATUS_LABEL = {

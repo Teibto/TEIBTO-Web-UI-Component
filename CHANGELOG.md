@@ -7,6 +7,26 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Added
+
+- **Vendor bill receipt (รับวางบิล) — production backend.** Replaces the mock
+  scaffold with real SuiteScript:
+  - `netsuite/objects/customrecord_tbt_bill_receipt.xml` + `_line.xml` — SDF
+    custom records (header + 1:N invoice lines), field ids matching the meta module.
+  - `netsuite/bill_receipt_meta.js` — single source of truth: record/field ids +
+    status state machine (Draft→Submitted→Approved/Rejected→Paid).
+  - `netsuite/bill_receipt_lib.js` — `validate` / `list` (SuiteQL) / `load` /
+    `vendors` / `save` (N/record, replace-lines) + permission gate.
+  - `netsuite/rl_bill_receipt.js` — RESTlet, the only writer: re-reads current
+    status from the DB and enforces permission → state-machine → validation
+    server-side (never trusts the client).
+  - `sl_bill_receipt_list/form.js` now read real data via the lib and resolve
+    URLs via `N/url`; they fall back to demo data with a warning banner when the
+    custom record isn't deployed yet (also the path `npm run test:smoke` exercises).
+  - `netsuite/DEPLOY.md` — SDF deploy steps, script/deployment ids, approver-role
+    wiring, and a sandbox smoke checklist (this backend can't be unit-tested
+    outside NetSuite).
+
 ## [1.43.0] — 2026-05-30
 
 ### Fixed
