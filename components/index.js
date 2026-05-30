@@ -69,6 +69,7 @@ export * from './tbt-field.js';
 export * from './tbt-field-grid.js';
 export * from './tbt-section.js';
 export * from './tbt-svg.js';
+export * from './tbt-avatar.js';
 export * from './tbt-table.js';
 export * from './tbt-data-table.js';
 export * from './tbt-summary.js';

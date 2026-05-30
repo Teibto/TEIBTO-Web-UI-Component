@@ -1,6 +1,6 @@
 /**
  * @component tbt-svg
- * @version 1.26.2
+ * @version 1.43.0
  * @author Wichit Wongta
  *
  * SVG illustration component — built-in named illustrations, external URL fetch,
@@ -20,6 +20,7 @@
  *   </tbt-svg>
  *
  * Built-in names: empty | search | success | error | warning | draft | no-access
+ *                 | no-data | no-results | maintenance | inbox-zero
  *
  * Props:
  *   name    String   Built-in illustration name
@@ -149,6 +150,57 @@ const ILLUSTRATIONS = {
       <!-- Keyhole -->
       <circle cx="40" cy="49" r="3.5" style="fill:var(--tbt-primary-bg)"/>
       <rect x="38.5" y="50" width="3" height="5" rx="1.5" style="fill:var(--tbt-primary-bg)"/>
+    </svg>`,
+
+  'no-data': `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+      <circle cx="40" cy="40" r="36" style="fill:var(--tbt-primary-bg)"/>
+      <!-- Axes -->
+      <path d="M26 24 L26 54 L58 54" style="stroke:var(--tbt-border-strong);fill:none" stroke-width="2" stroke-linecap="round"/>
+      <!-- Flat / empty bars (outlines only) -->
+      <rect x="32" y="48" width="6" height="6" rx="1" style="stroke:var(--tbt-primary-light);fill:var(--tbt-bg-card)" stroke-width="1.5"/>
+      <rect x="42" y="48" width="6" height="6" rx="1" style="stroke:var(--tbt-primary-light);fill:var(--tbt-bg-card)" stroke-width="1.5"/>
+      <rect x="52" y="48" width="6" height="6" rx="1" style="stroke:var(--tbt-primary-light);fill:var(--tbt-bg-card)" stroke-width="1.5"/>
+      <!-- Dashed "no value" line -->
+      <line x1="26" y1="34" x2="58" y2="34" style="stroke:var(--tbt-accent-blue)" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round" opacity="0.6"/>
+    </svg>`,
+
+  'no-results': `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+      <circle cx="40" cy="40" r="36" style="fill:var(--tbt-primary-bg)"/>
+      <circle cx="37" cy="37" r="14" style="stroke:var(--tbt-primary);fill:var(--tbt-bg-card)" stroke-width="2.5"/>
+      <line x1="47" y1="47" x2="57" y2="57" style="stroke:var(--tbt-primary)" stroke-width="3" stroke-linecap="round"/>
+      <!-- X inside lens = nothing found -->
+      <line x1="32" y1="32" x2="42" y2="42" style="stroke:var(--tbt-danger)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="42" y1="32" x2="32" y2="42" style="stroke:var(--tbt-danger)" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`,
+
+  maintenance: `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+      <circle cx="40" cy="40" r="36" style="fill:var(--tbt-warning-bg)"/>
+      <!-- Gear -->
+      <g transform="translate(34,34)">
+        <circle cx="0" cy="0" r="11" style="fill:var(--tbt-warning)"/>
+        <circle cx="0" cy="0" r="4.5" style="fill:var(--tbt-warning-bg)"/>
+        ${[0, 60, 120, 180, 240, 300].map((a) => `<rect x="-2.5" y="-15" width="5" height="6" rx="1" style="fill:var(--tbt-warning)" transform="rotate(${a})"/>`).join('')}
+      </g>
+      <!-- Wrench -->
+      <g transform="translate(48,48) rotate(40)">
+        <rect x="-3" y="-2" width="18" height="6" rx="3" style="fill:var(--tbt-primary)"/>
+        <circle cx="-3" cy="1" r="5" style="fill:var(--tbt-primary)"/>
+        <circle cx="-3" cy="1" r="2" style="fill:var(--tbt-primary-bg)"/>
+      </g>
+    </svg>`,
+
+  'inbox-zero': `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+      <circle cx="40" cy="40" r="36" style="fill:var(--tbt-success-bg)"/>
+      <!-- Tray -->
+      <path d="M24 34 L30 24 H50 L56 34 V52 a3 3 0 0 1 -3 3 H27 a3 3 0 0 1 -3 -3 Z"
+        style="fill:var(--tbt-bg-card);stroke:var(--tbt-success)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M24 38 H33 l3 5 h8 l3 -5 H56" style="stroke:var(--tbt-success);fill:none" stroke-width="2" stroke-linejoin="round"/>
+      <!-- Check = all done -->
+      <path d="M35 28 L39 32 L47 23" style="stroke:var(--tbt-success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`,
 };
 
