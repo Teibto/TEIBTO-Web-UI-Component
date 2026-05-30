@@ -1312,8 +1312,8 @@ CSS: `.screen { display: none; } .screen.active { display: block; }`. In a real 
 ### Standard page `<head>` (manual — legacy)
 
 ```html
-<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-theme.css">
-<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-ds.min.js"></script>
+<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.43.0/dist/tbt-theme.css">
+<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.43.0/dist/tbt-ds.min.js"></script>
 ```
 
 > Always pin to an exact version. Never use `/latest/`.

@@ -7,6 +7,8 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+## [1.43.0] — 2026-05-30
+
 ### Fixed
 
 - **`tbt-line-items` (v1.43.0)** — the horizontal/vertical scroll wrapper (`.lines-wrap`) is now keyboard-focusable (`tabindex="0"` + `role="group"` + `aria-label`), fixing the axe `scrollable-region-focusable` violation so keyboard-only users can scroll the line grid. Also clears the same failure surfaced through `tbt-lines-block`, which composes `tbt-line-items`.
