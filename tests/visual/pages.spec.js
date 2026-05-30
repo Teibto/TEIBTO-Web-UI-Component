@@ -53,6 +53,20 @@ test('specimen.html — dark mode', async ({ page }) => {
   await snap(page, 'specimen-dark.png');
 });
 
+test('chart.html — chart gallery', async ({ page }) => {
+  await page.goto('/demo/chart.html');
+  await waitForDS(page);
+  await snap(page, 'chart-light.png');
+});
+
+test('chart.html — dark mode', async ({ page }) => {
+  await page.goto('/demo/chart.html');
+  await waitForDS(page);
+  await page.evaluate(() => { document.documentElement.dataset.theme = 'dark'; });
+  await page.waitForTimeout(100);
+  await snap(page, 'chart-dark.png');
+});
+
 test('demo.html — purchase order page', async ({ page }) => {
   await page.goto('/demo/demo.html');
   await waitForDS(page);
