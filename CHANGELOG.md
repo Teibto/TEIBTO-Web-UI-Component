@@ -9,6 +9,18 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- **Employee expense claim — production backend.** Second module on the
+  bill-receipt reference pattern (header + 1:N lines + status state machine):
+  `netsuite/expense_meta.js` (ids + state machine), `expense_lib.js`
+  (validate / list / load / employees / save), `rl_expense.js` (RESTlet, the
+  only writer — re-reads status, enforces permission → state-machine →
+  validation), SDF `customrecord_tbt_expense_claim` + `_line`, and
+  `sl_expense_claim.js` reading real data via the lib + `N/url` with a demo
+  fallback banner. Fixed the submit payload to send the employee internal id
+  (not the display name). DEPLOY.md + smoke test extended. Verified locally:
+  lint + build + 575 unit + smoke green (expense page: 3 lines, 3 approval
+  steps, demo banner shown, no console errors); real N/query/N/record →
+  sandbox checklist.
 - **Vendor bill receipt (รับวางบิล) — production backend.** Replaces the mock
   scaffold with real SuiteScript:
   - `netsuite/objects/customrecord_tbt_bill_receipt.xml` + `_line.xml` — SDF

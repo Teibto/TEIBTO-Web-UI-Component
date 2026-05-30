@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Expense claim LINE record (one row per expense; N per claim).
+  Linked to the header via custrecord_tbt_expl_parent.
+  Field ids MUST match netsuite/expense_meta.js (LF.*).
+-->
+<customrecordtype scriptid="customrecord_tbt_expense_claim_line">
+  <recordname>TBT Expense Claim Line</recordname>
+  <includename>F</includename>
+  <includenumber>T</includenumber>
+  <showid>F</showid>
+  <allowattachments>F</allowattachments>
+  <allowinlineediting>F</allowinlineediting>
+  <enablesystemnotes>T</enablesystemnotes>
+  <hierarchical>F</hierarchical>
+  <customrecordcustomfields>
+    <customrecordcustomfield scriptid="custrecord_tbt_expl_parent">
+      <label>Expense claim</label>
+      <fieldtype>SELECT</fieldtype>
+      <selectrecordtype>[scriptid=customrecord_tbt_expense_claim]</selectrecordtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_expl_date">
+      <label>Date</label>
+      <fieldtype>DATE</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_expl_category">
+      <label>Category</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_expl_merchant">
+      <label>Merchant</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_expl_amount">
+      <label>Amount</label>
+      <fieldtype>CURRENCY</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_expl_billable">
+      <label>Billable</label>
+      <fieldtype>CHECKBOX</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_expl_receipt">
+      <label>Receipt URL</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_expl_memo">
+      <label>Memo</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+    </customrecordcustomfield>
+  </customrecordcustomfields>
+</customrecordtype>

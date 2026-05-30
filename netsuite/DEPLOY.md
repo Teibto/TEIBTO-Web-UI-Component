@@ -76,3 +76,49 @@ also why `npm run test:smoke` passes locally: the dev-suitelet stubs make the
    machine ("Cannot submit a record in status Approved").
 7. Negative/empty line amount → Save → rejected by validation.
 8. Confirm totals: header `custrecord_tbt_br_total` = Σ(amount+vat) of lines.
+
+---
+
+# Deploy guide — Employee expense claim backend
+
+Same pattern as bill-receipt (header + 1:N lines + status state machine);
+only the ids differ.
+
+## Files
+
+| File | Role |
+| --- | --- |
+| `objects/customrecord_tbt_expense_claim.xml` | claim header |
+| `objects/customrecord_tbt_expense_claim_line.xml` | expense lines (1:N) |
+| `expense_meta.js` | record/field ids + status state machine (single source of truth) |
+| `expense_lib.js` | validate / list / load / employees / save |
+| `rl_expense.js` | RESTlet — the only writer |
+| `../templates/sl_expense_claim.js` + `expense-claim.html` | entry page |
+
+## Script + deployment ids (resolved by code)
+
+- Suitelet `customscript_tbt_sl_expense_claim` / `customdeploy_tbt_sl_expense_claim`
+- RESTlet  `customscript_tbt_rl_expense`        / `customdeploy_tbt_rl_expense`
+
+## Status state machine (enforced in rl_expense)
+
+```
+(new) --save--> Draft --submit--> Submitted --approve--> Approved --pay--> Paid
+                                  \--reject--> Rejected --(save/submit)--> ...
+```
+
+`save`/`submit` may edit fields; `approve`/`reject`/`pay` change status only.
+Current status is re-read from the DB; an illegal transition is rejected.
+`approve`/`reject`/`pay` require an approver role — edit
+`expense_lib.permissionError` (`APPROVER_ROLES`) at deploy time.
+
+## Manual smoke checklist (sandbox)
+
+1. Open the entry Suitelet (no `?id=`) → no demo banner once deployed; blank claim.
+2. Pick employee + period, add one expense line → **Save draft** → status `Draft`,
+   tranid `EXP-<buddhist-year>-0001`.
+3. **Submit** → status `Submitted`.
+4. Non-approver → Approve → permission error. Approver → Approve → `Approved`.
+5. Crafted POST `submit` on an approved claim → rejected by the state machine.
+6. Line with amount ≤ 0 or no merchant → Save → validation error.
+7. Header `custrecord_tbt_exp_total` = Σ(amount) of lines.
