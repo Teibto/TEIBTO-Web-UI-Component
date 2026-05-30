@@ -1,0 +1,301 @@
+<!--
+  bill-receipt-form.html — Vendor bill receipt (รับวางบิล) document page body.
+
+  Layout (Teibto standard document):
+    Page header   — voucher no + vendor + status badge
+    Alerts        — success / error banners
+    Document info — vendor / receive date / due date / contact / reference (edit)
+    Summary stats — invoice count / pre-tax / VAT / grand total
+    Bill lines    — tbt-table of submitted vendor invoices (Add → modal)
+    Approval      — tbt-approval-flow
+    History       — tbt-audit-log
+    Action bar    — Save draft / Submit / Approve / Reject / Print / Back
+
+  Edit vs view: editable only while status === 'Draft'. Submitted shows
+  Approve / Reject; Approved / Paid are read-only.
+
+  Required keys on window.__DATA__:
+    voucher       { id, tranid, vendor, vendorId, receiveDate, dueDate, contact, reference, status }
+    lines         array of { id, invoiceNo, invoiceDate, poNo, amount, vat, memo }
+    vendors       [{ value, label }]
+    vatRate       number — default VAT rate (e.g. 0.07)
+    approvalSteps array
+    auditEntries  array
+    restletUrl    string
+-->
+
+<!-- ── 1. Page header ─────────────────────────────────────────── -->
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">ใบวางบิล · <span id="hdr-tranid"></span></div>
+      <div class="tbt-page-header__subtitle"><span id="hdr-vendor"></span> · รับเมื่อ <span id="hdr-date"></span></div>
+    </div>
+    <tbt-badge id="hdr-status" variant="neutral">—</tbt-badge>
+  </div>
+</tbt-section>
+
+<div class="tbt-page-alerts">
+  <tbt-alert id="ok-alert"  variant="success" dismissible hidden></tbt-alert>
+  <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
+</div>
+
+<!-- ── 2. Document info ───────────────────────────────────────── -->
+<tbt-section title="ข้อมูลใบวางบิล">
+  <tbt-field-grid columns="3">
+    <tbt-dropdown   id="f-vendor"  name="vendor"    label="ผู้จำหน่าย" required></tbt-dropdown>
+    <tbt-datepicker id="f-receive" name="receive"   label="วันที่รับวางบิล" required></tbt-datepicker>
+    <tbt-datepicker id="f-due"     name="due"       label="ครบกำหนดชำระ" required></tbt-datepicker>
+    <tbt-input      id="f-contact" name="contact"   label="ผู้นำส่งบิล"></tbt-input>
+    <tbt-input      id="f-ref"     name="reference" label="เลขที่อ้างอิง"></tbt-input>
+  </tbt-field-grid>
+</tbt-section>
+
+<!-- ── 3. Summary stats ───────────────────────────────────────── -->
+<tbt-section title="สรุปยอด">
+  <div class="tbt-stats-grid">
+    <tbt-stat id="stat-count" label="จำนวนใบแจ้งหนี้" variant="primary" icon="invoice"></tbt-stat>
+    <tbt-stat id="stat-net"   label="ยอดก่อนภาษี"     variant="info"    icon="money"></tbt-stat>
+    <tbt-stat id="stat-vat"   label="ภาษีมูลค่าเพิ่ม"  variant="warning" icon="receipt"></tbt-stat>
+    <tbt-stat id="stat-total" label="ยอดรวมสุทธิ"      variant="success" icon="payment"></tbt-stat>
+  </div>
+</tbt-section>
+
+<!-- ── 4. Bill lines ──────────────────────────────────────────── -->
+<tbt-section title="รายการใบแจ้งหนี้">
+  <tbt-button slot="actions" id="add-line" variant="primary" icon="add" size="sm">เพิ่มใบแจ้งหนี้</tbt-button>
+  <tbt-table id="lines-table" responsive max-height="380px"></tbt-table>
+</tbt-section>
+
+<!-- ── 5. Approval flow ───────────────────────────────────────── -->
+<tbt-section title="การอนุมัติ">
+  <tbt-approval-flow id="approval-flow" orientation="horizontal"></tbt-approval-flow>
+</tbt-section>
+
+<!-- ── 6. History ─────────────────────────────────────────────── -->
+<tbt-section title="ประวัติการทำรายการ">
+  <tbt-audit-log id="audit-log" max-height="320px"></tbt-audit-log>
+</tbt-section>
+
+<!-- ── 7. Action bar ──────────────────────────────────────────── -->
+<div class="tbt-action-bar">
+  <tbt-button id="save-btn"    variant="primary"   icon="save">บันทึกร่าง</tbt-button>
+  <tbt-button id="submit-btn"  variant="primary"   icon="submit">ส่งตรวจรับ</tbt-button>
+  <tbt-button id="approve-btn" variant="primary"   icon="approve">อนุมัติ</tbt-button>
+  <tbt-button id="reject-btn"  variant="danger"    icon="reject">ตีกลับ</tbt-button>
+  <tbt-button id="print-btn"   variant="secondary" icon="print">พิมพ์</tbt-button>
+  <tbt-button id="back-btn"    variant="ghost"     icon="cancel">กลับ</tbt-button>
+</div>
+
+<!-- ── 8. Add / edit invoice modal ────────────────────────────── -->
+<tbt-modal id="inv-modal" title="เพิ่มใบแจ้งหนี้" variant="default">
+  <tbt-form id="inv-form">
+    <tbt-field-grid columns="2">
+      <tbt-input      id="m-invno"  name="invoiceNo"   label="เลขที่ใบแจ้งหนี้" required></tbt-input>
+      <tbt-datepicker id="m-invdate" name="invoiceDate" label="วันที่ใบแจ้งหนี้" required></tbt-datepicker>
+      <tbt-input      id="m-pono"   name="poNo"        label="เลขที่ PO อ้างอิง"></tbt-input>
+      <tbt-input      id="m-amount" name="amount"      label="ยอดก่อนภาษี (฿)" type="number" required></tbt-input>
+      <tbt-input      id="m-vat"    name="vat"         label="ภาษีมูลค่าเพิ่ม (฿)" type="number"></tbt-input>
+      <tbt-textarea   id="m-memo"   name="memo"        label="หมายเหตุ" rows="2"></tbt-textarea>
+    </tbt-field-grid>
+  </tbt-form>
+  <div slot="footer" class="tbt-modal-actions">
+    <tbt-button id="modal-delete" variant="danger"    icon="delete" style="margin-right:auto;display:none">ลบ</tbt-button>
+    <tbt-button id="modal-cancel" variant="secondary" icon="cancel">ยกเลิก</tbt-button>
+    <tbt-button id="modal-save"   variant="primary"   icon="save">บันทึก</tbt-button>
+  </div>
+</tbt-modal>
+
+<script type="module">
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+  const v  = d.voucher;
+  const vatRate = d.vatRate == null ? 0.07 : d.vatRate;
+
+  const STATUS_LABEL = {
+    Draft: 'ร่าง', Submitted: 'รอตรวจรับ', Approved: 'อนุมัติแล้ว', Rejected: 'ตีกลับ', Paid: 'ชำระแล้ว',
+  };
+  const STATUS_VARIANT = {
+    Draft: 'warning', Submitted: 'info', Approved: 'success', Rejected: 'danger', Paid: 'success',
+  };
+
+  const editable = v.status === 'Draft';
+  const lineTotal = (r) => Number(r.amount || 0) + Number(r.vat || 0);
+
+  /* ── Header ─────────────────────────────────────────────── */
+  document.getElementById('hdr-tranid').textContent = v.tranid || '(ใหม่)';
+  document.getElementById('hdr-vendor').textContent = v.vendor || '';
+  document.getElementById('hdr-date').textContent   = v.receiveDate || '';
+  const hdrStatus = document.getElementById('hdr-status');
+  hdrStatus.textContent = STATUS_LABEL[v.status] || v.status || '—';
+  hdrStatus.setAttribute('variant', STATUS_VARIANT[v.status] || 'neutral');
+
+  /* ── Document info ──────────────────────────────────────── */
+  const fVendor  = document.getElementById('f-vendor');
+  const fReceive = document.getElementById('f-receive');
+  const fDue     = document.getElementById('f-due');
+  const fContact = document.getElementById('f-contact');
+  const fRef     = document.getElementById('f-ref');
+  fVendor.options = d.vendors || [];
+  fVendor.value   = v.vendorId || '';
+  fReceive.value  = v.receiveDate || '';
+  fDue.value      = v.dueDate || '';
+  fContact.value  = v.contact || '';
+  fRef.value      = v.reference || '';
+  if (!editable) {
+    [fVendor, fReceive, fDue, fContact, fRef].forEach(el => el.setAttribute('readonly', ''));
+  }
+
+  /* ── Stats ──────────────────────────────────────────────── */
+  function recomputeStats(rows) {
+    const net = rt.sumBy(rows, 'amount');
+    const vat = rt.sumBy(rows, 'vat');
+    document.getElementById('stat-count').value = String(rows.length) + ' ใบ';
+    document.getElementById('stat-net').value   = rt.currency(net);
+    document.getElementById('stat-vat').value   = rt.currency(vat);
+    document.getElementById('stat-total').value = rt.currency(net + vat);
+  }
+
+  /* ── Bill lines table ───────────────────────────────────── */
+  const table = document.getElementById('lines-table');
+  table.columns = [
+    { key: 'invoiceNo',   label: 'เลขที่ใบแจ้งหนี้', sortable: true, mobileTitle: true },
+    { key: 'invoiceDate', label: 'วันที่',           sortable: true },
+    { key: 'poNo',        label: 'PO อ้างอิง' },
+    { key: 'amountText',  label: 'ยอดก่อนภาษี',      align: 'right', sortable: true },
+    { key: 'vatText',     label: 'ภาษี',             align: 'right' },
+    { key: 'totalText',   label: 'รวม',              align: 'right' },
+    { key: 'memo',        label: 'หมายเหตุ' },
+  ];
+
+  function renderLines(rows) {
+    table.rows = rows.map(r => ({
+      ...r,
+      amountText: rt.currency(r.amount),
+      vatText:    rt.currency(r.vat),
+      totalText:  rt.currency(lineTotal(r)),
+    }));
+    recomputeStats(rows);
+  }
+  renderLines(d.lines || []);
+
+  /* ── Add / edit modal ───────────────────────────────────── */
+  const modal       = document.getElementById('inv-modal');
+  const mInvNo      = document.getElementById('m-invno');
+  const mInvDate    = document.getElementById('m-invdate');
+  const mPoNo       = document.getElementById('m-pono');
+  const mAmount     = document.getElementById('m-amount');
+  const mVat        = document.getElementById('m-vat');
+  const mMemo       = document.getElementById('m-memo');
+  const modalDelete = document.getElementById('modal-delete');
+  let editingId = null;
+
+  // Auto-fill VAT from the pre-tax amount when the VAT field is left untouched.
+  mAmount.addEventListener('tbt-input', () => {
+    if (!mVat.dataset.touched) {
+      mVat.value = String(Math.round(Number(mAmount.value || 0) * vatRate * 100) / 100);
+    }
+  });
+  mVat.addEventListener('tbt-input', () => { mVat.dataset.touched = '1'; });
+
+  function openModal(line) {
+    modal.setAttribute('title', line ? 'แก้ไขใบแจ้งหนี้' : 'เพิ่มใบแจ้งหนี้');
+    delete mVat.dataset.touched;
+    if (line) {
+      editingId = line.id;
+      mInvNo.value   = line.invoiceNo;
+      mInvDate.value = line.invoiceDate;
+      mPoNo.value    = line.poNo || '';
+      mAmount.value  = String(line.amount);
+      mVat.value     = String(line.vat);
+      mMemo.value    = line.memo || '';
+      mVat.dataset.touched = '1';
+      modalDelete.style.display = '';
+    } else {
+      editingId = null;
+      mInvNo.value = mPoNo.value = mAmount.value = mVat.value = mMemo.value = '';
+      mInvDate.value = new Date().toISOString().slice(0, 10);
+      modalDelete.style.display = 'none';
+    }
+    modal.open = true;
+  }
+
+  document.getElementById('add-line').addEventListener('click', () => openModal(null));
+
+  table.addEventListener('tbt-row-click', (e) => {
+    if (!editable) return;
+    const orig = (d.lines || []).find(x => x.id === e.detail.row.id);
+    if (orig) openModal(orig);
+  });
+
+  document.getElementById('modal-cancel').addEventListener('click', () => { modal.open = false; });
+
+  document.getElementById('modal-save').addEventListener('click', () => {
+    const next = {
+      id: editingId || ('IV-' + Date.now()),
+      invoiceNo:   mInvNo.value,
+      invoiceDate: mInvDate.value,
+      poNo:        mPoNo.value,
+      amount:      Number(mAmount.value || 0),
+      vat:         Number(mVat.value || 0),
+      memo:        mMemo.value,
+    };
+    if (!next.invoiceNo || !next.invoiceDate || !next.amount) return;
+    const rows = (d.lines || []).slice();
+    const idx = rows.findIndex(r => r.id === editingId);
+    if (idx >= 0) rows[idx] = next; else rows.push(next);
+    d.lines = rows;
+    renderLines(rows);
+    modal.open = false;
+  });
+
+  modalDelete.addEventListener('click', () => {
+    d.lines = (d.lines || []).filter(r => r.id !== editingId);
+    renderLines(d.lines);
+    modal.open = false;
+  });
+
+  /* ── Approval + history ─────────────────────────────────── */
+  document.getElementById('approval-flow').steps  = d.approvalSteps || [];
+  document.getElementById('audit-log').entries     = d.auditEntries  || [];
+
+  /* ── Action bar — show only the buttons valid for this status ── */
+  const show = (id, on) => { document.getElementById(id).style.display = on ? '' : 'none'; };
+  show('save-btn',    editable);
+  show('submit-btn',  editable);
+  show('add-line',    editable);
+  show('approve-btn', v.status === 'Submitted');
+  show('reject-btn',  v.status === 'Submitted');
+
+  function collect(action) {
+    return {
+      action,
+      voucher: {
+        id: v.id,
+        vendor:      fVendor.value,
+        receiveDate: fReceive.value,
+        dueDate:     fDue.value,
+        contact:     fContact.value,
+        reference:   fRef.value,
+      },
+      lines: d.lines || [],
+    };
+  }
+
+  async function submit(action, label) {
+    rt.hideAlerts('ok-alert', 'err-alert');
+    try {
+      await rt.post(d.restletUrl, collect(action));
+      rt.showAlert('ok-alert', label + 'สำเร็จ');
+    } catch (err) {
+      rt.showAlert('err-alert', label + 'ไม่สำเร็จ: ' + err.message);
+    }
+  }
+
+  document.getElementById('save-btn').addEventListener('click',    () => submit('save',    'บันทึก'));
+  document.getElementById('submit-btn').addEventListener('click',  () => submit('submit',  'ส่งตรวจรับ'));
+  document.getElementById('approve-btn').addEventListener('click', () => submit('approve', 'อนุมัติ'));
+  document.getElementById('reject-btn').addEventListener('click',  () => submit('reject',  'ตีกลับ'));
+  document.getElementById('print-btn').addEventListener('click',   () => window.print());
+  document.getElementById('back-btn').addEventListener('click',     () => history.back());
+</script>

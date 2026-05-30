@@ -15,6 +15,10 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- **`templates/bill-receipt-*` + `sl_bill_receipt_*.js` — vendor bill receipt (รับวางบิล) module.** Two Suitelets composed entirely from DS components + `var(--tbt-*)` tokens:
+  - `sl_bill_receipt_list.js` + `bill-receipt-list.html` — voucher list: search + status filter + `tbt-table` with status badges and view/edit row actions.
+  - `sl_bill_receipt_form.js` + `bill-receipt-form.html` — voucher document: header + document-info field-grid + summary stats + vendor-invoice lines (`tbt-table` + add/edit modal, auto-VAT) + `tbt-approval-flow` + `tbt-audit-log`. Edit only while status is `Draft`; `Submitted` exposes approve/reject; `Approved`/`Paid` are read-only.
+  - `scripts/dev-suitelet.mjs` — registered `/bill-receipt/list` + `/bill-receipt/form` preview routes.
 - **Page composition utility classes** in `theme/tbt-theme.css` — token-only, no hex. Lets Suitelet body templates drop inline-style duplication:
   - `.tbt-page-header` + `.tbt-page-header__title` + `.tbt-page-header__subtitle`
   - `.tbt-stats-grid` — auto-fit grid for `tbt-stat` cards

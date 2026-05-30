@@ -108,6 +108,8 @@ const ENTRIES = {
   '/invoice/form':       'templates/sl_invoice_form.js',
   '/quotation/list':     'templates/sl_quotation_list.js',
   '/quotation/form':     'templates/sl_quotation_form.js',
+  '/bill-receipt/list':  'templates/sl_bill_receipt_list.js',
+  '/bill-receipt/form':  'templates/sl_bill_receipt_form.js',
 };
 
 const INDEX_HTML = `<!DOCTYPE html>
