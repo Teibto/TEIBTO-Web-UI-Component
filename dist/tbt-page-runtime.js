@@ -2,7 +2,7 @@
  * tbt-page-runtime.js — shared client-side helpers for Suitelet body templates.
  *
  * Load alongside tbt-ds.min.js in the page <head>:
- *   <script src="/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-page-runtime.js"></script>
+ *   <script src="/sc/SuiteScripts/Teibto/ds/v1.43.0/dist/tbt-page-runtime.js"></script>
  *
  * Exposes a single global, window.tbtPageRuntime, with these helpers:
  *
