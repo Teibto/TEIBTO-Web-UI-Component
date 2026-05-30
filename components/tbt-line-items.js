@@ -564,7 +564,7 @@ class TbtLineItems extends LitElement {
     if (this.loading) return html`
       ${tablerLink}
       <div class="wrap">
-        <div class=${wrapClass} style=${wrapStyle}>
+        <div class=${wrapClass} style=${wrapStyle} tabindex="0" role="group" aria-label="Line items">
           <table>
             <thead>
               <tr>${['No.','Item','Desc','Qty','Unit','Price','Amount','Account',''].map(l =>
@@ -584,7 +584,7 @@ class TbtLineItems extends LitElement {
       ${tablerLink}
       <div class="wrap">
 
-        <div class=${wrapClass} style=${wrapStyle}>
+        <div class=${wrapClass} style=${wrapStyle} tabindex="0" role="group" aria-label="Line items">
           <table class="fixed">
             <colgroup>
               ${this._colWidths.map(w => html`<col style="width:${w}px">`)}
