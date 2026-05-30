@@ -972,6 +972,46 @@
   document.getElementById('demo-spark').data = months([12, 18, 9, 22, 17, 25]);
 </script>
 
+<div class="demo-label">Analytical · Combo (dual axis) · Waterfall</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-combo" type="combo" right-suffix="%" show-legend height="240"></tbt-chart>
+  <tbt-chart id="demo-wf" type="waterfall" value-prefix="฿" show-values height="240"></tbt-chart>
+</div>
+<div class="demo-label">Stacked 100% · Pareto (80/20)</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-stack" type="stacked" percent height="240"></tbt-chart>
+  <tbt-chart id="demo-pareto" type="pareto" value-prefix="฿" height="240"></tbt-chart>
+</div>
+<div class="demo-label">Gauge (value vs target)</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-gauge" type="gauge" value="72" max="100" target="80" value-suffix="%" height="160"></tbt-chart>
+  <tbt-chart id="demo-gauge2" type="gauge" variant="success" value="2450000" max="3000000" target="2800000" value-prefix="฿" height="160"></tbt-chart>
+</div>
+<script type="module">
+  const mo = (vals) => vals.map((v, i) => ({ label: ['Q1','Q2','Q3','Q4'][i], value: v }));
+  document.getElementById('demo-combo').series = [
+    { name: 'Revenue', kind: 'bar',  data: mo([1200000, 1500000, 1350000, 1800000]) },
+    { name: 'Margin %', kind: 'line', axis: 'right', data: mo([18, 22, 20, 26]) },
+  ];
+  document.getElementById('demo-wf').data = [
+    { label: 'Opening', value: 800000, total: true },
+    { label: 'Sales',   value: 1200000 },
+    { label: 'Refunds', value: -180000 },
+    { label: 'Costs',   value: -640000 },
+    { label: 'Closing', total: true },
+  ];
+  document.getElementById('demo-stack').series = [
+    { name: 'Hardware', data: mo([40, 55, 48, 60]) },
+    { name: 'Software', data: mo([30, 25, 35, 28]) },
+    { name: 'Services', data: mo([20, 30, 25, 35]) },
+  ];
+  document.getElementById('demo-pareto').data = [
+    { label: 'ABC Co.', value: 420000 }, { label: 'XYZ Ltd', value: 280000 },
+    { label: 'DEF',     value: 150000 }, { label: 'GHI',     value: 90000 },
+    { label: 'Others',  value: 60000 },
+  ];
+</script>
+
 <!-- ─── FIELD + FIELD-GRID ─────────────────────────── -->
 <h2 id="field">tbt-field + tbt-field-grid</h2>
 <tbt-field-grid columns="4" style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5)">

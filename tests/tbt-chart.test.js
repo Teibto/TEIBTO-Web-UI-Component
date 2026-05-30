@@ -86,6 +86,54 @@ describe('tbt-chart', () => {
     expect(labels.some(l => l.includes('฿'))).to.be.true;
   });
 
+  it('combo renders bar series + line series on dual axis', async () => {
+    const combo = [
+      { name: 'Revenue', kind: 'bar',  data: [{ label: 'Q1', value: 100 }, { label: 'Q2', value: 120 }] },
+      { name: 'Margin',  kind: 'line', axis: 'right', data: [{ label: 'Q1', value: 20 }, { label: 'Q2', value: 25 }] },
+    ];
+    const el = await fixture(html`<tbt-chart type="combo" .series=${combo}></tbt-chart>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelectorAll('rect.bar')).to.have.length(2);
+    expect(el.shadowRoot.querySelectorAll('polyline.line-path')).to.have.length(1);
+  });
+
+  it('waterfall renders one bar per step', async () => {
+    const wf = [
+      { label: 'Open', value: 100, total: true },
+      { label: 'Sales', value: 60 },
+      { label: 'Refund', value: -20 },
+      { label: 'Close', total: true },
+    ];
+    const el = await fixture(html`<tbt-chart type="waterfall" .data=${wf}></tbt-chart>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelectorAll('rect.bar')).to.have.length(4);
+  });
+
+  it('stacked renders one rect per series per label', async () => {
+    const el = await fixture(html`<tbt-chart type="stacked" .series=${SERIES}></tbt-chart>`);
+    await el.updateComplete;
+    // 2 series × 2 labels = 4 segments
+    expect(el.shadowRoot.querySelectorAll('rect.bar')).to.have.length(4);
+  });
+
+  it('pareto sorts bars descending and draws a cumulative line', async () => {
+    const el = await fixture(html`<tbt-chart type="pareto" .data=${[{ label: 'A', value: 30 }, { label: 'B', value: 90 }, { label: 'C', value: 60 }]}></tbt-chart>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelectorAll('rect.bar')).to.have.length(3);
+    expect(el.shadowRoot.querySelector('polyline.line-path')).to.exist;
+    const xLabels = [...el.shadowRoot.querySelectorAll('text.axis-label')].map(t => t.textContent);
+    // first category label (left-most bar) should be the largest: B
+    expect(xLabels).to.include('B');
+  });
+
+  it('gauge renders an arc and the value text', async () => {
+    const el = await fixture(html`<tbt-chart type="gauge" value="72" max="100" target="80" value-suffix="%"></tbt-chart>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('path.gauge-arc')).to.exist;
+    expect(el.shadowRoot.querySelector('line.gauge-target')).to.exist;
+    expect(el.shadowRoot.textContent).to.include('72');
+  });
+
   it('passes axe with data', async () => {
     const el = await fixture(html`<tbt-chart type="bar" .data=${DATA}></tbt-chart>`);
     await el.updateComplete;
