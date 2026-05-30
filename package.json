@@ -21,6 +21,7 @@
     "version:sync": "node scripts/sync-version.js",
     "test": "wtr",
     "test:visual": "playwright test",
+    "test:smoke": "node scripts/smoke-pages.mjs",
     "analyze": "cem analyze --globs \"components/**/*.js\" --litelement",
     "sync:sdf": "node scripts/sync-sdf.js"
   },
