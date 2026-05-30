@@ -30,6 +30,7 @@ class TbtCheckbox extends LitElement {
     indeterminate: { type: Boolean, reflect: true },
     required:      { type: Boolean, reflect: true },
     disabled:      { type: Boolean, reflect: true },
+    readonly:      { type: Boolean, reflect: true },
     error:         { type: String,  reflect: true },
     helper:        { type: String },
   };
@@ -62,6 +63,7 @@ class TbtCheckbox extends LitElement {
       user-select: none;
     }
     :host([disabled]) label { cursor: not-allowed; opacity: 0.6; }
+    :host([readonly]) label { cursor: default; pointer-events: none; }
 
     /* Hide native input — keep it focusable */
     input[type="checkbox"] {

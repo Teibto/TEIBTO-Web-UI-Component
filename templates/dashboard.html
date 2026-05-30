@@ -1,0 +1,56 @@
+<!--
+  dashboard.html — KPI dashboard body template.
+
+  Required keys on window.__DATA__:
+    stats[]    — array of { label, value, trend, variant, icon }
+    pending[]  — pending tasks rows
+    recent[]   — recent activity entries
+-->
+
+<!-- KPI strip -->
+<tbt-section title="Overview">
+  <div class="tbt-stats-grid">
+    <tbt-stat id="kpi-sales"   label="Sales MTD"     variant="primary" icon="money"></tbt-stat>
+    <tbt-stat id="kpi-orders"  label="Orders"        variant="info"    icon="sales-order"></tbt-stat>
+    <tbt-stat id="kpi-pending" label="Pending"       variant="warning" icon="pending"></tbt-stat>
+    <tbt-stat id="kpi-overdue" label="Overdue"       variant="danger"  icon="alert"></tbt-stat>
+  </div>
+</tbt-section>
+
+<!-- Two-column row -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:var(--tbt-space-4)">
+  <tbt-section title="Pending tasks">
+    <tbt-table id="pending-table" page-size="5" responsive></tbt-table>
+  </tbt-section>
+
+  <tbt-section title="Recent activity">
+    <tbt-audit-log id="recent-log" max-height="320px"></tbt-audit-log>
+  </tbt-section>
+</div>
+
+<script type="module">
+  const d = window.__DATA__;
+
+  const setKpi = (id, s) => {
+    const el = document.getElementById(id);
+    if (!s) return;
+    el.value = s.value;
+    if (s.trend)   el.trend = s.trend;
+    if (s.variant) el.setAttribute('variant', s.variant);
+  };
+  setKpi('kpi-sales',   d.stats?.sales);
+  setKpi('kpi-orders',  d.stats?.orders);
+  setKpi('kpi-pending', d.stats?.pending);
+  setKpi('kpi-overdue', d.stats?.overdue);
+
+  const pending = document.getElementById('pending-table');
+  pending.columns = [
+    { key: 'tranid', label: 'Document', mobileTitle: true },
+    { key: 'type',   label: 'Type' },
+    { key: 'amount', label: 'Amount', align: 'right' },
+    { key: 'due',    label: 'Due' },
+  ];
+  pending.rows = d.pending || [];
+
+  document.getElementById('recent-log').entries = d.recent || [];
+</script>

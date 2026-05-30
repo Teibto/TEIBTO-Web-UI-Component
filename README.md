@@ -1309,14 +1309,69 @@ CSS: `.screen { display: none; } .screen.active { display: block; }`. In a real 
   teibtologo.png
 ```
 
-### Standard page `<head>`
+### Standard page `<head>` (manual — legacy)
 
 ```html
-<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.26.2/tbt-theme.css">
-<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.26.2/index.js"></script>
+<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-theme.css">
+<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-ds.min.js"></script>
 ```
 
 > Always pin to an exact version. Never use `/latest/`.
+
+### Zero-boilerplate page — `tbt_page.js` helper
+
+Don't hand-write the `<head>`, app shell, menubar, sidebar, or version paths. Use the
+server-side helper at [`netsuite/tbt_page.js`](netsuite/tbt_page.js) — a SuiteScript 2.1
+Fat Module that emits the full HTML document from one `render(opts)` call.
+
+```javascript
+/**
+ * @NApiVersion 2.1
+ * @NScriptType Suitelet
+ * @NModuleScope SameAccount
+ * @author Wichit Wongta
+ */
+define([ 'N/file', './tbt_page' ], (file, tbtPage) => ({
+  onRequest(ctx) {
+    const body = file.load({ id: './document-page.html' }).getContents();
+    const data = { tranId: 'PO-0001', vendor: 'ABC Co.', lines: [] };
+    ctx.response.write(tbtPage.render({
+      title:  'Purchase order',
+      active: 'purchase-order',
+      data,
+      body,
+    }));
+  },
+}));
+```
+
+**`render(opts)` API:**
+
+| Key       | Type   | Required | Notes |
+|-----------|--------|----------|-------|
+| `title`   | string | yes      | Page `<title>` + brand context |
+| `body`    | string | yes      | HTML for `<main slot="content">` — `tbt-*` components only |
+| `active`  | string | no       | Sidebar item `key` to mark active |
+| `data`    | object | no       | Injected as `window.__DATA__` (escapes `</`, `<!--`, `-->`, U+2028/9) |
+| `lang`    | string | no       | `<html lang>` — defaults to `"th"` |
+| `menu`    | array  | no       | Menubar items — defaults to standard set |
+| `sidebar` | array  | no       | Sidebar items — defaults to standard set |
+
+`DS_VERSION` lives at the top of `tbt_page.js`. Every File Cabinet URL is derived from it —
+bumping the DS = edit one line, not every page.
+
+Missing `title` or `body` throws `error.create({ name: 'TBT_PAGE_MISSING_ARG', … })` —
+the helper never silently substitutes a default. Errors surface for debugging.
+
+### Starter templates
+
+Three copy-paste page bodies + matching thin Suitelets live under `templates/`:
+
+| Template | Thin entry | Pattern |
+|---|---|---|
+| `document-page.html` | `sl_starter_document.js` | Header + field-grid + lines-block + action bar |
+| `list-page.html`     | `sl_starter_list.js`     | Search + new button + paginated `tbt-table` |
+| `dashboard.html`     | `sl_starter_dashboard.js`| KPI strip + pending tasks + audit log |
 
 ### Upload with SuiteCloud CLI
 

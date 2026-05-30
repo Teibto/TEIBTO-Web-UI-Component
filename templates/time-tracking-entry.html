@@ -1,0 +1,243 @@
+<!--
+  time-tracking-entry.html — Employee weekly time entry.
+
+  Layout (Teibto standard):
+    Page header        — name + week + status badge
+    Filters            — employee / week / project / status
+    Summary stats      — total / billable / non-billable / utilization
+    Time entries       — tbt-table (action: Add entry → modal)
+    Approval flow      — tbt-approval-flow
+    Action bar         — Save draft / Submit / Cancel
+
+  Required keys on window.__DATA__:
+    employee     string
+    week         { from, to }
+    status       string
+    entries      array of { id, date, project, projectLabel, task, hours, billable, memo }
+    projects     [{ value, label }]
+    employees    [{ value, label }]
+    statuses     [{ value, label }]
+    approvalSteps array
+-->
+
+<!-- ── 1. Page header ─────────────────────────────────────────── -->
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">Time tracking · <span id="hdr-employee"></span></div>
+      <div class="tbt-page-header__subtitle">Week <span id="hdr-week"></span></div>
+    </div>
+    <tbt-badge id="hdr-status" variant="warning">Draft</tbt-badge>
+  </div>
+</tbt-section>
+
+<div class="tbt-page-alerts">
+  <tbt-alert id="ok-alert"  variant="success" dismissible hidden></tbt-alert>
+  <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
+</div>
+
+<!-- ── 2. Filters ─────────────────────────────────────────────── -->
+<tbt-section title="Filters">
+  <tbt-field-grid columns="4">
+    <tbt-dropdown   id="f-employee" name="employee" label="Employee" required></tbt-dropdown>
+    <tbt-date-range id="f-week"     name-from="from" name-to="to" label="Period"></tbt-date-range>
+    <tbt-dropdown   id="f-project"  name="project"  label="Project"></tbt-dropdown>
+    <tbt-dropdown   id="f-status"   name="status"   label="Status"></tbt-dropdown>
+  </tbt-field-grid>
+</tbt-section>
+
+<!-- ── 3. Summary stats ───────────────────────────────────────── -->
+<tbt-section title="Summary">
+  <div class="tbt-stats-grid">
+    <tbt-stat id="stat-total"    label="Total hours"  variant="primary" icon="time"></tbt-stat>
+    <tbt-stat id="stat-billable" label="Billable"     variant="success" icon="money"></tbt-stat>
+    <tbt-stat id="stat-nonbill"  label="Non-billable" variant="warning" icon="pending"></tbt-stat>
+    <tbt-stat id="stat-util"     label="Utilization"  variant="info"    icon="chart"></tbt-stat>
+  </div>
+</tbt-section>
+
+<!-- ── 4. Time entries ────────────────────────────────────────── -->
+<tbt-section title="Time entries">
+  <tbt-button slot="actions" id="add-entry" variant="primary" icon="add" size="sm">Add entry</tbt-button>
+  <tbt-table id="entries-table" paginate page-size="20" responsive max-height="380px"></tbt-table>
+</tbt-section>
+
+<!-- ── 5. Approval flow ───────────────────────────────────────── -->
+<tbt-section title="Approval">
+  <tbt-approval-flow id="approval-flow" orientation="horizontal"></tbt-approval-flow>
+</tbt-section>
+
+<!-- ── 6. Action bar ──────────────────────────────────────────── -->
+<div class="tbt-action-bar">
+  <tbt-button id="save-btn"   variant="primary"   icon="save">Save draft</tbt-button>
+  <tbt-button id="submit-btn" variant="primary"   icon="submit">Submit for approval</tbt-button>
+  <tbt-button id="cancel-btn" variant="ghost"     icon="cancel">Cancel</tbt-button>
+</div>
+
+<!-- ── 7. Add/Edit entry modal ────────────────────────────────── -->
+<tbt-modal id="entry-modal" title="Add time entry" variant="default">
+  <tbt-form id="entry-form">
+    <tbt-field-grid columns="2">
+      <tbt-datepicker id="m-date"    name="date"    label="Date"    required></tbt-datepicker>
+      <tbt-dropdown   id="m-project" name="project" label="Project" required></tbt-dropdown>
+      <tbt-input      id="m-task"    name="task"    label="Task"    required></tbt-input>
+      <tbt-input      id="m-hours"   name="hours"   label="Hours"   type="number" required></tbt-input>
+      <tbt-toggle     id="m-billable" name="billable" label="Billable" label-on="Yes" label-off="No"></tbt-toggle>
+      <tbt-textarea   id="m-memo"    name="memo"    label="Memo"    rows="2"></tbt-textarea>
+    </tbt-field-grid>
+  </tbt-form>
+  <div slot="footer" class="tbt-modal-actions">
+    <tbt-button id="modal-delete" variant="danger"    icon="delete" style="margin-right:auto;display:none">Delete</tbt-button>
+    <tbt-button id="modal-cancel" variant="secondary" icon="cancel">Cancel</tbt-button>
+    <tbt-button id="modal-save"   variant="primary"   icon="save">Save entry</tbt-button>
+  </div>
+</tbt-modal>
+
+<script type="module">
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+
+  /* ── Header ─────────────────────────────────────────────── */
+  document.getElementById('hdr-employee').textContent = d.employee;
+  document.getElementById('hdr-week').textContent     = `${d.week.from}  to  ${d.week.to}`;
+  rt.setStatusBadge(document.getElementById('hdr-status'), d.status);
+
+  /* ── Filters ────────────────────────────────────────────── */
+  const fEmployee = document.getElementById('f-employee');
+  const fProject  = document.getElementById('f-project');
+  const fStatus   = document.getElementById('f-status');
+  const fWeek     = document.getElementById('f-week');
+  fEmployee.options = d.employees;
+  fProject.options  = [{ value: '', label: 'All projects' }, ...d.projects];
+  fStatus.options   = d.statuses;
+  fEmployee.value = d.employee;
+  fProject.value  = '';
+  fStatus.value   = d.status;
+  fWeek.from = d.week.from;
+  fWeek.to   = d.week.to;
+
+  /* ── Stats ──────────────────────────────────────────────── */
+  const CAPACITY = 40;  // weekly capacity (hours)
+  function recomputeStats(rows) {
+    const total    = rt.sumBy(rows, 'hours');
+    const billable = rt.sumBy(rows.filter(r => r.billable), 'hours');
+    document.getElementById('stat-total').value    = total.toFixed(1)         + ' h';
+    document.getElementById('stat-billable').value = billable.toFixed(1)      + ' h';
+    document.getElementById('stat-nonbill').value  = (total - billable).toFixed(1) + ' h';
+    document.getElementById('stat-util').value     = Math.round((billable / CAPACITY) * 100) + '%';
+  }
+
+  /* ── Entries table ──────────────────────────────────────── */
+  const table = document.getElementById('entries-table');
+  table.columns = [
+    { key: 'date',         label: 'Date',     sortable: true, mobileTitle: true },
+    { key: 'projectLabel', label: 'Project',  sortable: true },
+    { key: 'task',         label: 'Task' },
+    { key: 'hours',        label: 'Hours',    align: 'right', sortable: true },
+    { key: 'billableText', label: 'Billable', align: 'center' },
+    { key: 'memo',         label: 'Memo' },
+  ];
+
+  function renderEntries(rows) {
+    table.rows = rows.map(r => ({
+      ...r,
+      billableText: r.billable ? 'Yes' : 'No',
+    }));
+    recomputeStats(rows);
+  }
+  renderEntries(d.entries || []);
+
+  /* ── Add/Edit modal ─────────────────────────────────────── */
+  const modal      = document.getElementById('entry-modal');
+  const mDate      = document.getElementById('m-date');
+  const mProject   = document.getElementById('m-project');
+  const mTask      = document.getElementById('m-task');
+  const mHours     = document.getElementById('m-hours');
+  const mBillable  = document.getElementById('m-billable');
+  const mMemo      = document.getElementById('m-memo');
+  const modalDelete = document.getElementById('modal-delete');
+  mProject.options = d.projects;
+
+  let editingId = null;
+
+  function openModal(entry) {
+    modal.setAttribute('title', entry ? 'Edit time entry' : 'Add time entry');
+    if (entry) {
+      editingId = entry.id;
+      mDate.value     = entry.date;
+      mProject.value  = entry.project;
+      mTask.value     = entry.task;
+      mHours.value    = String(entry.hours);
+      mBillable.value = !!entry.billable;
+      mMemo.value     = entry.memo || '';
+      modalDelete.style.display = '';
+    } else {
+      editingId = null;
+      mDate.value = d.week.from;
+      mProject.value = mTask.value = mHours.value = mMemo.value = '';
+      mBillable.value = true;
+      modalDelete.style.display = 'none';
+    }
+    modal.open = true;
+  }
+
+  document.getElementById('add-entry').addEventListener('click', () => openModal(null));
+
+  table.addEventListener('tbt-row-click', (e) => {
+    const row = e.detail.row;
+    const orig = (d.entries || []).find(x => x.id === row.id);
+    if (orig) openModal(orig);
+  });
+
+  document.getElementById('modal-cancel').addEventListener('click', () => { modal.open = false; });
+
+  document.getElementById('modal-save').addEventListener('click', () => {
+    const project = d.projects.find(p => p.value === mProject.value);
+    const next = {
+      id: editingId || ('TMP-' + Date.now()),
+      date: mDate.value,
+      project: mProject.value,
+      projectLabel: project?.label || '',
+      task: mTask.value,
+      hours: Number(mHours.value || 0),
+      billable: !!mBillable.value,
+      memo: mMemo.value,
+    };
+    if (!next.date || !next.project || !next.task || !next.hours) return;
+    const rows = d.entries.slice();
+    const idx = rows.findIndex(r => r.id === editingId);
+    if (idx >= 0) rows[idx] = next; else rows.push(next);
+    d.entries = rows;
+    renderEntries(rows);
+    modal.open = false;
+  });
+
+  modalDelete.addEventListener('click', () => {
+    d.entries = d.entries.filter(r => r.id !== editingId);
+    renderEntries(d.entries);
+    modal.open = false;
+  });
+
+  /* ── Approval flow ──────────────────────────────────────── */
+  document.getElementById('approval-flow').steps = d.approvalSteps || [];
+
+  /* ── Action bar ─────────────────────────────────────────── */
+  async function submit(action, label) {
+    rt.hideAlerts('ok-alert', 'err-alert');
+    try {
+      await rt.post(d.restletUrl, {
+        action,
+        employee: fEmployee.value,
+        week:     { from: fWeek.from, to: fWeek.to },
+        entries:  d.entries,
+      });
+      rt.showAlert('ok-alert', label + ' successful.');
+    } catch (err) {
+      rt.showAlert('err-alert', label + ' failed: ' + err.message);
+    }
+  }
+
+  document.getElementById('save-btn').addEventListener('click',   () => submit('save',   'Save'));
+  document.getElementById('submit-btn').addEventListener('click', () => submit('submit', 'Submit'));
+  document.getElementById('cancel-btn').addEventListener('click', () => history.back());
+</script>

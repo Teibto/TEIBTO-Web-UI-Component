@@ -1,0 +1,345 @@
+<!--
+  erp-form.html — universal ERP record form using the Sales Order pattern:
+    Main section (schema.sections[0])  +  Subtabs (schema.sections[1..])
+
+  View mode  → label + value display via tbt-field; FK fields render as links.
+  New / Edit → tbt-input / tbt-dropdown / tbt-datepicker / ... per field type.
+
+  Required window.__DATA__:
+    schemaName    string  — named export in DS bundle (e.g. "PO_SCHEMA")
+    recordLabel   string  — singular noun for headlines
+    mode          'new' | 'view' | 'edit'
+    record        object
+    optionLists   object
+    listUrl, selfUrl, restletUrl
+  Optional:
+    lines, approvalSteps, auditEntries
+-->
+
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title" id="hdr-title"></div>
+      <div class="tbt-page-header__subtitle" id="hdr-subtitle"></div>
+    </div>
+    <tbt-badge id="hdr-status" variant="warning" hidden></tbt-badge>
+  </div>
+</tbt-section>
+
+<div class="tbt-page-alerts">
+  <tbt-alert id="ok-alert"  variant="success" dismissible hidden></tbt-alert>
+  <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
+</div>
+
+<!-- Main section (section[0] of schema) — rendered into here -->
+<tbt-section id="main-section" title=""></tbt-section>
+
+<!-- Subtabs (section[1..]) -->
+<tbt-section id="subtabs-section" not-collapsible hidden>
+  <tbt-tabs id="subtabs" active="0"></tbt-tabs>
+</tbt-section>
+
+<!-- Action bar (mode-aware) -->
+<div class="tbt-action-bar" id="action-bar"></div>
+
+<script type="module">
+  import * as ds from '/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-ds.min.js';
+
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+
+  /* ── Schema ─────────────────────────────────────────────── */
+  const schema = ds[d.schemaName];
+  if (!schema) throw new Error('Unknown schema: ' + d.schemaName);
+  const label     = d.recordLabel || schema.title || 'Record';
+  const displayId = d.record.tranid || d.record.entityid || '';
+  const recId     = d.record.id != null ? d.record.id : displayId;
+
+  /* ── Foreign-key destination map ────────────────────────── */
+  const FK_LINKS = {
+    customer: v => `/customer/form?id=${v}`,
+    // extend as more record list pages come online
+  };
+
+  /* ── Mode config ────────────────────────────────────────── */
+  const MODE_CONFIG = {
+    new: {
+      title:    `New ${label.toLowerCase()}`,
+      subtitle: `Fill in fields and save to create a new ${label.toLowerCase()}`,
+      readonly: false,
+      buttons: [
+        { id: 'cancel', label: 'Cancel', variant: 'ghost' },
+        { id: 'save',   label: 'Save',   variant: 'primary', icon: 'save' },
+      ],
+    },
+    view: {
+      title:    `${label} · ${displayId}`,
+      subtitle: 'View mode — read only',
+      readonly: true,
+      buttons: [
+        { id: 'edit',  label: 'Edit',  variant: 'primary',   icon: 'edit' },
+        { id: 'print', label: 'Print', variant: 'secondary', icon: 'print' },
+        { id: 'email', label: 'Email', variant: 'secondary', icon: 'email' },
+        { id: 'back',  label: 'Back',  variant: 'ghost',     icon: 'back' },
+      ],
+    },
+    edit: {
+      title:    `Edit · ${displayId}`,
+      subtitle: 'Edit mode — changes saved on Save',
+      readonly: false,
+      buttons: [
+        { id: 'cancel', label: 'Cancel', variant: 'ghost' },
+        { id: 'delete', label: 'Delete', variant: 'danger',  icon: 'delete' },
+        { id: 'save',   label: 'Save',   variant: 'primary', icon: 'save' },
+      ],
+    },
+  };
+  const cfg = MODE_CONFIG[d.mode] || MODE_CONFIG.view;
+
+  /* ── Header ─────────────────────────────────────────────── */
+  document.getElementById('hdr-title').textContent    = cfg.title;
+  document.getElementById('hdr-subtitle').textContent = cfg.subtitle;
+  const hdrStatus = document.getElementById('hdr-status');
+  if (d.record.status) {
+    hdrStatus.hidden = false;
+    rt.setStatusBadge(hdrStatus, d.record.status);
+  }
+
+  /* ── Helpers ────────────────────────────────────────────── */
+  function optionsOf(field) {
+    if (typeof field.options === 'string') return d.optionLists?.[field.options] || [];
+    return field.options || [];
+  }
+
+  function displayValue(field, val) {
+    if (val === '' || val == null) return '—';
+    if (field.type === 'dropdown') {
+      const opt = optionsOf(field).find(o => String(o.value) === String(val));
+      return opt ? opt.label : String(val);
+    }
+    if (field.type === 'multiselect') {
+      const opts = optionsOf(field);
+      const arr  = Array.isArray(val) ? val : [val];
+      return arr.map(v => (opts.find(o => String(o.value) === String(v)) || {}).label || v).join(', ');
+    }
+    if (field.type === 'address') {
+      const a = val || {};
+      const parts = [a.street, a.city, a.state, a.postcode, a.country].filter(Boolean);
+      return parts.length ? parts.join(', ') : '—';
+    }
+    if (field.type === 'toggle' || field.type === 'checkbox') return val ? 'Yes' : 'No';
+    return String(val);
+  }
+
+  function renderViewField(field, val) {
+    const f = document.createElement('tbt-field');
+    f.setAttribute('label', field.label || field.name || '');
+    if (field.span) f.setAttribute('span', String(field.span));
+    const text = displayValue(field, val);
+    if (FK_LINKS[field.name] && val) {
+      const a = document.createElement('a');
+      a.href = FK_LINKS[field.name](val);
+      a.style.color = 'var(--tbt-text-link)';
+      a.style.textDecoration = 'none';
+      a.textContent = text;
+      a.addEventListener('mouseenter', () => { a.style.textDecoration = 'underline'; });
+      a.addEventListener('mouseleave', () => { a.style.textDecoration = 'none'; });
+      f.appendChild(a);
+    } else {
+      f.setAttribute('value', text);
+    }
+    return f;
+  }
+
+  function renderEditField(field, val) {
+    const type = field.type || 'text';
+    let el;
+    if (type === 'dropdown') {
+      el = document.createElement('tbt-dropdown');
+      el.options = optionsOf(field);
+      if (field.searchable) el.setAttribute('searchable', '');
+    } else if (type === 'multiselect') {
+      el = document.createElement('tbt-multiselect');
+      el.options = optionsOf(field);
+    } else if (type === 'date') {
+      el = document.createElement('tbt-datepicker');
+    } else if (type === 'date-range') {
+      el = document.createElement('tbt-date-range');
+    } else if (type === 'textarea') {
+      el = document.createElement('tbt-textarea');
+      if (field.rows) el.setAttribute('rows', String(field.rows));
+    } else if (type === 'address') {
+      el = document.createElement('tbt-address');
+    } else if (type === 'toggle') {
+      el = document.createElement('tbt-toggle');
+    } else if (type === 'checkbox') {
+      el = document.createElement('tbt-checkbox');
+    } else if (type === 'search') {
+      el = document.createElement('tbt-search');
+    } else if (type === 'file') {
+      el = document.createElement('tbt-file-upload');
+    } else if (type === 'number') {
+      el = document.createElement('tbt-input');
+      el.setAttribute('type', 'number');
+    } else {
+      el = document.createElement('tbt-input');
+      if (type !== 'text') el.setAttribute('type', type);
+    }
+    el.setAttribute('label', field.label || field.name || '');
+    if (field.name)     el.setAttribute('name',     field.name);
+    if (field.required) el.setAttribute('required', '');
+    if (field.readonly) el.setAttribute('readonly', '');
+    if (field.placeholder) el.setAttribute('placeholder', field.placeholder);
+    if (field.span) el.setAttribute('span', String(field.span));
+    if (val !== undefined && val !== null) el.value = val;
+    el.dataset.name = field.name || '';
+    return el;
+  }
+
+  function renderFieldsSection(section, container) {
+    const grid = document.createElement('tbt-field-grid');
+    grid.setAttribute('columns', String(section.columns || 2));
+    (section.fields || []).forEach(f => {
+      const val = d.record[f.name];
+      const el  = cfg.readonly ? renderViewField(f, val) : renderEditField(f, val);
+      grid.appendChild(el);
+    });
+    container.appendChild(grid);
+  }
+
+  function renderSpecialSection(section, container) {
+    if (section.type === 'lines') {
+      const lb = document.createElement('tbt-lines-block');
+      if (cfg.readonly) {
+        lb.setAttribute('readonly', '');
+      } else {
+        lb.setAttribute('add-label', 'Add line');
+        lb.id = 'lines';
+      }
+      lb.setAttribute('currency', section.currency || '฿');
+      lb.setAttribute('vat-rate', String(section.vatRate || 0.07));
+      // Sticky columns — schema controls the default; user can override per
+      // record type via right-click on column header (saved to localStorage
+      // under pref-key namespace).
+      if (section.stickyLeft  != null) lb.setAttribute('sticky-left',  String(section.stickyLeft));
+      if (section.stickyRight != null) lb.setAttribute('sticky-right', String(section.stickyRight));
+      // pref-key = record schema name (e.g. "PO_SCHEMA-lines") so each record's
+      // pinned columns persist independently per browser.
+      lb.setAttribute('pref-key', `${d.schemaName}-lines`);
+      if (section.maxHeight) lb.setAttribute('max-height', section.maxHeight);
+      container.appendChild(lb);
+      setTimeout(() => { lb.rows = d.lines || []; }, 0);
+    } else if (section.type === 'approval') {
+      const af = document.createElement('tbt-approval-flow');
+      af.setAttribute('orientation', section.orientation || 'horizontal');
+      container.appendChild(af);
+      setTimeout(() => { af.steps = d.approvalSteps || []; }, 0);
+    } else if (section.type === 'audit') {
+      const al = document.createElement('tbt-audit-log');
+      if (section.maxHeight) al.setAttribute('max-height', section.maxHeight);
+      container.appendChild(al);
+      setTimeout(() => { al.entries = d.auditEntries || []; }, 0);
+    }
+  }
+
+  /* ── Render Main section (sections[0]) + Subtabs (sections[1..]) ── */
+  const sections   = schema.sections || [];
+  const mainSec    = sections[0];
+  const subtabSecs = sections.slice(1);
+
+  const mainHost = document.getElementById('main-section');
+  if (mainSec) {
+    if (mainSec.title) mainHost.setAttribute('title', mainSec.title);
+    if (mainSec.type === 'lines' || mainSec.type === 'approval' || mainSec.type === 'audit') {
+      renderSpecialSection(mainSec, mainHost);
+    } else {
+      renderFieldsSection(mainSec, mainHost);
+    }
+  }
+
+  const subtabsHost = document.getElementById('subtabs');
+  if (subtabSecs.length > 0) {
+    document.getElementById('subtabs-section').hidden = false;
+    subtabSecs.forEach(s => {
+      const panel = document.createElement('tbt-tabs-panel');
+      panel.setAttribute('label', s.title || (s.type === 'lines' ? 'Items' : s.type === 'approval' ? 'Approval' : s.type === 'audit' ? 'Audit' : 'Details'));
+      if (s.type === 'lines' || s.type === 'approval' || s.type === 'audit') {
+        renderSpecialSection(s, panel);
+      } else {
+        renderFieldsSection(s, panel);
+      }
+      subtabsHost.appendChild(panel);
+    });
+  }
+
+  /* ── Action bar ─────────────────────────────────────────── */
+  const bar = document.getElementById('action-bar');
+  cfg.buttons.forEach(b => {
+    const btn = document.createElement('tbt-button');
+    btn.setAttribute('variant', b.variant);
+    if (b.icon) btn.setAttribute('icon', b.icon);
+    btn.textContent = b.label;
+    btn.addEventListener('click', () => handleAction(b.id));
+    bar.appendChild(btn);
+  });
+
+  function collectData() {
+    const out = {};
+    document.querySelectorAll('[data-name]').forEach(el => {
+      const n = el.dataset.name;
+      if (!n) return;
+      out[n] = el.value;
+    });
+    const linesEl = document.getElementById('lines');
+    if (linesEl && linesEl.rows) out.lines = linesEl.rows;
+    return out;
+  }
+
+  async function handleAction(actionId) {
+    if (actionId === 'cancel' || actionId === 'back') { location.href = d.listUrl; return; }
+    if (actionId === 'edit')  { location.href = `${d.selfUrl}?id=${recId}&mode=edit`; return; }
+    if (actionId === 'print') { window.print(); return; }
+    if (actionId === 'email') {
+      rt.showAlert('ok-alert', 'Email draft prepared for ' + (d.record.customer || d.record.vendor || d.record.companyname || 'recipient') + '.');
+      return;
+    }
+    if (actionId === 'save')   { await save(); return; }
+    if (actionId === 'delete') { await del();  return; }
+  }
+
+  async function save() {
+    rt.hideAlerts('ok-alert', 'err-alert');
+    try {
+      const body = await rt.post(d.restletUrl, {
+        action: d.mode === 'new' ? 'create' : 'update',
+        id:     recId || null,
+        data:   collectData(),
+      });
+      const newId    = body.id     || recId || 0;
+      const newDisp  = body.tranid || body.entityid || displayId || 'NEW';
+      rt.showAlert('ok-alert', (d.mode === 'new' ? 'Created ' : 'Saved ') + newDisp + '. Redirecting…');
+      setTimeout(() => { location.href = `${d.selfUrl}?id=${newId}`; }, 800);
+    } catch (err) {
+      rt.showAlert('err-alert', 'Save failed: ' + err.message);
+    }
+  }
+
+  async function del() {
+    const ok = await ds.confirm({
+      title:        `Delete ${label.toLowerCase()}?`,
+      message:      `This will permanently delete ${displayId || recId}. This action cannot be undone.`,
+      confirmLabel: 'Delete',
+      cancelLabel:  'Cancel',
+      variant:      'danger',
+    });
+    if (!ok) return;
+    rt.hideAlerts('ok-alert', 'err-alert');
+    try {
+      await rt.post(d.restletUrl, { action: 'delete', id: recId });
+      rt.showAlert('ok-alert', `Deleted ${displayId || recId}. Redirecting…`);
+      setTimeout(() => { location.href = d.listUrl; }, 800);
+    } catch (err) {
+      rt.showAlert('err-alert', 'Delete failed: ' + err.message);
+    }
+  }
+</script>

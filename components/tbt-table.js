@@ -44,6 +44,15 @@ class TbtTable extends LitElement {
     serverSort:   { type: Boolean, attribute: 'server-sort' },
     sortKey:      { type: String,  attribute: 'sort-key' },
     sortAsc:      { type: Boolean, attribute: 'sort-asc' },
+    /* Sticky columns — comma-separated column indexes. Same API as
+       tbt-line-items: sticky-left="0,1" pins the first two columns to the
+       left edge; sticky-right="N" pins to the right. */
+    stickyLeft:   { type: String,  attribute: 'sticky-left',  reflect: true },
+    stickyRight:  { type: String,  attribute: 'sticky-right', reflect: true },
+    /* Optional namespace for per-user persistence; right-click pin/unpin
+       on a column header is saved to localStorage under
+       `tbt-table-sticky-${prefKey}`. */
+    prefKey:      { type: String,  attribute: 'pref-key' },
     _sortKey:     { state: true },
     _sortAsc:     { state: true },
     _page:        { state: true },
@@ -71,6 +80,133 @@ class TbtTable extends LitElement {
     this._isMobile = false;
   }
 
+  /* ── Sticky-column helpers ──────────────────────────────── */
+  _stickyIndexes(side) {
+    const raw = side === 'left' ? this.stickyLeft : this.stickyRight;
+    if (!raw) return [];
+    return String(raw).split(',').map(s => parseInt(s.trim(), 10)).filter(Number.isFinite);
+  }
+  _stickyStyleFor(colIndex) {
+    const leftIdxs  = this._stickyIndexes('left');
+    const rightIdxs = this._stickyIndexes('right');
+    if (leftIdxs.includes(colIndex)) {
+      const offset = leftIdxs
+        .filter(i => i < colIndex)
+        .reduce((s, i) => s + (this._colWidths[i] || 0), 0);
+      return `left:${offset}px`;
+    }
+    if (rightIdxs.includes(colIndex)) {
+      const offset = rightIdxs
+        .filter(i => i > colIndex)
+        .reduce((s, i) => s + (this._colWidths[i] || 0), 0);
+      return `right:${offset}px`;
+    }
+    return '';
+  }
+  _stickyClassFor(colIndex) {
+    const leftIdxs  = this._stickyIndexes('left');
+    const rightIdxs = this._stickyIndexes('right');
+    if (leftIdxs.includes(colIndex)) {
+      const isLast = Math.max(...leftIdxs) === colIndex;
+      return isLast ? 'sticky-cell edge-left' : 'sticky-cell';
+    }
+    if (rightIdxs.includes(colIndex)) {
+      const isFirst = Math.min(...rightIdxs) === colIndex;
+      return isFirst ? 'sticky-cell edge-right' : 'sticky-cell';
+    }
+    return '';
+  }
+
+  /* ── User preference persistence ────────────────────────── */
+  _loadStickyPref() {
+    if (!this.prefKey) return;
+    try {
+      const raw = localStorage.getItem('tbt-table-sticky-' + this.prefKey);
+      if (!raw) return;
+      const obj = JSON.parse(raw);
+      if (typeof obj.left  === 'string') this.stickyLeft  = obj.left;
+      if (typeof obj.right === 'string') this.stickyRight = obj.right;
+    } catch (_) {}
+  }
+  _saveStickyPref() {
+    if (!this.prefKey) return;
+    try {
+      localStorage.setItem('tbt-table-sticky-' + this.prefKey, JSON.stringify({
+        left:  this.stickyLeft  || '',
+        right: this.stickyRight || '',
+      }));
+    } catch (_) {}
+  }
+
+  /* ── Right-click pin / unpin column ────────────────────── */
+  _showStickyMenu(e, colIndex) {
+    e.preventDefault();
+    document.querySelectorAll('.tbt-sticky-menu').forEach(el => el.remove());
+
+    const menu = document.createElement('div');
+    menu.className = 'tbt-sticky-menu';
+    menu.style.cssText = `
+      position: fixed;
+      top: ${e.clientY}px; left: ${e.clientX}px;
+      background: var(--tbt-bg-card, #fff);
+      border: 1px solid var(--tbt-border, #e2e8f0);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      padding: 4px 0;
+      z-index: 9999;
+      font-family: var(--tbt-font, system-ui);
+      font-size: 14px;
+      min-width: 160px;
+    `;
+    const isPinnedLeft  = this._stickyIndexes('left').includes(colIndex);
+    const isPinnedRight = this._stickyIndexes('right').includes(colIndex);
+    menu.innerHTML = `
+      <div data-act="pin-left"  style="padding:8px 14px;cursor:pointer;${isPinnedLeft ? 'background:var(--tbt-bg-hover, #f3f4f6)' : ''}">📌 Pin to left</div>
+      <div data-act="pin-right" style="padding:8px 14px;cursor:pointer;${isPinnedRight ? 'background:var(--tbt-bg-hover, #f3f4f6)' : ''}">📌 Pin to right</div>
+      <div data-act="unpin"     style="padding:8px 14px;cursor:pointer;color:var(--tbt-danger, #ef4444)">✕ Unpin</div>
+    `;
+    menu.querySelectorAll('[data-act]').forEach(el => {
+      el.addEventListener('mouseenter', () => el.style.background = 'var(--tbt-bg-hover, #f3f4f6)');
+      el.addEventListener('mouseleave', () => el.style.background = (
+        (el.dataset.act === 'pin-left'  && isPinnedLeft)  ||
+        (el.dataset.act === 'pin-right' && isPinnedRight)
+      ) ? 'var(--tbt-bg-hover, #f3f4f6)' : '');
+    });
+    menu.addEventListener('click', (ev) => {
+      const t = ev.target.closest('[data-act]');
+      if (!t) return;
+      this._applyStickyAction(colIndex, t.dataset.act);
+      menu.remove();
+    });
+    document.body.appendChild(menu);
+
+    const close = (ev) => {
+      if (menu.contains(ev.target)) return;
+      menu.remove();
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('keydown', escClose);
+    };
+    const escClose = (ev) => { if (ev.key === 'Escape') { menu.remove(); document.removeEventListener('mousedown', close); document.removeEventListener('keydown', escClose); } };
+    setTimeout(() => {
+      document.addEventListener('mousedown', close);
+      document.addEventListener('keydown', escClose);
+    }, 0);
+  }
+
+  _applyStickyAction(colIndex, action) {
+    let left  = this._stickyIndexes('left').filter(i => i !== colIndex);
+    let right = this._stickyIndexes('right').filter(i => i !== colIndex);
+    if (action === 'pin-left')  left.push(colIndex);
+    if (action === 'pin-right') right.push(colIndex);
+    this.stickyLeft  = left.sort((a, b)  => a - b).join(',');
+    this.stickyRight = right.sort((a, b) => a - b).join(',');
+    this._saveStickyPref();
+    this.dispatchEvent(new CustomEvent('tbt-sticky-change', {
+      detail: { left: this.stickyLeft, right: this.stickyRight },
+      bubbles: true, composed: true,
+    }));
+  }
+
   static styles = css`
     :host {
       display: block;
@@ -87,11 +223,31 @@ class TbtTable extends LitElement {
       box-shadow: var(--tbt-shadow-sm);
     }
     table {
-      border-collapse: collapse;
+      /* border-collapse: separate is required for sticky positioning on
+         th/td to work reliably across browsers (Chrome/Firefox/Safari all
+         have collapse-mode sticky bugs). border-spacing:0 keeps cells flush. */
+      border-collapse: separate;
+      border-spacing: 0;
       font-size: var(--tbt-size-base);
       min-width: 100%;
     }
     table.fixed { table-layout: fixed; }
+
+    /* ── Sticky columns ─────────────────────────────────
+       Class .sticky-cell is applied to th and td by render() based on
+       stickyLeft / stickyRight. left/right offset is computed per-cell and
+       set via inline style. edge-left / edge-right add a 1px shadow at the
+       boundary between sticky and scrolling regions. */
+    th.sticky-cell,
+    td.sticky-cell {
+      position: sticky;
+      z-index: 1;
+    }
+    .sticky-cell.edge-left  { box-shadow:  1px 0 0 var(--tbt-border); }
+    .sticky-cell.edge-right { box-shadow: -1px 0 0 var(--tbt-border); }
+    td.sticky-cell { background: var(--tbt-bg-card); }
+    tbody tr:hover td.sticky-cell { background: var(--tbt-bg-hover); }
+    thead th.sticky-cell { z-index: 3; background: var(--tbt-bg-hover); }
     thead {
       background: var(--tbt-bg-hover);
       position: sticky;
@@ -110,7 +266,7 @@ class TbtTable extends LitElement {
       user-select: none;
       position: relative;
       box-shadow: inset 0 -1px 0 var(--tbt-border);
-      overflow: hidden;
+      background: var(--tbt-bg-hover);   /* needed so sticky scroll doesn't show transparent header */
     }
     th.sortable { cursor: pointer; }
     th.sortable:hover { color: var(--tbt-text-primary); }
@@ -131,6 +287,7 @@ class TbtTable extends LitElement {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      background: var(--tbt-bg-card);   /* opaque so sticky cells visually cover scrolled cells */
     }
     tr:last-child td { border-bottom: 0; }
     tbody tr:hover td { background: var(--tbt-bg-hover); }
@@ -278,6 +435,7 @@ class TbtTable extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    this._loadStickyPref();
     this._ro = new ResizeObserver(([entry]) => {
       const mobile = entry.contentRect.width < 600;
       if (mobile !== this._isMobile) this._isMobile = mobile;
@@ -444,17 +602,25 @@ class TbtTable extends LitElement {
             </colgroup>` : ''}
           <thead>
             <tr>
-              ${this.columns.map((col, i) => html`
+              ${this.columns.map((col, i) => {
+                const sortCls   = col.sortable ? ((this.serverSort ? this.sortKey : this._sortKey) === col.key ? 'sortable active' : 'sortable') : '';
+                const stickyCls = this._stickyClassFor(i);
+                const cls       = [sortCls, stickyCls].filter(Boolean).join(' ');
+                const stickySt  = this._stickyStyleFor(i);
+                return html`
                 <th
                   scope="col"
-                  class=${col.sortable ? ((this.serverSort ? this.sortKey : this._sortKey) === col.key ? 'sortable active' : 'sortable') : ''}
+                  class=${cls}
+                  style=${stickySt}
                   data-align=${col.align || 'left'}
                   aria-sort=${col.sortable
                     ? ((this.serverSort ? this.sortKey : this._sortKey) === col.key
                         ? ((this.serverSort ? this.sortAsc : this._sortAsc) ? 'ascending' : 'descending')
                         : 'none')
                     : nothing}
-                  @click=${col.sortable ? () => this._setSort(col.key) : nothing}>
+                  @click=${col.sortable ? () => this._setSort(col.key) : nothing}
+                  @contextmenu=${(e) => this._showStickyMenu(e, i)}
+                  title="Right-click to pin/unpin this column">
                   ${col.label}
                   ${col.sortable ? html`
                     <span class="sort-icon" aria-hidden="true">
@@ -468,7 +634,7 @@ class TbtTable extends LitElement {
                       @click=${(e) => e.stopPropagation()}>
                     </span>` : ''}
                 </th>
-              `)}
+              `;})}
             </tr>
           </thead>
           <tbody>
@@ -479,9 +645,14 @@ class TbtTable extends LitElement {
                 </td>
               </tr>` : pageRows.map(row => html`
               <tr>
-                ${this.columns.map(col => html`
-                  <td data-align=${col.align || 'left'}>${this._cell(col, row)}</td>
-                `)}
+                ${this.columns.map((col, i) => {
+                  const stickyCls = this._stickyClassFor(i);
+                  const stickySt  = this._stickyStyleFor(i);
+                  return html`
+                  <td data-align=${col.align || 'left'}
+                      class=${stickyCls || nothing}
+                      style=${stickySt || nothing}>${this._cell(col, row)}</td>
+                `;})}
               </tr>
             `)}
           </tbody>

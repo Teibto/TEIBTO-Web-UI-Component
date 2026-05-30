@@ -1,6 +1,6 @@
 /**
  * @component tbt-section
- * @version 1.26.2
+ * @version 1.43.0
  * @author Wichit Wongta
  *
  * Collapsible card section. Container for grouped fields or content.
@@ -32,7 +32,8 @@ class TbtSection extends LitElement {
   static properties = {
     title:     { type: String },
     collapsed: { type: Boolean, reflect: true },
-    icon:      { type: String }
+    icon:      { type: String },
+    notCollapsible: { type: Boolean, attribute: 'not-collapsible', reflect: true },
   };
 
   static styles = css`
@@ -42,7 +43,10 @@ class TbtSection extends LitElement {
       border: 1px solid var(--tbt-border);
       border-radius: var(--tbt-radius-lg);
       margin-bottom: var(--tbt-space-4);
-      overflow: hidden;
+      /* overflow: visible — allow dropdown/popover popups inside the section
+         to escape past the section edge (otherwise overflow:hidden clips them
+         and the popup gets covered by the next section). */
+      overflow: visible;
       font-family: var(--tbt-font);
       box-shadow: var(--tbt-shadow-sm);
     }
@@ -51,6 +55,8 @@ class TbtSection extends LitElement {
       align-items: center;
       padding: var(--tbt-space-4) var(--tbt-space-5);
       transition: background var(--tbt-transition-fast);
+      /* Round only the top corners so hover background follows the host radius. */
+      border-radius: var(--tbt-radius-lg) var(--tbt-radius-lg) 0 0;
     }
     header:hover {
       background: var(--tbt-bg-hover);
@@ -108,9 +114,16 @@ class TbtSection extends LitElement {
     :host([collapsed]) .body {
       display: none;
     }
+    /* not-collapsible: hide chevron + neutralize toggle button cursor.
+       Header still shows the title and slot=actions normally. */
+    :host([not-collapsible]) .chevron     { display: none; }
+    :host([not-collapsible]) .toggle-btn  { cursor: default; }
+    :host([not-collapsible]) .toggle-btn:focus-visible { outline: none; box-shadow: none; }
+    :host([not-collapsible]) header:hover { background: transparent; }
   `;
 
   toggle() {
+    if (this.notCollapsible) return;
     this.collapsed = !this.collapsed;
     this.dispatchEvent(new CustomEvent('tbt-section-toggle', {
       detail: { collapsed: this.collapsed },

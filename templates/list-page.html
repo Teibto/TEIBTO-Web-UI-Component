@@ -1,0 +1,43 @@
+<!--
+  list-page.html — standard ERP list / search page body template.
+
+  Required keys on window.__DATA__:
+    rows[]  — array of records to display
+    total   — total record count (for pagination)
+
+  Layout:
+    Search + new button (in section actions) → paginated tbt-table
+-->
+
+<tbt-section title="Invoice list">
+  <div slot="actions" style="display:flex;gap:var(--tbt-space-3)">
+    <tbt-search id="search" placeholder="Search documents…" debounce="300"></tbt-search>
+    <tbt-button id="new-btn" variant="primary" icon="add">New</tbt-button>
+  </div>
+  <tbt-table id="table" paginate page-size="50" responsive></tbt-table>
+</tbt-section>
+
+<script type="module">
+  const d = window.__DATA__;
+  const table = document.getElementById('table');
+
+  table.columns = [
+    { key: 'tranid',  label: 'Document no.', sortable: true, mobileTitle: true },
+    { key: 'vendor',  label: 'Vendor',       sortable: true },
+    { key: 'date',    label: 'Date',         sortable: true },
+    { key: 'amount',  label: 'Amount',       sortable: true, align: 'right' },
+    { key: 'status',  label: 'Status' },
+  ];
+  table.rows = d.rows || [];
+
+  document.getElementById('search').addEventListener('tbt-search', (e) => {
+    const q = (e.detail.value || '').toLowerCase();
+    table.rows = (d.rows || []).filter((r) =>
+      Object.values(r).some((v) => String(v).toLowerCase().includes(q))
+    );
+  });
+
+  document.getElementById('new-btn').addEventListener('click', () => {
+    // navigate to new-document Suitelet
+  });
+</script>

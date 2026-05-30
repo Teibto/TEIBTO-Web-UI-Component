@@ -29,6 +29,7 @@ class TbtToggle extends LitElement {
     name:     { type: String },
     checked:  { type: Boolean, reflect: true },
     disabled: { type: Boolean, reflect: true },
+    readonly: { type: Boolean, reflect: true },
     labelOn:  { type: String, attribute: 'label-on' },
     labelOff: { type: String, attribute: 'label-off' },
   };
@@ -53,6 +54,7 @@ class TbtToggle extends LitElement {
       user-select: none;
     }
     :host([disabled]) label { cursor: not-allowed; opacity: 0.5; }
+    :host([readonly]) label { cursor: default; pointer-events: none; }
 
     /* Hide native input — keep it focusable */
     input[type="checkbox"] {

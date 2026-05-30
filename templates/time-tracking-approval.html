@@ -1,0 +1,184 @@
+<!--
+  time-tracking-approval.html — Manager approval queue.
+
+  Layout (Teibto standard):
+    Page header        — title + count of pending
+    Filters            — team / week / status / employee search
+    Summary stats      — Pending / Approved this week / Rejected / Avg turn-around
+    Approval queue     — tbt-table (row click → detail modal with Approve/Reject)
+
+  Required keys on window.__DATA__:
+    pending      array of { id, employee, period, hours, billable, submitted, projects, entries[] }
+    summary      { pending, approvedThisWeek, rejectedThisWeek, avgTurnaround }
+    teams        [{ value, label }]
+    statuses     [{ value, label }]
+-->
+
+<!-- ── 1. Page header ─────────────────────────────────────────── -->
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">Time approval queue</div>
+      <div class="tbt-page-header__subtitle">Review and approve team time submissions</div>
+    </div>
+    <tbt-badge id="hdr-count" variant="warning">0 pending</tbt-badge>
+  </div>
+</tbt-section>
+
+<div class="tbt-page-alerts">
+  <tbt-alert id="ok-alert"  variant="success" dismissible hidden></tbt-alert>
+  <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
+</div>
+
+<!-- ── 2. Filters ─────────────────────────────────────────────── -->
+<tbt-section title="Filters">
+  <tbt-field-grid columns="4">
+    <tbt-dropdown   id="f-team"     name="team"   label="Team"></tbt-dropdown>
+    <tbt-date-range id="f-week"     name-from="from" name-to="to" label="Period"></tbt-date-range>
+    <tbt-dropdown   id="f-status"   name="status" label="Status"></tbt-dropdown>
+    <tbt-search     id="f-search"   placeholder="Search employee…" debounce="300"></tbt-search>
+  </tbt-field-grid>
+</tbt-section>
+
+<!-- ── 3. Summary stats ───────────────────────────────────────── -->
+<tbt-section title="Summary">
+  <div class="tbt-stats-grid">
+    <tbt-stat id="stat-pending"  label="Pending"           variant="warning" icon="pending"></tbt-stat>
+    <tbt-stat id="stat-approved" label="Approved (week)"   variant="success" icon="approve"></tbt-stat>
+    <tbt-stat id="stat-rejected" label="Rejected (week)"   variant="danger"  icon="reject"></tbt-stat>
+    <tbt-stat id="stat-turn"     label="Avg turn-around"   variant="info"    icon="schedule"></tbt-stat>
+  </div>
+</tbt-section>
+
+<!-- ── 4. Approval queue ──────────────────────────────────────── -->
+<tbt-section title="Pending submissions">
+  <tbt-table id="queue-table" paginate page-size="20" responsive max-height="420px"></tbt-table>
+</tbt-section>
+
+<!-- ── 5. Detail / approval modal ─────────────────────────────── -->
+<tbt-modal id="detail-modal" title="Time submission" variant="default">
+  <div style="display:flex;flex-direction:column;gap:var(--tbt-space-4)">
+    <tbt-field-grid columns="2">
+      <tbt-field id="m-employee" label="Employee"></tbt-field>
+      <tbt-field id="m-period"   label="Period"></tbt-field>
+      <tbt-field id="m-hours"    label="Total hours"></tbt-field>
+      <tbt-field id="m-billable" label="Billable hours"></tbt-field>
+    </tbt-field-grid>
+
+    <div>
+      <div style="font-size:var(--tbt-size-sm);font-weight:var(--tbt-weight-medium);color:var(--tbt-text-primary);margin-bottom:var(--tbt-space-2);font-family:var(--tbt-font)">
+        Entries
+      </div>
+      <tbt-table id="m-entries" max-height="240px"></tbt-table>
+    </div>
+
+    <tbt-textarea id="m-comment" label="Reviewer comment" rows="2" placeholder="Optional note for the employee…"></tbt-textarea>
+  </div>
+
+  <div slot="footer" class="tbt-modal-actions">
+    <tbt-button id="modal-reject"  variant="danger"    icon="reject">Reject</tbt-button>
+    <tbt-button id="modal-cancel"  variant="ghost"     icon="cancel">Cancel</tbt-button>
+    <tbt-button id="modal-approve" variant="primary"   icon="approve">Approve</tbt-button>
+  </div>
+</tbt-modal>
+
+<script type="module">
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+
+  /* ── Header + stats ─────────────────────────────────────── */
+  document.getElementById('hdr-count').textContent     = (d.summary.pending || 0) + ' pending';
+  document.getElementById('stat-pending').value        = String(d.summary.pending);
+  document.getElementById('stat-approved').value       = String(d.summary.approvedThisWeek);
+  document.getElementById('stat-rejected').value       = String(d.summary.rejectedThisWeek);
+  document.getElementById('stat-turn').value           = d.summary.avgTurnaround;
+
+  /* ── Filters ────────────────────────────────────────────── */
+  const fTeam   = document.getElementById('f-team');
+  const fStatus = document.getElementById('f-status');
+  const fSearch = document.getElementById('f-search');
+  fTeam.options   = [{ value: '', label: 'All teams' }, ...d.teams];
+  fStatus.options = d.statuses;
+  fTeam.value   = '';
+  fStatus.value = 'pending';
+
+  /* ── Queue table ────────────────────────────────────────── */
+  const table = document.getElementById('queue-table');
+  table.columns = [
+    { key: 'employee',  label: 'Employee',  sortable: true, mobileTitle: true },
+    { key: 'team',      label: 'Team',      sortable: true },
+    { key: 'period',    label: 'Period',    sortable: true },
+    { key: 'hours',     label: 'Hours',     align: 'right', sortable: true },
+    { key: 'billable',  label: 'Billable',  align: 'right' },
+    { key: 'projects',  label: 'Projects' },
+    { key: 'submitted', label: 'Submitted', sortable: true },
+  ];
+  function applyFilter() {
+    const team = fTeam.value;
+    const q    = (fSearch.value || '').toLowerCase();
+    table.rows = (d.pending || []).filter(r =>
+      (!team || r.teamKey === team) &&
+      (!q || r.employee.toLowerCase().includes(q))
+    );
+  }
+  fTeam.addEventListener('tbt-change', applyFilter);
+  fSearch.addEventListener('tbt-search', applyFilter);
+  applyFilter();
+
+  /* ── Detail modal ───────────────────────────────────────── */
+  const modal     = document.getElementById('detail-modal');
+  const mEntries  = document.getElementById('m-entries');
+  const mComment  = document.getElementById('m-comment');
+  mEntries.columns = [
+    { key: 'date',         label: 'Date',     sortable: true },
+    { key: 'projectLabel', label: 'Project' },
+    { key: 'task',         label: 'Task' },
+    { key: 'hours',        label: 'Hours',    align: 'right' },
+    { key: 'billableText', label: 'Billable', align: 'center' },
+  ];
+
+  let currentSubmission = null;
+
+  table.addEventListener('tbt-row-click', (e) => {
+    const row = e.detail.row;
+    const full = (d.pending || []).find(p => p.id === row.id);
+    if (!full) return;
+    currentSubmission = full;
+    document.getElementById('m-employee').value = full.employee;
+    document.getElementById('m-period').value   = full.period;
+    document.getElementById('m-hours').value    = full.hours + ' h';
+    document.getElementById('m-billable').value = full.billable + ' h';
+    mEntries.rows = (full.entries || []).map(x => ({
+      ...x,
+      billableText: x.billable ? 'Yes' : 'No',
+    }));
+    mComment.value = '';
+    modal.setAttribute('title', 'Review · ' + full.employee);
+    modal.open = true;
+  });
+
+  document.getElementById('modal-cancel').addEventListener('click', () => { modal.open = false; });
+
+  async function decide(action) {
+    if (!currentSubmission) return;
+    rt.hideAlerts('ok-alert', 'err-alert');
+    try {
+      await rt.post(d.restletUrl, {
+        action,
+        submissionId: currentSubmission.id,
+        comment:      mComment.value,
+      });
+      d.pending = d.pending.filter(p => p.id !== currentSubmission.id);
+      applyFilter();
+      document.getElementById('hdr-count').textContent = d.pending.length + ' pending';
+      document.getElementById('stat-pending').value    = String(d.pending.length);
+      rt.showAlert('ok-alert', (action === 'approve' ? 'Approved' : 'Rejected') + ' — ' + currentSubmission.employee);
+      modal.open = false;
+    } catch (err) {
+      rt.showAlert('err-alert', (action === 'approve' ? 'Approve' : 'Reject') + ' failed: ' + err.message);
+    }
+  }
+
+  document.getElementById('modal-approve').addEventListener('click', () => decide('approve'));
+  document.getElementById('modal-reject').addEventListener('click',  () => decide('reject'));
+</script>

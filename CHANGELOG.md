@@ -7,6 +7,53 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Added
+
+- **Page composition utility classes** in `theme/tbt-theme.css` — token-only, no hex. Lets Suitelet body templates drop inline-style duplication:
+  - `.tbt-page-header` + `.tbt-page-header__title` + `.tbt-page-header__subtitle`
+  - `.tbt-stats-grid` — auto-fit grid for `tbt-stat` cards
+  - `.tbt-action-bar` — bottom button row with top divider
+  - `.tbt-modal-actions` — right-aligned modal footer buttons
+  - `.tbt-page-alerts` — wrapper around stacked `tbt-alert` pair
+- **`dist/tbt-page-runtime.js`** — shared client-side helper (`window.tbtPageRuntime`), auto-loaded by `tbt_page.render()`. Exposes:
+  - `currency(n, prefix='฿')` · `setStatusBadge(el, label)` · `showAlert(id, msg)` · `hideAlerts(...ids)` · `post(url, payload)` · `sumBy(rows, field)`
+- **`templates/_mock_lookups.js`** — shared mock lookup module (employees, currencies, subsidiaries, payment-terms, vendors, customers, etc.) so kit/starter Suitelets import via `define([…, './_mock_lookups'], …)` instead of duplicating arrays per file. Replace each list with N/search in production.
+
+### Changed
+
+- **`tbt-sidebar`** (v1.43.0) — added `brand` + `footer` slots; merged collapse toggle into the brand row to save vertical space. Backward-compatible: existing usages without brand/footer render unchanged.
+- **`tbt-app-shell`** (v1.43.0) — drawer + backdrop top offset uses `var(--tbt-menubar-height, 56px)` so pages without a menubar can set `--tbt-menubar-height: 0`.
+- **`netsuite/tbt_page.js`** — menubar removed; user info + theme toggle moved into the sidebar footer; floating hamburger button replaces menubar trigger on mobile (≤768px).
+- Refactored all 9 body templates to use utility classes + `tbtPageRuntime`. Net reduction: ~120 lines of duplicated inline style + helper functions across the suite.
+
+### Added
+
+- **`templates/time-tracking-*` + `sl_tt_*.js` — full Time tracking module.** Three Suitelets that compose a complete workflow on top of the standard Teibto layout, using only DS components and `var(--tbt-*)` tokens.
+  - `sl_tt_entry.js` + `time-tracking-entry.html` — Employee weekly entry: header + filters + summary stats + entries table (modal-driven add/edit) + approval flow + Save / Submit action bar.
+  - `sl_tt_approval.js` + `time-tracking-approval.html` — Manager queue: filters + summary + pending list (row-click → detail modal with full entry breakdown + Approve / Reject).
+  - `sl_tt_report.js` + `time-tracking-report.html` — Reporting dashboard: filters + KPI strip (utilization, billable, capacity, overtime) + top projects table + activity log + Export CSV / Print.
+- **`netsuite/tbt_page.js`** — added `time-tracking` to `DEFAULT_SIDEBAR` (icon: `time`).
+- **`templates/kit-*` — ready-to-use schema-driven kits.**
+  - `kit-doc.html` — universal `<tbt-doc-form>` body that picks a schema by name from the DS bundle, wires `tbt-submit` → POST to `restletUrl`, and shows success/error via `tbt-alert`.
+  - `sl_kit_customer.js` → `CUSTOMER_SCHEMA` — profile, contact, billing/shipping address, terms.
+  - `sl_kit_sales_order.js` → `SALES_ORDER_SCHEMA` — doc info, shipping, lines, approval.
+  - `sl_kit_purchase_order.js` → `PO_SCHEMA` — doc info, lines, approval, audit.
+  - Each kit thin entry only carries `record` + `optionLists` + `restletUrl`; layout, fields, icons, colors, and field widgets all come from DS — nothing outside the design system is referenced.
+- **`netsuite/tbt_page.js`** — server-side Suitelet page helper (SuiteScript 2.1 Fat Module). One `tbtPage.render({ title, active, data, body })` call emits the full `<head>` (theme CSS + bundled `tbt-ds.min.js`), `tbt-app-shell` + `tbt-menubar` + `tbt-sidebar` wrap, and a safely-escaped `window.__DATA__` injection. No per-page boilerplate.
+  - `DS_VERSION` constant — single source of truth for File Cabinet URLs. Bumping the DS = edit one line.
+  - Default menu + sidebar items (`opts.menu`, `opts.sidebar` to override per page).
+  - JSON injection escapes `</`, `<!--`, `-->`, U+2028, U+2029 — safe against script-tag and HTML-comment breakout.
+  - Throws `error.create({ name: 'TBT_PAGE_MISSING_ARG', … })` on missing `title` or `body` — surfaces, never silent-defaults.
+- **`templates/`** — three copy-paste page bodies + matching thin-entry Suitelets:
+  - `document-page.html` / `sl_starter_document.js` — header + field-grid + lines-block + action bar.
+  - `list-page.html` / `sl_starter_list.js` — search + new button + paginated `tbt-table`.
+  - `dashboard.html` / `sl_starter_dashboard.js` — KPI strip (`tbt-stat`) + pending tasks + audit log.
+- **`package.json` `tbt.file-cabinet-path`** — moved to `/SuiteScripts/Teibto/ds/v1.42.1/dist/`. Bundled `tbt-ds.min.js` + `tbt-theme.css` now live under the `dist/` subfolder of the versioned File Cabinet path.
+
+### Notes
+
+- The existing Rollup build (`npm run build`) already inlines Lit 3 into `dist/tbt-ds.min.js` via `nodeResolve` — no toolchain change required. Tabler icons remain a separate webfont CSS fetched at runtime.
+
 ---
 
 ## [1.42.1] — 2026-05-29

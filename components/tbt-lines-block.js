@@ -1,6 +1,6 @@
 /**
  * @component tbt-lines-block
- * @version 1.26.2
+ * @version 1.43.0
  * @author Wichit Wongta
  *
  * Compound component: section wrapper + inline-editable line items + Add button + totals.
@@ -46,9 +46,22 @@ class TbtLinesBlock extends LitElement {
     vatRate:     { type: Number,  attribute: 'vat-rate' },
     showSummary: { type: Boolean, attribute: 'show-summary' },
     maxHeight:   { type: String,  attribute: 'max-height' },
+    stickyLeft:  { type: String,  attribute: 'sticky-left' },
+    stickyRight: { type: String,  attribute: 'sticky-right' },
+    prefKey:     { type: String,  attribute: 'pref-key' },
+    itemOptions: { type: Array,   attribute: 'item-options' },
     disabled:    { type: Boolean, reflect: true },
+    readonly:    { type: Boolean, reflect: true },
     _totals:     { state: true },
   };
+
+  get itemOptions() { return this._itemOptions ?? []; }
+  set itemOptions(v) {
+    this._itemOptions = v;
+    const li = this._li();
+    if (li) li.itemOptions = v;
+    else this.updateComplete.then(() => { const x = this._li(); if (x) x.itemOptions = v; });
+  }
 
   constructor() {
     super();
@@ -106,33 +119,55 @@ class TbtLinesBlock extends LitElement {
   render() {
     const { subtotal, vat, total } = this._totals;
     const vatPct = `VAT ${Math.round((this.vatRate ?? 0.07) * 100)}%`;
-    return html`
-      <tbt-section .title=${this.title ?? ''}>
-        <tbt-line-items
-          .currency=${this.currency ?? '฿'}
-          .vatRate=${this.vatRate ?? 0.07}
-          .maxHeight=${this.maxHeight ?? '320px'}
-          .showSummary=${false}
-          @tbt-change=${this._onLiChange}>
-        </tbt-line-items>
-        <div class="footer">
-          <tbt-button
-            variant="ghost"
-            icon="plus"
-            size="sm"
-            ?disabled=${this.disabled}
-            @click=${() => this._li()?.addRow()}>
-            ${this.addLabel ?? 'Add line'}
-          </tbt-button>
-          ${this.showSummary ? html`
-            <tbt-summary>
-              <tbt-summary-item label="Subtotal"    value=${this._fmt(subtotal)}></tbt-summary-item>
-              <tbt-summary-item label=${vatPct}     value=${this._fmt(vat)}></tbt-summary-item>
-              <tbt-summary-item label="Grand total" value=${this._fmt(total)} highlight></tbt-summary-item>
-            </tbt-summary>` : nothing}
-        </div>
-      </tbt-section>
+    const hasTitle = this.title && String(this.title).trim();
+
+    const inner = html`
+      <tbt-line-items
+        .currency=${this.currency ?? '฿'}
+        .vatRate=${this.vatRate ?? 0.07}
+        .maxHeight=${this.maxHeight ?? '320px'}
+        .showSummary=${false}
+        ?readonly=${this.readonly}
+        sticky-left=${this.stickyLeft ?? nothing}
+        sticky-right=${this.stickyRight ?? nothing}
+        pref-key=${this.prefKey ?? nothing}
+        @tbt-change=${this._onLiChange}>
+      </tbt-line-items>
+      ${this.readonly ? '' : html`
+      <div class="footer">
+        <tbt-button
+          variant="ghost"
+          icon="plus"
+          size="sm"
+          ?disabled=${this.disabled}
+          @click=${() => this._li()?.addRow()}>
+          ${this.addLabel ?? 'Add line'}
+        </tbt-button>
+        ${this.showSummary ? html`
+          <tbt-summary>
+            <tbt-summary-item label="Subtotal"    value=${this._fmt(subtotal)}></tbt-summary-item>
+            <tbt-summary-item label=${vatPct}     value=${this._fmt(vat)}></tbt-summary-item>
+            <tbt-summary-item label="Grand total" value=${this._fmt(total)} highlight></tbt-summary-item>
+          </tbt-summary>` : nothing}
+      </div>
+      `}
+      ${this.readonly && this.showSummary ? html`
+      <div class="footer">
+        <span></span>
+        <tbt-summary>
+          <tbt-summary-item label="Subtotal"    value=${this._fmt(subtotal)}></tbt-summary-item>
+          <tbt-summary-item label=${vatPct}     value=${this._fmt(vat)}></tbt-summary-item>
+          <tbt-summary-item label="Grand total" value=${this._fmt(total)} highlight></tbt-summary-item>
+        </tbt-summary>
+      </div>` : nothing}
     `;
+
+    // Wrap in <tbt-section> only when a title is provided. Otherwise the parent
+    // is responsible for any framing — avoids 3-layer nesting (outer section +
+    // tabs panel + inner section all stacking padding/border).
+    return hasTitle
+      ? html`<tbt-section .title=${this.title}>${inner}</tbt-section>`
+      : inner;
   }
 }
 

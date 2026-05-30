@@ -1,0 +1,256 @@
+<!--
+  inventory.html — Warehouse stock list with filters + KPI + modal-driven CRUD.
+
+  Layout (Teibto LIST pattern):
+    Page header   — title + total items badge
+    Filters       — warehouse / category / status / search
+    KPI strip     — total / value / low / out
+    Items table   — paginate, sortable, responsive, row-click → modal
+    Action bar    — Export CSV / Print
+
+  Required keys on window.__DATA__:
+    items        array of { id, sku, name, category, categoryLabel, warehouse, warehouseLabel, qty, reorder, cost }
+    warehouses   [{ value, label }]
+    categories   [{ value, label }]
+    statuses     [{ value, label }]   // All / In stock / Low / Out
+-->
+
+<!-- ── 1. Page header ─────────────────────────────────────────── -->
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">Inventory</div>
+      <div class="tbt-page-header__subtitle">Stock levels across warehouses</div>
+    </div>
+    <tbt-badge id="hdr-count" variant="primary">0 items</tbt-badge>
+  </div>
+</tbt-section>
+
+<div class="tbt-page-alerts">
+  <tbt-alert id="ok-alert"  variant="success" dismissible hidden></tbt-alert>
+  <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
+</div>
+
+<!-- ── 2. Filters ─────────────────────────────────────────────── -->
+<tbt-section title="Filters">
+  <tbt-field-grid columns="4">
+    <tbt-dropdown id="f-warehouse" name="warehouse" label="Warehouse"></tbt-dropdown>
+    <tbt-dropdown id="f-category"  name="category"  label="Category"></tbt-dropdown>
+    <tbt-dropdown id="f-status"    name="status"    label="Status"></tbt-dropdown>
+    <tbt-search   id="f-search"    placeholder="Search SKU or name…" debounce="300"></tbt-search>
+  </tbt-field-grid>
+</tbt-section>
+
+<!-- ── 3. KPI strip ───────────────────────────────────────────── -->
+<tbt-section title="Summary">
+  <div class="tbt-stats-grid">
+    <tbt-stat id="stat-total" label="Total items"  variant="primary" icon="product"></tbt-stat>
+    <tbt-stat id="stat-value" label="Total value"  variant="success" icon="money"></tbt-stat>
+    <tbt-stat id="stat-low"   label="Low stock"    variant="warning" icon="alert"></tbt-stat>
+    <tbt-stat id="stat-out"   label="Out of stock" variant="danger"  icon="reject"></tbt-stat>
+  </div>
+</tbt-section>
+
+<!-- ── 4. Items table ─────────────────────────────────────────── -->
+<tbt-section title="Items">
+  <tbt-button slot="actions" id="add-item" variant="primary" icon="add" size="sm">New item</tbt-button>
+  <tbt-table id="items-table" paginate page-size="20" responsive max-height="420px" pref-key="inventory-list"></tbt-table>
+</tbt-section>
+
+<!-- ── 5. Action bar ──────────────────────────────────────────── -->
+<div class="tbt-action-bar">
+  <tbt-button id="export-btn" variant="primary"   icon="export">Export CSV</tbt-button>
+  <tbt-button id="print-btn"  variant="secondary" icon="print">Print</tbt-button>
+</div>
+
+<!-- ── 6. Add/Edit item modal ─────────────────────────────────── -->
+<tbt-modal id="item-modal" title="New item" variant="default">
+  <tbt-form id="item-form">
+    <tbt-field-grid columns="2">
+      <tbt-input    id="m-sku"       name="sku"       label="SKU"           required></tbt-input>
+      <tbt-input    id="m-name"      name="name"      label="Name"          required></tbt-input>
+      <tbt-dropdown id="m-category"  name="category"  label="Category"      required></tbt-dropdown>
+      <tbt-dropdown id="m-warehouse" name="warehouse" label="Warehouse"     required></tbt-dropdown>
+      <tbt-input    id="m-qty"       name="qty"       label="Current qty"   type="number" required></tbt-input>
+      <tbt-input    id="m-reorder"   name="reorder"   label="Reorder point" type="number"></tbt-input>
+      <tbt-input    id="m-cost"      name="cost"      label="Unit cost (฿)" type="number"></tbt-input>
+    </tbt-field-grid>
+  </tbt-form>
+  <div slot="footer" class="tbt-modal-actions">
+    <tbt-button id="modal-delete" variant="danger"    icon="delete" style="margin-right:auto;display:none">Delete</tbt-button>
+    <tbt-button id="modal-cancel" variant="secondary" icon="cancel">Cancel</tbt-button>
+    <tbt-button id="modal-save"   variant="primary"   icon="save">Save item</tbt-button>
+  </div>
+</tbt-modal>
+
+<script type="module">
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+
+  /* ── Derived status logic ───────────────────────────────── */
+  const STATUS_OF = (item) =>
+    item.qty <= 0                ? 'Out of stock'
+    : item.qty <= item.reorder   ? 'Low stock'
+                                 : 'In stock';
+  const BADGE_HTML = (status) => {
+    const v = status === 'Out of stock' ? 'danger'
+            : status === 'Low stock'    ? 'warning'
+                                        : 'success';
+    return `<tbt-badge variant="${v}">${status}</tbt-badge>`;
+  };
+
+  /* ── Filters ────────────────────────────────────────────── */
+  const fWarehouse = document.getElementById('f-warehouse');
+  const fCategory  = document.getElementById('f-category');
+  const fStatus    = document.getElementById('f-status');
+  const fSearch    = document.getElementById('f-search');
+  fWarehouse.options = [{ value: '', label: 'All warehouses' }, ...d.warehouses];
+  fCategory.options  = [{ value: '', label: 'All categories' },  ...d.categories];
+  fStatus.options    = [{ value: '', label: 'All statuses' },    ...d.statuses];
+  fWarehouse.value = fCategory.value = fStatus.value = '';
+
+  /* ── KPI computation ────────────────────────────────────── */
+  function recomputeStats(rows) {
+    const value = rows.reduce((s, r) => s + Number(r.qty || 0) * Number(r.cost || 0), 0);
+    const low   = rows.filter(r => r.qty > 0 && r.qty <= r.reorder).length;
+    const out   = rows.filter(r => r.qty <= 0).length;
+    document.getElementById('stat-total').value = String(rows.length);
+    document.getElementById('stat-value').value = rt.currency(value);
+    document.getElementById('stat-low').value   = String(low);
+    document.getElementById('stat-out').value   = String(out);
+    document.getElementById('hdr-count').textContent = rows.length + ' items';
+  }
+
+  /* ── Items table ────────────────────────────────────────── */
+  const table = document.getElementById('items-table');
+  table.columns = [
+    { key: 'no',             label: 'No.',           align: 'right', resizable: false },
+    { key: 'sku',            label: 'SKU',           sortable: true, mobileTitle: true },
+    { key: 'name',           label: 'Name',          sortable: true },
+    { key: 'categoryLabel',  label: 'Category',      sortable: true },
+    { key: 'warehouseLabel', label: 'Warehouse',     sortable: true },
+    { key: 'qty',            label: 'Qty',           align: 'right', sortable: true },
+    { key: 'reorder',        label: 'Reorder',       align: 'right' },
+    { key: 'costText',       label: 'Unit cost',     align: 'right' },
+    { key: 'statusBadge',    label: 'Status',        align: 'center', html: true },
+  ];
+
+  function renderItems(rows) {
+    table.rows = rows.map((r, i) => ({
+      ...r,
+      no:           i + 1,
+      costText:     rt.currency(r.cost),
+      statusBadge:  BADGE_HTML(STATUS_OF(r)),
+    }));
+    recomputeStats(rows);
+  }
+
+  function applyFilter() {
+    const w  = fWarehouse.value;
+    const c  = fCategory.value;
+    const st = fStatus.value;
+    const q  = (fSearch.value || '').toLowerCase();
+    const filtered = (d.items || []).filter(r => {
+      if (w  && r.warehouse !== w) return false;
+      if (c  && r.category  !== c) return false;
+      if (st && STATUS_OF(r) !== st) return false;
+      if (q  && !(`${r.sku} ${r.name}`).toLowerCase().includes(q)) return false;
+      return true;
+    });
+    renderItems(filtered);
+  }
+  [fWarehouse, fCategory, fStatus].forEach(el => el.addEventListener('tbt-change', applyFilter));
+  fSearch.addEventListener('tbt-search', applyFilter);
+  applyFilter();
+
+  /* ── Add/Edit modal ─────────────────────────────────────── */
+  const modal       = document.getElementById('item-modal');
+  const mSku        = document.getElementById('m-sku');
+  const mName       = document.getElementById('m-name');
+  const mCategory   = document.getElementById('m-category');
+  const mWarehouse  = document.getElementById('m-warehouse');
+  const mQty        = document.getElementById('m-qty');
+  const mReorder    = document.getElementById('m-reorder');
+  const mCost       = document.getElementById('m-cost');
+  const modalDelete = document.getElementById('modal-delete');
+  mCategory.options  = d.categories;
+  mWarehouse.options = d.warehouses;
+
+  let editingId = null;
+
+  function openModal(item) {
+    modal.setAttribute('title', item ? 'Edit item' : 'New item');
+    if (item) {
+      editingId = item.id;
+      mSku.value       = item.sku;
+      mName.value      = item.name;
+      mCategory.value  = item.category;
+      mWarehouse.value = item.warehouse;
+      mQty.value       = String(item.qty);
+      mReorder.value   = String(item.reorder);
+      mCost.value      = String(item.cost);
+      modalDelete.style.display = '';
+    } else {
+      editingId = null;
+      mSku.value = mName.value = mQty.value = mReorder.value = mCost.value = '';
+      mCategory.value = mWarehouse.value = '';
+      modalDelete.style.display = 'none';
+    }
+    modal.open = true;
+  }
+
+  document.getElementById('add-item').addEventListener('click', () => openModal(null));
+
+  table.addEventListener('tbt-row-click', (e) => {
+    const orig = (d.items || []).find(x => x.id === e.detail.row.id);
+    if (orig) openModal(orig);
+  });
+
+  document.getElementById('modal-cancel').addEventListener('click', () => { modal.open = false; });
+
+  document.getElementById('modal-save').addEventListener('click', () => {
+    const category  = d.categories.find(c => c.value === mCategory.value);
+    const warehouse = d.warehouses.find(w => w.value === mWarehouse.value);
+    const next = {
+      id: editingId || ('SKU-' + Date.now()),
+      sku:            mSku.value,
+      name:           mName.value,
+      category:       mCategory.value,
+      categoryLabel:  category?.label  || '',
+      warehouse:      mWarehouse.value,
+      warehouseLabel: warehouse?.label || '',
+      qty:            Number(mQty.value     || 0),
+      reorder:        Number(mReorder.value || 0),
+      cost:           Number(mCost.value    || 0),
+    };
+    if (!next.sku || !next.name || !next.category || !next.warehouse) return;
+    const items = d.items.slice();
+    const idx = items.findIndex(r => r.id === editingId);
+    if (idx >= 0) items[idx] = next; else items.push(next);
+    d.items = items;
+    applyFilter();
+    rt.showAlert('ok-alert', (idx >= 0 ? 'Updated ' : 'Created ') + next.sku);
+    modal.open = false;
+  });
+
+  modalDelete.addEventListener('click', () => {
+    d.items = d.items.filter(r => r.id !== editingId);
+    applyFilter();
+    modal.open = false;
+  });
+
+  /* ── Action bar ─────────────────────────────────────────── */
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const csv = ['SKU,Name,Category,Warehouse,Qty,Reorder,Cost,Status', ...d.items.map(r =>
+      `"${r.sku}","${r.name}","${r.categoryLabel}","${r.warehouseLabel}",${r.qty},${r.reorder},${r.cost},"${STATUS_OF(r)}"`
+    )].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'inventory-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('print-btn').addEventListener('click', () => window.print());
+</script>
