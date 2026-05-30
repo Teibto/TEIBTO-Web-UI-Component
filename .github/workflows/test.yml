@@ -29,3 +29,9 @@ jobs:
 
       - name: Run unit tests
         run: npm test
+
+      - name: Build bundle (needed by the page smoke test)
+        run: npm run build
+
+      - name: Run page smoke tests (dashboard + bill receipt)
+        run: npm run test:smoke
