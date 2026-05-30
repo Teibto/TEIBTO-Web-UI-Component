@@ -98,8 +98,10 @@
   const d  = window.__DATA__;
   const rt = window.tbtPageRuntime;
 
+  if (d.demo) { const da = document.getElementById('demo-alert'); if (da) da.hidden = false; }
+
   /* ── Header ─────────────────────────────────────────────── */
-  document.getElementById('hdr-claimno').textContent = d.claim.id;
+  document.getElementById('hdr-claimno').textContent = d.claim.tranid || d.claim.id || '(new)';
   document.getElementById('hdr-employee').textContent= d.claim.employee;
   document.getElementById('hdr-period').textContent  = d.claim.period;
   rt.setStatusBadge(document.getElementById('hdr-status'), d.claim.status);

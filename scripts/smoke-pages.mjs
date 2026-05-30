@@ -84,6 +84,17 @@ try {
       'approval flow has steps': { val: af?.steps?.length, ok: af?.steps?.length > 0 },
     };
   });
+
+  await check(browser, 'expense claim (demo fallback)', '/expense/claim?id=7', () => {
+    const table = document.getElementById('lines-table');
+    const af = document.getElementById('approval-flow');
+    const demo = document.getElementById('demo-alert');
+    return {
+      'expense lines render':    { val: table?.rows?.length, ok: table?.rows?.length === 3 },
+      'approval flow has steps': { val: af?.steps?.length, ok: af?.steps?.length === 3 },
+      'demo banner visible':     { val: demo && demo.hidden === false, ok: demo && demo.hidden === false },
+    };
+  });
 } catch (err) {
   console.error('smoke error:', err.message);
   failures++;
