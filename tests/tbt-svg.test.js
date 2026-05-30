@@ -16,11 +16,11 @@ describe('tbt-svg', () => {
     expect(el.shadowRoot.querySelector('svg')).to.exist;
   });
 
-  it('renders slotted inline SVG', async () => {
+  it('renders a slot for inline SVG (projected from light DOM)', async () => {
     const el = await fixture(html`<tbt-svg><svg viewBox="0 0 10 10"></svg></tbt-svg>`);
     await el.updateComplete;
-    await el.updateComplete;
-    expect(el.shadowRoot.querySelector('svg')).to.exist;
+    expect(el.shadowRoot.querySelector('slot')).to.exist;       // slot present in shadow
+    expect(el.querySelector('svg')).to.exist;                    // slotted svg stays in light DOM
   });
 
   it('renders the 4 new illustrations (no-data, no-results, maintenance, inbox-zero)', async () => {

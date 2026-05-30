@@ -46,7 +46,7 @@ class TbtAvatar extends LitElement {
       position: relative; display: inline-flex; align-items: center; justify-content: center;
       width: var(--_sz); height: var(--_sz);
       border-radius: var(--tbt-radius-pill);
-      color: #fff; font-weight: var(--tbt-weight-semibold);
+      color: white; font-weight: var(--tbt-weight-semibold);
       overflow: hidden; user-select: none;
       box-shadow: 0 0 0 2px var(--tbt-bg-card);
     }
