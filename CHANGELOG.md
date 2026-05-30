@@ -7,6 +7,10 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Fixed
+
+- **`tbt-table` + `tbt-line-items` (v1.43.0)** — removed hex color fallbacks from the right-click pin/unpin context menu (`var(--tbt-*, #hex)` → `var(--tbt-*)`, 14 occurrences). The menu mounts on `document.body`, where tokens resolve from `:root` in `tbt-theme.css`, so the fallbacks were dead weight. Satisfies governance rule 1 (no hex literals) — `npm run lint` now passes clean.
+
 ### Added
 
 - **Page composition utility classes** in `theme/tbt-theme.css` — token-only, no hex. Lets Suitelet body templates drop inline-style duplication:
