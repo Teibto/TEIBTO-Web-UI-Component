@@ -42,14 +42,15 @@ class TbtTree extends LitElement {
   get value() { return this.selected; }
   set value(v) { this.selected = v == null ? '' : String(v); }
 
-  connectedCallback() {
-    super.connectedCallback();
-    if (this.expanded && Array.isArray(this.expanded)) {
-      this._open = new Set(this.expanded.map(String));
-    } else {
-      // Default: open the root level so the tree isn't a single collapsed row.
-      this._open = new Set((this.nodes || []).map((n) => String(n.id)));
-    }
+  // Initialise expand state once nodes are available. Done in willUpdate (not
+  // connectedCallback) because consumers usually set `.nodes` imperatively
+  // AFTER the element connects — at connect time nodes would still be empty.
+  willUpdate() {
+    if (this._init || !(this.nodes || []).length) return;
+    this._open = (this.expanded && Array.isArray(this.expanded))
+      ? new Set(this.expanded.map(String))
+      : new Set(this.nodes.map((n) => String(n.id)));   // default: root level open
+    this._init = true;
   }
 
   static styles = css`

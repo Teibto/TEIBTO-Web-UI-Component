@@ -858,6 +858,35 @@
   <tbt-toggle label="Disabled on" disabled checked></tbt-toggle>
 </div>
 
+<h2 id="radio">tbt-radio</h2>
+<div style="display:flex;gap:var(--tbt-space-8);flex-wrap:wrap;padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-radio id="demo-radio" label="Payment method" name="pm" value="cash"></tbt-radio>
+  <tbt-radio id="demo-radio2" label="Priority" name="pri" orientation="horizontal" value="normal"></tbt-radio>
+</div>
+
+<h2 id="tree">tbt-tree</h2>
+<div style="padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);max-width:360px">
+  <tbt-tree id="demo-tree" selected="1-1"></tbt-tree>
+</div>
+<script type="module">
+  document.getElementById('demo-radio').options = [
+    { value: 'cash', label: 'Cash' }, { value: 'credit', label: 'Credit card' }, { value: 'transfer', label: 'Bank transfer' },
+  ];
+  document.getElementById('demo-radio2').options = [
+    { value: 'low', label: 'Low' }, { value: 'normal', label: 'Normal' }, { value: 'high', label: 'High' },
+  ];
+  document.getElementById('demo-tree').nodes = [
+    { id: '1', label: 'Assets', icon: 'folder', children: [
+      { id: '1-1', label: 'Cash & equivalents' },
+      { id: '1-2', label: 'Accounts receivable' },
+    ]},
+    { id: '2', label: 'Liabilities', icon: 'folder', children: [
+      { id: '2-1', label: 'Accounts payable' },
+    ]},
+    { id: '3', label: 'Equity', icon: 'folder' },
+  ];
+</script>
+
 <!-- ─── COLOR PICKER ─────────────────────────────────── -->
 <h2 id="color-picker">tbt-color-picker</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-4);padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
