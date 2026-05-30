@@ -42,6 +42,7 @@ export * from './tbt-toast.js';
 
 /* Form inputs */
 export * from './tbt-checkbox.js';
+export * from './tbt-radio.js';
 export * from './tbt-toggle.js';
 export * from './tbt-input.js';
 export * from './tbt-textarea.js';
@@ -58,6 +59,7 @@ export * from './tbt-address.js';
 /* Display */
 export * from './tbt-stat.js';
 export * from './tbt-chart.js';
+export * from './tbt-tree.js';
 export * from './tbt-approval-flow.js';
 export * from './tbt-audit-log.js';
 export * from './tbt-timeline.js';
