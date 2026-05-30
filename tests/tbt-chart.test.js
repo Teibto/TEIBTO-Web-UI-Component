@@ -134,6 +134,24 @@ describe('tbt-chart', () => {
     expect(el.shadowRoot.textContent).to.include('72');
   });
 
+  it('bar with negative values renders a zero line and downward bars', async () => {
+    const el = await fixture(html`<tbt-chart type="bar" .data=${[{ label: 'A', value: 50 }, { label: 'B', value: -30 }, { label: 'C', value: 20 }]}></tbt-chart>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelectorAll('rect.bar')).to.have.length(3);
+    expect(el.shadowRoot.querySelector('line.zero-line'), 'zero line present for signed domain').to.exist;
+    const heights = [...el.shadowRoot.querySelectorAll('rect.bar')].map(r => Number(r.getAttribute('height')));
+    expect(heights.every(h => h >= 1), 'all bars have positive height (negatives grow downward, not vanish)').to.be.true;
+  });
+
+  it('exposes a visually-hidden data table for screen readers', async () => {
+    const el = await fixture(html`<tbt-chart type="bar" .data=${DATA}></tbt-chart>`);
+    await el.updateComplete;
+    const t = el.shadowRoot.querySelector('.sr-only table');
+    expect(t).to.exist;
+    expect(t.querySelectorAll('tbody tr')).to.have.length(3);
+    expect(t.textContent).to.include('Jan');
+  });
+
   it('passes axe with data', async () => {
     const el = await fixture(html`<tbt-chart type="bar" .data=${DATA}></tbt-chart>`);
     await el.updateComplete;

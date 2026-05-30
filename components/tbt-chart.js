@@ -45,7 +45,7 @@ class TbtChart extends LitElement {
 
   static styles = css`
     :host { display: block; font-family: var(--tbt-font); }
-    .wrap { width: 100%; }
+    .wrap { width: 100%; position: relative; }
     svg { display: block; width: 100%; }
 
     /* Categorical / series palette — fill/stroke read currentColor */
@@ -83,6 +83,8 @@ class TbtChart extends LitElement {
     .legend-item { display: inline-flex; align-items: center; gap: var(--tbt-space-2); font-size: var(--tbt-size-sm); color: var(--tbt-text-secondary); }
     .swatch { width: 12px; height: 12px; border-radius: 3px; background: currentColor; flex-shrink: 0; }
 
+    .grid.zero-line { stroke: var(--tbt-border-strong); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .empty { display: flex; align-items: center; justify-content: center; color: var(--tbt-text-muted); font-size: var(--tbt-size-sm); }
     .skel { fill: var(--tbt-bg-hover); animation: skel 1.4s ease-in-out infinite; }
     @keyframes skel { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -217,7 +219,28 @@ class TbtChart extends LitElement {
           ${body}
         </svg>
         ${wantLegend ? this._renderLegend(m) : nothing}
+        ${this._dataTable(m)}
       </div>`;
+  }
+
+  // Visually-hidden data table so screen readers get the values, not just the
+  // aria-label summary. (SVG charts are otherwise opaque to assistive tech.)
+  _dataTable(m) {
+    if (this.type === 'gauge') {
+      return html`<div class="sr-only"><table><caption>Gauge value</caption><tbody>
+        <tr><th scope="row">Value</th><td>${this._fmt(this.value)}</td></tr>
+        <tr><th scope="row">Max</th><td>${this._fmt(this.max != null ? this.max : this.value)}</td></tr>
+        ${this.target != null ? html`<tr><th scope="row">Target</th><td>${this._fmt(this.target)}</td></tr>` : nothing}
+      </tbody></table></div>`;
+    }
+    const heads = m.multi ? m.series.map((s) => s.name) : ['Value'];
+    const rows = m.multi
+      ? m.labels.map((lab, i) => ({ lab, cells: m.series.map((s) => s.points[i]?.value) }))
+      : (m.series[0]?.points || []).map((p) => ({ lab: p.label, cells: [p.value] }));
+    return html`<div class="sr-only"><table>
+      <thead><tr><th>${'Label'}</th>${heads.map((h) => html`<th>${h}</th>`)}</tr></thead>
+      <tbody>${rows.map((r) => html`<tr><th scope="row">${r.lab}</th>${r.cells.map((c) => html`<td>${this._fmt(+c || 0)}</td>`)}</tr>`)}</tbody>
+    </table></div>`;
   }
 
   _ariaLabel(m) {
@@ -229,21 +252,30 @@ class TbtChart extends LitElement {
 
   /* ── Axis frame (bar/line/area) ──────────────────────────── */
 
-  _frame(maxV, W, H) {
+  _frame(maxV, W, H, minV = 0) {
     const PAD = { l: this.showAxis ? 44 : 6, r: 12, t: 12, b: this.showAxis ? 26 : 6 };
     const pw = Math.max(1, W - PAD.l - PAD.r);
     const ph = Math.max(1, H - PAD.t - PAD.b);
-    const y = (v) => PAD.t + ph - (v / maxV) * ph;
+    const span = (maxV - minV) || 1;
+    const y = (v) => PAD.t + ph - ((v - minV) / span) * ph;
+    const y0 = y(Math.max(minV, Math.min(0, maxV)));   // zero baseline, clamped into the domain
     const grid = [];
     if (this.showAxis) {
       for (let i = 0; i <= 4; i++) {
-        const v = (maxV * i) / 4;
+        const v = minV + (span * i) / 4;
         const gy = y(v);
         grid.push(svg`<line class="grid" x1=${PAD.l} y1=${gy} x2=${PAD.l + pw} y2=${gy}></line>
           <text class="axis-label" x=${PAD.l - 6} y=${gy + 3} text-anchor="end">${this._fmtAxis(v)}</text>`);
       }
+      if (minV < 0) grid.push(svg`<line class="grid zero-line" x1=${PAD.l} y1=${y0} x2=${PAD.l + pw} y2=${y0}></line>`);
     }
-    return { PAD, pw, ph, y, grid };
+    return { PAD, pw, ph, y, y0, grid };
+  }
+
+  // Signed domain for bar/line/area: nice max above 0 and nice min below 0.
+  _domain(all) {
+    const dataMax = Math.max(0, ...all), dataMin = Math.min(0, ...all);
+    return { maxV: this._niceMax(dataMax), minV: dataMin < 0 ? -this._niceMax(-dataMin) : 0 };
   }
 
   _xLabels(labels, PAD, pw, H) {
@@ -259,14 +291,13 @@ class TbtChart extends LitElement {
 
   _renderBar(m, W, H) {
     const all = m.series.flatMap((s) => s.points.map((p) => +p.value || 0));
-    const maxV = this._niceMax(Math.max(0, ...all));
-    const { PAD, pw, ph, y, grid } = this._frame(maxV, W, H);
+    const { maxV, minV } = this._domain(all);
+    const { PAD, pw, ph, y, y0, grid } = this._frame(maxV, W, H, minV);
     const n = m.labels.length;
     const band = pw / Math.max(1, n);
     const S = m.series.length;
     const groupW = band * 0.7;
     const barW = groupW / S;
-    const base = PAD.t + ph;
 
     const bars = [];
     m.series.forEach((s, si) => {
@@ -274,13 +305,16 @@ class TbtChart extends LitElement {
         const v = +p.value || 0;
         const cls = s.perDatum ? this._cls(i, p.variant) : s.cls;
         const x = PAD.l + band * i + (band - groupW) / 2 + barW * si;
-        const top = y(v);
+        const yv = y(v);
+        const top = Math.min(yv, y0);          // grows up for positive, down for negative
+        const h = Math.max(1, Math.abs(yv - y0));
         const datum = { ...p, series: s.name };
         bars.push(svg`<rect class="bar ${cls}" fill="currentColor"
-          x=${x} y=${top} width=${Math.max(1, barW - 2)} height=${Math.max(0, base - top)}
+          x=${x} y=${top} width=${Math.max(1, barW - 2)} height=${h}
           rx="2" @click=${() => this._emitSelect(i, datum)}><title>${(s.name ? s.name + ' · ' : '') + (p.label ?? '') + ': ' + this._fmt(v)}</title></rect>`);
         if (this.showValues && S === 1) {
-          bars.push(svg`<text class="value-label" x=${x + barW / 2} y=${top - 4} text-anchor="middle">${this._fmtAxis(v)}</text>`);
+          const ly = v >= 0 ? top - 4 : top + h + 12;
+          bars.push(svg`<text class="value-label" x=${x + barW / 2} y=${ly} text-anchor="middle">${this._fmtAxis(v)}</text>`);
         }
       });
     });
@@ -291,19 +325,18 @@ class TbtChart extends LitElement {
 
   _renderLine(m, W, H, area) {
     const all = m.series.flatMap((s) => s.points.map((p) => +p.value || 0));
-    const maxV = this._niceMax(Math.max(0, ...all));
-    const { PAD, pw, ph, y, grid } = this._frame(maxV, W, H);
+    const { maxV, minV } = this._domain(all);
+    const { PAD, pw, ph, y, y0, grid } = this._frame(maxV, W, H, minV);
     const n = m.labels.length;
     const band = pw / Math.max(1, n);
     const cx = (i) => PAD.l + band * (i + 0.5);
-    const base = PAD.t + ph;
 
     const parts = [];
     m.series.forEach((s) => {
       const pts = s.points.map((p, i) => [cx(i), y(+p.value || 0)]);
       const line = pts.map((pt) => pt.join(',')).join(' ');
       if (area && pts.length) {
-        const poly = `${pts[0][0]},${base} ${line} ${pts[pts.length - 1][0]},${base}`;
+        const poly = `${pts[0][0]},${y0} ${line} ${pts[pts.length - 1][0]},${y0}`;
         parts.push(svg`<polygon class="area-fill ${s.cls}" points=${poly}></polygon>`);
       }
       parts.push(svg`<polyline class="line-path ${s.cls}" points=${line}></polyline>`);
@@ -340,9 +373,15 @@ class TbtChart extends LitElement {
 
   /* ── Donut / pie ─────────────────────────────────────────── */
 
+  // Slice data for donut/pie — shared by render and legend (no render side-effect).
+  _pieSlices(m) {
+    return m.multi
+      ? m.series.map((s) => ({ label: s.name, value: (s.points || []).reduce((a, p) => a + (+p.value || 0), 0), cls: s.cls }))
+      : m.series[0].points.map((p, i) => ({ label: p.label, value: +p.value || 0, cls: this._cls(i, p.variant) }));
+  }
+
   _renderPie(m, W, H, donut) {
-    const data = m.multi ? m.series.map((s) => ({ label: s.name, value: (s.points || []).reduce((a, p) => a + (+p.value || 0), 0), cls: s.cls }))
-                         : m.series[0].points.map((p, i) => ({ label: p.label, value: +p.value || 0, cls: this._cls(i, p.variant) }));
+    const data = this._pieSlices(m);
     const total = data.reduce((a, d) => a + d.value, 0) || 1;
     const cx = W / 2;
     const cy = H / 2;
@@ -374,14 +413,13 @@ class TbtChart extends LitElement {
         style="font-size:${Math.round(R * 0.32)}px">${this._fmtAxis(total)}</text>
       <text class="donut-hole-sub" x=${cx} y=${cy + R * 0.28} text-anchor="middle" dominant-baseline="middle">Total</text>` : nothing;
 
-    this._pieData = data; // for legend
     return svg`${slices}${centre}`;
   }
 
   /* ── Dual-axis frame (combo / pareto) ────────────────────── */
 
-  _frame2(maxL, maxR, W, H, rightSuffix = this.rightSuffix) {
-    const PAD = { l: 44, r: 44, t: 12, b: 26 };
+  _frame2(maxL, maxR, W, H, rightSuffix = this.rightSuffix, showRight = true) {
+    const PAD = { l: 44, r: showRight ? 44 : 12, t: 12, b: 26 };
     const pw = Math.max(1, W - PAD.l - PAD.r);
     const ph = Math.max(1, H - PAD.t - PAD.b);
     const yL = (v) => PAD.t + ph - (v / (maxL || 1)) * ph;
@@ -391,7 +429,7 @@ class TbtChart extends LitElement {
       const gy = PAD.t + ph - (ph * i) / 4;
       grid.push(svg`<line class="grid" x1=${PAD.l} y1=${gy} x2=${PAD.l + pw} y2=${gy}></line>
         <text class="axis-label" x=${PAD.l - 6} y=${gy + 3} text-anchor="end">${this._fmtAxis((maxL * i) / 4)}</text>
-        <text class="axis-label" x=${PAD.l + pw + 6} y=${gy + 3} text-anchor="start">${this._compact((maxR * i) / 4) + rightSuffix}</text>`);
+        ${showRight ? svg`<text class="axis-label" x=${PAD.l + pw + 6} y=${gy + 3} text-anchor="start">${this._compact((maxR * i) / 4) + rightSuffix}</text>` : nothing}`);
     }
     return { PAD, pw, ph, yL, yR, grid };
   }
@@ -403,7 +441,7 @@ class TbtChart extends LitElement {
     const rightV = m.series.filter((s) => s.axis === 'right').flatMap((s) => s.points.map((p) => +p.value || 0));
     const maxL = this._niceMax(Math.max(0, ...leftV));
     const maxR = this._niceMax(Math.max(0, ...(rightV.length ? rightV : [0])));
-    const { PAD, pw, ph, yL, yR, grid } = this._frame2(maxL, maxR, W, H);
+    const { PAD, pw, ph, yL, yR, grid } = this._frame2(maxL, maxR, W, H, this.rightSuffix, rightV.length > 0);
     const band = pw / Math.max(1, m.labels.length);
     const cx = (i) => PAD.l + band * (i + 0.5);
     const base = PAD.t + ph;
@@ -550,7 +588,7 @@ class TbtChart extends LitElement {
   _renderLegend(m) {
     let items;
     if (this.type === 'donut' || this.type === 'pie') {
-      items = (this._pieData || []).map((d) => ({ name: d.label, cls: d.cls }));
+      items = this._pieSlices(m).map((d) => ({ name: d.label, cls: d.cls }));
     } else if (m.multi) {
       items = m.series.map((s) => ({ name: s.name, cls: s.cls }));
     } else {
