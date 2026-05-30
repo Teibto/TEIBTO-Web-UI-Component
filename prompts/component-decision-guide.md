@@ -312,5 +312,6 @@ Action bar
 | Custom fetch wrapper | `window.tbtPageRuntime.post()` |
 | Custom status badge logic | `window.tbtPageRuntime.setStatusBadge()` |
 | Mock data duplicated per file | `./_mock_lookups` import |
+| ใส่ค่า record ดิบใน `html: true` column ของ `tbt-table` | `rt.badge(label, variant)` หรือ `rt.escapeHtml(v)` — column นี้ render ผ่าน `unsafeHTML` = XSS ถ้าไม่ escape |
 | New CSS framework (Bootstrap/Tailwind) | DS tokens เท่านั้น |
 | Chart library (Chart.js/D3) | ใช้ `tbt-chart` (bar/line/area/donut/pie/sparkline + combo/waterfall/stacked/pareto/gauge); เฉพาะ heatmap/treemap/sankey/zoom จึง escalate เป็น `tbt-echart` (RFC ใหม่) |

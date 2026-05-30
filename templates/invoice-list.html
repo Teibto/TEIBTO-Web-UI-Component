@@ -52,7 +52,7 @@
   fCustomer.value = fStatus.value = '';
 
   const STATUS_VARIANT = { Draft: 'warning', 'Pending approval': 'info', Approved: 'success', Paid: 'success', Overdue: 'danger', Rejected: 'danger' };
-  const statusBadge = (s) => `<tbt-badge variant="${STATUS_VARIANT[s] || 'neutral'}">${s}</tbt-badge>`;
+  const statusBadge = (s) => rt.badge(s, STATUS_VARIANT[s] || 'neutral');
 
   const TODAY = '2026-05-30';
   function recomputeStats(rows) {

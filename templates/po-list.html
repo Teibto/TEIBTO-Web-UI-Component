@@ -52,7 +52,7 @@
   fVendor.value = fStatus.value = '';
 
   const STATUS_VARIANT = { Draft: 'warning', 'Pending approval': 'info', Approved: 'success', Rejected: 'danger' };
-  const statusBadge = (s) => `<tbt-badge variant="${STATUS_VARIANT[s] || 'neutral'}">${s}</tbt-badge>`;
+  const statusBadge = (s) => rt.badge(s, STATUS_VARIANT[s] || 'neutral');
 
   function recomputeStats(rows) {
     const value     = rt.sumBy(rows, 'amount');

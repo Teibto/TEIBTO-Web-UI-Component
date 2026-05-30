@@ -96,7 +96,7 @@
     const v = status === 'Out of stock' ? 'danger'
             : status === 'Low stock'    ? 'warning'
                                         : 'success';
-    return `<tbt-badge variant="${v}">${status}</tbt-badge>`;
+    return rt.badge(status, v);
   };
 
   /* ── Filters ────────────────────────────────────────────── */

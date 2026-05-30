@@ -47,8 +47,7 @@
   const STATUS_VARIANT = {
     Draft: 'warning', Submitted: 'info', Approved: 'success', Rejected: 'danger', Paid: 'success',
   };
-  const badge = (s) =>
-    `<tbt-badge variant="${STATUS_VARIANT[s] || 'neutral'}">${STATUS_LABEL[s] || s}</tbt-badge>`;
+  const badge = (s) => rt.badge(STATUS_LABEL[s] || s, STATUS_VARIANT[s] || 'neutral');
 
   /* ── Table ──────────────────────────────────────────────── */
   const table = document.getElementById('table');
