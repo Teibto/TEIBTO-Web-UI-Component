@@ -290,6 +290,7 @@ class TbtTable extends LitElement {
       background: var(--tbt-bg-card);   /* opaque so sticky cells visually cover scrolled cells */
     }
     tr:last-child td { border-bottom: 0; }
+    tbody tr { cursor: pointer; }
     tbody tr:hover td { background: var(--tbt-bg-hover); }
     td a {
       color: var(--tbt-text-link);
@@ -525,6 +526,14 @@ class TbtTable extends LitElement {
     this._page = 1;
   }
 
+  _emitRowClick(row) {
+    this.dispatchEvent(new CustomEvent('tbt-row-click', {
+      detail: { row },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
   /* ── Cell renderer (shared) ─────────────────────────── */
 
   _cell(col, row) {
@@ -644,7 +653,7 @@ class TbtTable extends LitElement {
                   <div class="empty">${this.loading ? 'Loading…' : this.emptyMessage}</div>
                 </td>
               </tr>` : pageRows.map(row => html`
-              <tr>
+              <tr @click=${() => this._emitRowClick(row)}>
                 ${this.columns.map((col, i) => {
                   const stickyCls = this._stickyClassFor(i);
                   const stickySt  = this._stickyStyleFor(i);

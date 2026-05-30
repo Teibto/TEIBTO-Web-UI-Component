@@ -9,6 +9,7 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Fixed
 
+- **`tbt-table` (v1.43.0)** — now emits `tbt-row-click` (`detail: { row }`) when a body row is clicked, with a `cursor: pointer` affordance. The event was already consumed by 8 list templates (and `tbtPageRuntime.wireRowActions`, whose capture-phase guard is documented as "fires before tbt-row-click") but `tbt-table` never dispatched it — every "click row to open document" interaction was a silent no-op. Covered by a new unit test.
 - **`tbt-table` + `tbt-line-items` (v1.43.0)** — removed hex color fallbacks from the right-click pin/unpin context menu (`var(--tbt-*, #hex)` → `var(--tbt-*)`, 14 occurrences). The menu mounts on `document.body`, where tokens resolve from `:root` in `tbt-theme.css`, so the fallbacks were dead weight. Satisfies governance rule 1 (no hex literals) — `npm run lint` now passes clean.
 
 ### Added
