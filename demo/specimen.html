@@ -938,6 +938,40 @@
   <tbt-stat label="Down this quarter" value="฿250K" trend="-18%" trend-variant="danger" icon="trending-down" variant="danger"></tbt-stat>
 </div>
 
+<!-- ─── CHART ───────────────────────────────────────── -->
+<h2 id="chart">tbt-chart</h2>
+<div class="demo-label">Bar (single, value labels) · Donut (categorical + legend)</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-bar" type="bar" value-prefix="฿" show-values height="240"></tbt-chart>
+  <tbt-chart id="demo-donut" type="donut" height="240"></tbt-chart>
+</div>
+<div class="demo-label">Line + area (multi-series, legend)</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-line" type="line" show-legend height="240"></tbt-chart>
+  <tbt-chart id="demo-area" type="area" height="240"></tbt-chart>
+</div>
+<div class="demo-label">Sparkline (no axis, inline)</div>
+<div style="max-width:220px;margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-spark" type="sparkline" height="48"></tbt-chart>
+</div>
+<script type="module">
+  const months = (vals) => vals.map((v, i) => ({ label: ['Jan','Feb','Mar','Apr','May','Jun'][i], value: v }));
+  document.getElementById('demo-bar').data = months([120000, 98000, 150000, 132000, 175000]);
+  document.getElementById('demo-donut').data = [
+    { label: 'Approved', value: 86, variant: 'success' },
+    { label: 'Pending',  value: 28, variant: 'warning' },
+    { label: 'Draft',    value: 11, variant: 'info' },
+    { label: 'Rejected', value: 3,  variant: 'danger' },
+  ];
+  const series = [
+    { name: '2025', data: months([80, 92, 76, 110, 95]) },
+    { name: '2026', data: months([120, 98, 150, 132, 175]) },
+  ];
+  document.getElementById('demo-line').series = series;
+  document.getElementById('demo-area').series = series;
+  document.getElementById('demo-spark').data = months([12, 18, 9, 22, 17, 25]);
+</script>
+
 <!-- ─── FIELD + FIELD-GRID ─────────────────────────── -->
 <h2 id="field">tbt-field + tbt-field-grid</h2>
 <tbt-field-grid columns="4" style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:var(--tbt-space-5)">
