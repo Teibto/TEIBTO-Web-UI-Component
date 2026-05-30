@@ -1,0 +1,127 @@
+<!--
+  time-tracking-report.html — Time tracking · Reporting / utilization dashboard.
+
+  Layout (Teibto standard):
+    Page header        — title + period summary
+    Filters            — date range / department / employee
+    KPI strip          — utilization % / billable hours / capacity / overtime
+    Top projects       — tbt-table
+    Activity log       — tbt-audit-log
+    Action bar         — Export / Print
+
+  Required keys on window.__DATA__:
+    kpis         { utilization, billable, capacity, overtime }
+    departments  [{ value, label }]
+    employees    [{ value, label }]
+    projects     array of { projectLabel, total, billable, billablePct, lead }
+    activity     array of audit entries
+-->
+
+<!-- ── 1. Page header ─────────────────────────────────────────── -->
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">Time tracking · Reporting</div>
+      <div class="tbt-page-header__subtitle">Utilization &amp; billable analysis for <span id="hdr-period"></span></div>
+    </div>
+    <tbt-badge id="hdr-headcount" variant="primary">0 people</tbt-badge>
+  </div>
+</tbt-section>
+
+<!-- ── 2. Filters ─────────────────────────────────────────────── -->
+<tbt-section title="Filters">
+  <tbt-field-grid columns="4">
+    <tbt-date-range id="f-period"     name-from="from" name-to="to" label="Period"></tbt-date-range>
+    <tbt-dropdown   id="f-department" name="department" label="Department"></tbt-dropdown>
+    <tbt-dropdown   id="f-employee"   name="employee"   label="Employee"></tbt-dropdown>
+    <tbt-dropdown   id="f-billable"   name="billable"   label="Billable"></tbt-dropdown>
+  </tbt-field-grid>
+</tbt-section>
+
+<!-- ── 3. KPI strip ───────────────────────────────────────────── -->
+<tbt-section title="Key metrics">
+  <div class="tbt-stats-grid">
+    <tbt-stat id="kpi-util"     label="Utilization"      variant="primary" icon="chart"></tbt-stat>
+    <tbt-stat id="kpi-billable" label="Billable hours"   variant="success" icon="money"></tbt-stat>
+    <tbt-stat id="kpi-capacity" label="Total capacity"   variant="info"    icon="time"></tbt-stat>
+    <tbt-stat id="kpi-overtime" label="Overtime"         variant="warning" icon="alert"></tbt-stat>
+  </div>
+</tbt-section>
+
+<!-- ── 4. Top projects table ──────────────────────────────────── -->
+<tbt-section title="Top projects (by hours)">
+  <tbt-table id="projects-table" paginate page-size="10" responsive></tbt-table>
+</tbt-section>
+
+<!-- ── 5. Activity log ────────────────────────────────────────── -->
+<tbt-section title="Recent activity">
+  <tbt-audit-log id="activity-log" max-height="320px"></tbt-audit-log>
+</tbt-section>
+
+<!-- ── 6. Action bar ──────────────────────────────────────────── -->
+<div class="tbt-action-bar">
+  <tbt-button id="export-btn" variant="primary"   icon="export">Export CSV</tbt-button>
+  <tbt-button id="print-btn"  variant="secondary" icon="print">Print</tbt-button>
+</div>
+
+<script type="module">
+  const d = window.__DATA__;
+
+  /* ── Header ─────────────────────────────────────────────── */
+  document.getElementById('hdr-period').textContent     = `${d.period.from} → ${d.period.to}`;
+  document.getElementById('hdr-headcount').textContent  = d.kpis.headcount + ' people';
+
+  /* ── Filters ────────────────────────────────────────────── */
+  const fPeriod     = document.getElementById('f-period');
+  const fDepartment = document.getElementById('f-department');
+  const fEmployee   = document.getElementById('f-employee');
+  const fBillable   = document.getElementById('f-billable');
+  fPeriod.from = d.period.from;
+  fPeriod.to   = d.period.to;
+  fDepartment.options = [{ value: '', label: 'All departments' }, ...d.departments];
+  fEmployee.options   = [{ value: '', label: 'All employees'   }, ...d.employees];
+  fBillable.options   = [
+    { value: '',    label: 'All entries' },
+    { value: 'yes', label: 'Billable only' },
+    { value: 'no',  label: 'Non-billable only' },
+  ];
+  fDepartment.value = fEmployee.value = fBillable.value = '';
+
+  /* ── KPIs ───────────────────────────────────────────────── */
+  document.getElementById('kpi-util').value       = d.kpis.utilization + '%';
+  document.getElementById('kpi-util').trend       = d.kpis.utilizationTrend;
+  document.getElementById('kpi-billable').value   = d.kpis.billable + ' h';
+  document.getElementById('kpi-billable').trend   = d.kpis.billableTrend;
+  document.getElementById('kpi-capacity').value   = d.kpis.capacity + ' h';
+  document.getElementById('kpi-overtime').value   = d.kpis.overtime + ' h';
+  document.getElementById('kpi-overtime').trend   = d.kpis.overtimeTrend;
+
+  /* ── Projects table ─────────────────────────────────────── */
+  const table = document.getElementById('projects-table');
+  table.columns = [
+    { key: 'projectLabel', label: 'Project',         sortable: true, mobileTitle: true },
+    { key: 'lead',         label: 'Lead' },
+    { key: 'total',        label: 'Hours',           align: 'right', sortable: true },
+    { key: 'billable',     label: 'Billable',        align: 'right' },
+    { key: 'billablePct',  label: 'Billable %',      align: 'right' },
+  ];
+  table.rows = d.projects;
+
+  /* ── Activity log ───────────────────────────────────────── */
+  document.getElementById('activity-log').entries = d.activity;
+
+  /* ── Action bar ─────────────────────────────────────────── */
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const csv = ['Project,Lead,Total,Billable,Billable %', ...d.projects.map(p =>
+      `"${p.projectLabel}","${p.lead}",${p.total},${p.billable},${p.billablePct}`
+    )].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = `time-report-${d.period.from}_${d.period.to}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('print-btn').addEventListener('click', () => window.print());
+</script>

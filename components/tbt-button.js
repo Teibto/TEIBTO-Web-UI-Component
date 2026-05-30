@@ -1,6 +1,6 @@
 /**
  * @component tbt-button
- * @version 1.26.2
+ * @version 1.43.0
  * @author Wichit Wongta
  *
  * Standard action button with brand variants.
@@ -12,6 +12,8 @@
  *   <tbt-button variant="ghost" icon="printer">Print</tbt-button>
  *   <tbt-button variant="primary" loading>Saving…</tbt-button>
  *   <tbt-button variant="accent">Gradient button</tbt-button>
+ *   <tbt-button href="/page" icon="external">Navigate</tbt-button>
+ *   <tbt-button href="https://…" target="_blank">External</tbt-button>
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
@@ -27,6 +29,8 @@ class TbtButton extends LitElement {
     disabled: { type: Boolean, reflect: true },
     size:     { type: String, reflect: true },
     type:     { type: String },
+    href:     { type: String },
+    target:   { type: String },
   };
 
   constructor() {
@@ -158,6 +162,15 @@ class TbtButton extends LitElement {
     if (this.disabled || this.loading) {
       e.stopPropagation();
       e.preventDefault();
+      return;
+    }
+    if (this.href) {
+      // Honor modifier keys so users can open in a new tab.
+      if (e.metaKey || e.ctrlKey || e.shiftKey || this.target === '_blank') {
+        window.open(this.href, this.target || '_blank', 'noopener,noreferrer');
+      } else {
+        window.location.href = this.href;
+      }
     }
   }
 

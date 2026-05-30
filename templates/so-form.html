@@ -1,0 +1,384 @@
+<!--
+  so-form.html — Sales Order form with tabbed sub-detail.
+
+  Layout:
+    Page header (title + status badge)
+    Main section: Document info — header fields always visible
+    Subtabs (tbt-tabs internally — Teibto calls these "Subtabs"):
+      1. Items       — tbt-lines-block (inline edit + auto totals)
+      2. Shipping    — ship_to address + ship via + memo
+      3. Approval    — approval flow + reviewer comment
+      4. Audit       — audit log
+      5. Related     — linked records (quotation / invoices / fulfillments / payments)
+      6. Accounting  — subsidiary / currency / terms / accountant memo
+    Action bar (mode-aware: new / view / edit)
+
+  Required window.__DATA__:
+    mode          'new' | 'view' | 'edit'
+    record        SO record (empty {} for new)
+    lines         line items
+    approvalSteps approval array
+    auditEntries  audit array
+    related       { quotation, invoices[], fulfillments[], payments[] }
+    optionLists   { customers, 'sales-reps', subsidiaries, currencies, 'payment-terms', 'ship-via' }
+    listUrl / selfUrl / restletUrl
+-->
+
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title" id="hdr-title">Sales order</div>
+      <div class="tbt-page-header__subtitle" id="hdr-subtitle">View mode</div>
+    </div>
+    <tbt-badge id="hdr-status" variant="warning" hidden></tbt-badge>
+  </div>
+</tbt-section>
+
+<div class="tbt-page-alerts">
+  <tbt-alert id="ok-alert"  variant="success" dismissible hidden></tbt-alert>
+  <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
+</div>
+
+<!-- ── MAIN section: Document info ────────────────────────────── -->
+<tbt-section title="Document info">
+  <tbt-field-grid columns="4">
+    <tbt-input      id="f-tranid"   name="tranid"    label="SO no." readonly></tbt-input>
+    <tbt-dropdown   id="f-customer" name="customer"  label="Customer" required searchable></tbt-dropdown>
+    <tbt-datepicker id="f-date"     name="date"      label="Date" required></tbt-datepicker>
+    <tbt-datepicker id="f-expected" name="expected"  label="Expected ship"></tbt-datepicker>
+    <tbt-dropdown   id="f-salesrep" name="salesrep"  label="Sales rep" searchable></tbt-dropdown>
+    <tbt-input      id="f-po"       name="po_number" label="Customer PO"></tbt-input>
+    <tbt-input      id="f-amount"   name="amount"    label="Total amount" readonly></tbt-input>
+    <tbt-input      id="f-memo"     name="memo"      label="Internal memo"></tbt-input>
+  </tbt-field-grid>
+</tbt-section>
+
+<!-- ── SUBTABS ────────────────────────────────────────────────── -->
+<tbt-section not-collapsible>
+  <tbt-tabs active="0" id="so-subtabs">
+
+    <!-- Subtab 1: Items -->
+    <tbt-tabs-panel label="Items">
+      <tbt-lines-block id="lines"
+        title=""
+        add-label="Add line"
+        currency="฿"
+        vat-rate="0.07"
+        max-height="320px"
+        sticky-left="0,1"
+        sticky-right="8"
+        pref-key="so-lines">
+      </tbt-lines-block>
+    </tbt-tabs-panel>
+
+    <!-- Subtab 2: Shipping -->
+    <tbt-tabs-panel label="Shipping">
+      <tbt-field-grid columns="2">
+        <tbt-address  id="f-ship-to"  name="ship_to" label="Ship to" required></tbt-address>
+        <tbt-dropdown id="f-ship-via" name="ship_via" label="Ship via"></tbt-dropdown>
+      </tbt-field-grid>
+      <div style="margin-top:var(--tbt-space-4)">
+        <tbt-textarea id="f-ship-memo" name="ship_memo" label="Shipping memo" rows="3"></tbt-textarea>
+      </div>
+    </tbt-tabs-panel>
+
+    <!-- Subtab 3: Approval -->
+    <tbt-tabs-panel label="Approval">
+      <tbt-approval-flow id="approval-flow" orientation="horizontal"></tbt-approval-flow>
+      <div style="margin-top:var(--tbt-space-4)">
+        <tbt-textarea id="f-approval-comment" name="approval_comment" label="Reviewer comment" rows="3" placeholder="Optional note for approvers…"></tbt-textarea>
+      </div>
+    </tbt-tabs-panel>
+
+    <!-- Subtab 4: Audit -->
+    <tbt-tabs-panel label="Audit log">
+      <tbt-audit-log id="audit-log" max-height="380px"></tbt-audit-log>
+    </tbt-tabs-panel>
+
+    <!-- Subtab 5: Related -->
+    <tbt-tabs-panel label="Related">
+      <tbt-list id="related-list" divided></tbt-list>
+    </tbt-tabs-panel>
+
+    <!-- Subtab 6: Accounting -->
+    <tbt-tabs-panel label="Accounting">
+      <tbt-field-grid columns="2">
+        <tbt-dropdown id="f-subsidiary" name="subsidiary" label="Subsidiary"></tbt-dropdown>
+        <tbt-dropdown id="f-currency"   name="currency"   label="Currency"></tbt-dropdown>
+        <tbt-dropdown id="f-terms"      name="terms"      label="Payment terms"></tbt-dropdown>
+        <tbt-input    id="f-exchrate"   name="exchrate"   label="Exchange rate" type="number"></tbt-input>
+      </tbt-field-grid>
+      <div style="margin-top:var(--tbt-space-4)">
+        <tbt-textarea id="f-acct-memo" name="acct_memo" label="Accounting note" rows="3" placeholder="Account-coding instructions…"></tbt-textarea>
+      </div>
+    </tbt-tabs-panel>
+
+  </tbt-tabs>
+</tbt-section>
+
+<!-- ── Action bar (mode-aware) ────────────────────────────────── -->
+<div class="tbt-action-bar" id="action-bar"></div>
+
+<script type="module">
+  import * as ds from '/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-ds.min.js';
+
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+
+  /* ── Mode config ────────────────────────────────────────── */
+  const MODE_CONFIG = {
+    new: {
+      title:    'New sales order',
+      subtitle: 'Fill in customer + items + shipping, then save',
+      readonly: false,
+      buttons: [
+        { id: 'cancel', label: 'Cancel', variant: 'ghost' },
+        { id: 'save',   label: 'Save',   variant: 'primary', icon: 'save' },
+      ],
+    },
+    view: {
+      title:    `Sales order · ${d.record.tranid || d.record.id || ''}`,
+      subtitle: 'View mode — read only',
+      readonly: true,
+      buttons: [
+        { id: 'edit',  label: 'Edit',  variant: 'primary',   icon: 'edit' },
+        { id: 'print', label: 'Print', variant: 'secondary', icon: 'print' },
+        { id: 'email', label: 'Email', variant: 'secondary', icon: 'email' },
+        { id: 'back',  label: 'Back',  variant: 'ghost',     icon: 'back' },
+      ],
+    },
+    edit: {
+      title:    `Edit · ${d.record.tranid || d.record.id || ''}`,
+      subtitle: 'Edit mode — changes saved on Save',
+      readonly: false,
+      buttons: [
+        { id: 'cancel', label: 'Cancel', variant: 'ghost' },
+        { id: 'delete', label: 'Delete', variant: 'danger',  icon: 'delete' },
+        { id: 'save',   label: 'Save',   variant: 'primary', icon: 'save' },
+      ],
+    },
+  };
+  const cfg = MODE_CONFIG[d.mode] || MODE_CONFIG.view;
+
+  /* ── Header ─────────────────────────────────────────────── */
+  document.getElementById('hdr-title').textContent    = cfg.title;
+  document.getElementById('hdr-subtitle').textContent = cfg.subtitle;
+  const hdrStatus = document.getElementById('hdr-status');
+  if (d.record.status) {
+    hdrStatus.hidden = false;
+    rt.setStatusBadge(hdrStatus, d.record.status);
+  }
+
+  /* ── Populate dropdowns ─────────────────────────────────── */
+  const opt = d.optionLists || {};
+  document.getElementById('f-customer').options    = opt.customers       || [];
+  document.getElementById('f-salesrep').options    = opt['sales-reps']   || [];
+  document.getElementById('f-ship-via').options    = opt['ship-via']     || [];
+  document.getElementById('f-subsidiary').options  = opt.subsidiaries    || [];
+  document.getElementById('f-currency').options    = opt.currencies      || [];
+  document.getElementById('f-terms').options       = opt['payment-terms']|| [];
+
+  /* ── Prefill record values ──────────────────────────────── */
+  const r = d.record || {};
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el && v !== undefined) el.value = v; };
+  setVal('f-tranid',    r.tranid);
+  setVal('f-customer',  r.customer);
+  setVal('f-date',      r.date);
+  setVal('f-expected',  r.expected);
+  setVal('f-salesrep',  r.salesrep);
+  setVal('f-po',        r.po_number);
+  setVal('f-memo',      r.memo);
+  setVal('f-ship-to',   r.ship_to);
+  setVal('f-ship-via',  r.ship_via);
+  setVal('f-ship-memo', r.ship_memo);
+  setVal('f-subsidiary',r.subsidiary);
+  setVal('f-currency',  r.currency);
+  setVal('f-terms',     r.terms);
+  setVal('f-exchrate',  r.exchrate);
+  setVal('f-acct-memo', r.acct_memo);
+
+  /* ── Items, approval, audit ─────────────────────────────── */
+  const lines = document.getElementById('lines');
+  if (d.itemOptions) lines.itemOptions = d.itemOptions;   // search-list for Item column
+  lines.rows  = d.lines || [];
+  lines.addEventListener('tbt-change', (e) => {
+    setVal('f-amount', rt.currency(e.detail.total));
+  });
+  // initial amount from server data
+  const initialTotal = (d.lines || []).reduce((s, l) => s + Number(l.qty || 0) * Number(l.price || 0), 0);
+  setVal('f-amount', rt.currency(initialTotal * 1.07));  // include VAT 7%
+
+  document.getElementById('approval-flow').steps = d.approvalSteps || [];
+  document.getElementById('audit-log').entries   = d.auditEntries  || [];
+
+  /* ── Related records ────────────────────────────────────── */
+  const relatedList = document.getElementById('related-list');
+  const rel = d.related || {};
+  relatedList.innerHTML = '';
+  function addRelatedItem(icon, label, value, href) {
+    const item = document.createElement('tbt-list-item');
+    item.setAttribute('icon',  icon);
+    item.setAttribute('label', label);
+    item.setAttribute('value', value || '—');
+    if (href) {
+      const btn = document.createElement('tbt-button');
+      btn.setAttribute('slot', 'action');
+      btn.setAttribute('variant', 'ghost');
+      btn.setAttribute('size', 'sm');
+      btn.setAttribute('icon', 'view');
+      btn.setAttribute('href', href);
+      btn.textContent = 'Open';
+      item.appendChild(btn);
+    }
+    relatedList.appendChild(item);
+  }
+  addRelatedItem('quotation',     'Source quotation', rel.quotation?.tranid,
+    rel.quotation ? `/quotation/form?id=${rel.quotation.tranid}` : null);
+  (rel.invoices || []).forEach(inv =>
+    addRelatedItem('invoice', 'Invoice', inv.tranid, `/invoice/form?id=${inv.tranid}`));
+  (rel.fulfillments || []).forEach(f =>
+    addRelatedItem('purchase-order', 'Fulfillment', f.tranid, null));
+  (rel.payments || []).forEach(p =>
+    addRelatedItem('payment', 'Payment', p.tranid + ' · ' + rt.currency(p.amount), null));
+  if (!rel.quotation && !(rel.invoices || []).length && !(rel.fulfillments || []).length && !(rel.payments || []).length) {
+    addRelatedItem('info', 'Linked records', 'None yet', null);
+  }
+
+  /* ── View mode — replace inputs with tbt-field display + FK links ────── */
+  if (cfg.readonly) {
+    const FK_LINKS = {
+      customer: v => `/customer/form?id=${v}`,   // v = internal id (integer)
+      // Add more foreign-key destinations as those record types come online.
+    };
+
+    const displayValue = (el, val) => {
+      if (el.tagName === 'TBT-DROPDOWN') {
+        const opt = (el.options || []).find(o => o.value === val);
+        return opt ? opt.label : (val || '—');
+      }
+      if (el.tagName === 'TBT-ADDRESS') {
+        const a = val || {};
+        const parts = [a.street, a.city, a.state, a.postcode, a.country].filter(Boolean);
+        return parts.length ? parts.join(', ') : '—';
+      }
+      if (val === '' || val == null) return '—';
+      return String(val);
+    };
+
+    document.querySelectorAll('tbt-input, tbt-dropdown, tbt-datepicker, tbt-textarea, tbt-address').forEach(el => {
+      // Skip inputs that belong to lines-block — its own readonly prop handles them.
+      if (el.closest('tbt-lines-block')) return;
+      const label = el.getAttribute('label');
+      if (!label) return;  // unlabeled inputs aren't part of the form layout
+      const name  = el.getAttribute('name');
+      const val   = el.value;
+      const text  = displayValue(el, val);
+
+      const field = document.createElement('tbt-field');
+      field.setAttribute('label', label);
+
+      // Foreign-key value → render as link inside the field's slot
+      if (FK_LINKS[name] && val) {
+        const a = document.createElement('a');
+        a.href = FK_LINKS[name](val);
+        a.style.color = 'var(--tbt-text-link)';
+        a.style.textDecoration = 'none';
+        a.textContent = text;
+        a.addEventListener('mouseenter', () => { a.style.textDecoration = 'underline'; });
+        a.addEventListener('mouseleave', () => { a.style.textDecoration = 'none'; });
+        field.appendChild(a);
+      } else {
+        field.setAttribute('value', text);
+      }
+      el.replaceWith(field);
+    });
+
+    // Lines-block has its own readonly mode (plain text rows, no editing).
+    lines.setAttribute('readonly', '');
+  }
+
+  /* ── Action bar (mode-aware) ────────────────────────────── */
+  const bar = document.getElementById('action-bar');
+  cfg.buttons.forEach(b => {
+    const btn = document.createElement('tbt-button');
+    btn.id = `act-${b.id}`;
+    btn.setAttribute('variant', b.variant);
+    if (b.icon) btn.setAttribute('icon', b.icon);
+    btn.textContent = b.label;
+    btn.addEventListener('click', () => handleAction(b.id));
+    bar.appendChild(btn);
+  });
+
+  /* ── Collect current form data ──────────────────────────── */
+  function collectData() {
+    const data = {
+      tranid:           document.getElementById('f-tranid').value,
+      customer:         document.getElementById('f-customer').value,
+      date:             document.getElementById('f-date').value,
+      expected:         document.getElementById('f-expected').value,
+      salesrep:         document.getElementById('f-salesrep').value,
+      po_number:        document.getElementById('f-po').value,
+      memo:             document.getElementById('f-memo').value,
+      ship_to:          document.getElementById('f-ship-to').value,
+      ship_via:         document.getElementById('f-ship-via').value,
+      ship_memo:        document.getElementById('f-ship-memo').value,
+      subsidiary:       document.getElementById('f-subsidiary').value,
+      currency:         document.getElementById('f-currency').value,
+      terms:            document.getElementById('f-terms').value,
+      exchrate:         document.getElementById('f-exchrate').value,
+      acct_memo:        document.getElementById('f-acct-memo').value,
+      approval_comment: document.getElementById('f-approval-comment').value,
+      lines:            lines.rows,
+    };
+    return data;
+  }
+
+  /* ── Action handlers ────────────────────────────────────── */
+  async function handleAction(id) {
+    if (id === 'cancel' || id === 'back') { location.href = d.listUrl; return; }
+    if (id === 'edit')  { location.href = `${d.selfUrl}?id=${d.record.id}&mode=edit`; return; }
+    if (id === 'print') { window.print(); return; }
+    if (id === 'email') {
+      rt.showAlert('ok-alert', 'Email draft prepared for ' + (r.customer || 'customer') + '.');
+      return;
+    }
+    if (id === 'save')   { await save(); return; }
+    if (id === 'delete') { await del(); return; }
+  }
+
+  async function save() {
+    rt.hideAlerts('ok-alert', 'err-alert');
+    try {
+      const body = await rt.post(d.restletUrl, {
+        action: d.mode === 'new' ? 'create' : 'update',
+        id:     r.tranid || null,
+        data:   collectData(),
+      });
+      const newId    = body.id    || r.id || 0;
+      const newDispId = body.tranid || r.tranid || 'SO-NEW';
+      rt.showAlert('ok-alert', (d.mode === 'new' ? 'Created ' : 'Saved ') + newDispId + '. Redirecting…');
+      setTimeout(() => { location.href = `${d.selfUrl}?id=${newId}`; }, 800);
+    } catch (err) {
+      rt.showAlert('err-alert', 'Save failed: ' + err.message);
+    }
+  }
+
+  async function del() {
+    const ok = await ds.confirm({
+      title:        'Delete sales order?',
+      message:      `This will permanently delete ${r.tranid || r.id}. This action cannot be undone.`,
+      confirmLabel: 'Delete',
+      cancelLabel:  'Cancel',
+      variant:      'danger',
+    });
+    if (!ok) return;
+    rt.hideAlerts('ok-alert', 'err-alert');
+    try {
+      await rt.post(d.restletUrl, { action: 'delete', id: r.id });
+      rt.showAlert('ok-alert', `Deleted ${r.tranid || r.id}. Redirecting…`);
+      setTimeout(() => { location.href = d.listUrl; }, 800);
+    } catch (err) {
+      rt.showAlert('err-alert', 'Delete failed: ' + err.message);
+    }
+  }
+</script>

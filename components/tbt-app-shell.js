@@ -1,6 +1,6 @@
 /**
  * @component tbt-app-shell
- * @version 1.26.2
+ * @version 1.43.0
  * @author Wichit Wongta
  *
  * Page-level layout wrapper. Provides menubar slot at top, optional
@@ -118,7 +118,7 @@ class TbtAppShell extends LitElement {
       /* CSS fallback — hides sidebar instantly on first paint, before ResizeObserver fires */
       .sidebar-slot {
         position: fixed;
-        top: 56px; left: 0; bottom: 0;
+        top: var(--tbt-menubar-height, 56px); left: 0; bottom: 0;
         z-index: 800;
         transform: translateX(-100%);
         transition: transform 200ms ease;
@@ -128,7 +128,7 @@ class TbtAppShell extends LitElement {
     /* JS-driven compact mode — activated by ResizeObserver (component width ≤ 768px) */
     :host([compact]) .sidebar-slot {
       position: fixed;
-      top: 56px; left: 0; bottom: 0;
+      top: var(--tbt-menubar-height, 56px); left: 0; bottom: 0;
       z-index: 800;
       transform: translateX(-100%);
       transition: transform 200ms ease;

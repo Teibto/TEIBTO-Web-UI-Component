@@ -37,6 +37,7 @@ class TbtMultiselect extends LitElement {
     value:       { type: Array },
     required:    { type: Boolean, reflect: true },
     disabled:    { type: Boolean, reflect: true },
+    readonly:    { type: Boolean, reflect: true },
     error:       { type: String, reflect: true },
     searchable:  { type: Boolean },
     _open:       { state: true },
@@ -79,6 +80,7 @@ class TbtMultiselect extends LitElement {
     }
     :host([error]) .trigger { border-color: var(--tbt-danger); }
     :host([disabled]) .trigger { background: var(--tbt-bg-hover); cursor: not-allowed; opacity: 0.65; }
+    :host([readonly]) .trigger { background: var(--tbt-bg-hover); cursor: default; pointer-events: none; }
     .chip {
       display: inline-flex; align-items: center; gap: 4px;
       background: var(--tbt-primary-bg); color: var(--tbt-primary-text);
@@ -183,7 +185,7 @@ class TbtMultiselect extends LitElement {
   }
 
   _toggleOpen() {
-    if (!this.disabled) this._open = !this._open;
+    if (!this.disabled && !this.readonly) this._open = !this._open;
   }
 
   _toggle(val) {
@@ -242,7 +244,7 @@ class TbtMultiselect extends LitElement {
         aria-label=${this.label || this.placeholder}
         aria-controls=${listboxId}
         aria-owns=${listboxId}
-        tabindex=${this.disabled ? '-1' : '0'}
+        tabindex=${this.disabled || this.readonly ? '-1' : '0'}
         @click=${this._toggleOpen}
         @keydown=${this._onTriggerKeydown}>
         ${selected.length === 0

@@ -1,0 +1,141 @@
+<!-- invoice-list.html — Invoice (AR) list. -->
+
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">Invoices</div>
+      <div class="tbt-page-header__subtitle">All AR invoices</div>
+    </div>
+    <tbt-badge id="hdr-count" variant="primary">0</tbt-badge>
+  </div>
+</tbt-section>
+
+<tbt-section title="Filters">
+  <tbt-field-grid columns="3">
+    <tbt-dropdown   id="f-customer" name="customer" label="Customer" searchable></tbt-dropdown>
+    <tbt-date-range id="f-period"   name-from="from" name-to="to" label="Period"></tbt-date-range>
+    <tbt-dropdown   id="f-status"   name="status"   label="Status"></tbt-dropdown>
+  </tbt-field-grid>
+</tbt-section>
+
+<tbt-section title="Summary">
+  <div class="tbt-stats-grid">
+    <tbt-stat id="stat-total"   label="Total invoices" variant="primary" icon="invoice"></tbt-stat>
+    <tbt-stat id="stat-value"   label="Total value"    variant="success" icon="money"></tbt-stat>
+    <tbt-stat id="stat-paid"    label="Paid"           variant="info"    icon="approve"></tbt-stat>
+    <tbt-stat id="stat-overdue" label="Overdue"        variant="danger"  icon="alert"></tbt-stat>
+  </div>
+</tbt-section>
+
+<tbt-section title="Invoices">
+  <div slot="actions" style="display:flex;align-items:center;gap:var(--tbt-space-3)">
+    <tbt-search id="f-search" placeholder="Search invoice no…" debounce="300"></tbt-search>
+    <tbt-button id="new-btn" variant="primary" icon="add" size="sm">New invoice</tbt-button>
+  </div>
+  <tbt-table id="rec-table" paginate page-size="20" responsive max-height="420px" pref-key="invoice-list"></tbt-table>
+</tbt-section>
+
+<div class="tbt-action-bar">
+  <tbt-button id="export-btn" variant="primary"   icon="export">Export CSV</tbt-button>
+  <tbt-button id="print-btn"  variant="secondary" icon="print">Print</tbt-button>
+</div>
+
+<script type="module">
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+
+  const fCustomer = document.getElementById('f-customer');
+  const fStatus   = document.getElementById('f-status');
+  const fSearch   = document.getElementById('f-search');
+  fCustomer.options = [{ value: '', label: 'All customers' }, ...d.customers];
+  fStatus.options   = [{ value: '', label: 'All statuses' },  ...d.statuses];
+  fCustomer.value = fStatus.value = '';
+
+  const STATUS_VARIANT = { Draft: 'warning', 'Pending approval': 'info', Approved: 'success', Paid: 'success', Overdue: 'danger', Rejected: 'danger' };
+  const statusBadge = (s) => `<tbt-badge variant="${STATUS_VARIANT[s] || 'neutral'}">${s}</tbt-badge>`;
+
+  const TODAY = '2026-05-30';
+  function recomputeStats(rows) {
+    const value   = rt.sumBy(rows, 'amount');
+    const paid    = rows.filter(r => r.status === 'Paid').length;
+    const overdue = rows.filter(r => r.status !== 'Paid' && r.duedate < TODAY).length;
+    document.getElementById('stat-total').value   = String(rows.length);
+    document.getElementById('stat-value').value   = rt.currency(value);
+    document.getElementById('stat-paid').value    = String(paid);
+    document.getElementById('stat-overdue').value = String(overdue);
+    document.getElementById('hdr-count').textContent = rows.length + ' invoices';
+  }
+
+  const table = document.getElementById('rec-table');
+  table.columns = [
+    { key: 'no',          label: 'No.',         align: 'right', resizable: false },
+    { key: 'tranid',      label: 'Invoice no.', sortable: true, mobileTitle: true,
+      href: row => `${d.formUrl}?id=${row.id}` },
+    { key: 'customer',    label: 'Customer',    sortable: true },
+    { key: 'date',        label: 'Date',        sortable: true },
+    { key: 'duedate',     label: 'Due date',    sortable: true },
+    { key: 'amountText',  label: 'Amount',      align: 'right', sortable: true },
+    { key: 'statusBadge', label: 'Status',      align: 'center', html: true },
+    { key: 'actions',     label: 'Actions',     align: 'center', html: true, resizable: false },
+  ];
+
+  function renderRows(rows) {
+    table.rows = rows.map((r, i) => ({
+      ...r,
+      no:          i + 1,
+      amountText:  rt.currency(r.amount),
+      statusBadge: statusBadge(r.status),
+      actions:     rt.rowActions(r.id),
+    }));
+    recomputeStats(rows);
+  }
+
+  function applyFilter() {
+    const c = fCustomer.value, st = fStatus.value;
+    const q = (fSearch.value || '').toLowerCase();
+    renderRows((d.records || []).filter(r =>
+      (!c  || r.customerId === c) &&
+      (!st || r.status     === st) &&
+      (!q  || r.tranid.toLowerCase().includes(q))
+    ));
+  }
+  [fCustomer, fStatus].forEach(el => el.addEventListener('tbt-change', applyFilter));
+  fSearch.addEventListener('tbt-search', applyFilter);
+  applyFilter();
+
+  table.addEventListener('tbt-row-click', (e) => {
+    location.href = `${d.formUrl}?id=${e.detail.row.id}`;
+  });
+  rt.wireRowActions(table, {
+    onView:   (id) => { location.href = `${d.formUrl}?id=${id}`; },
+    onEdit:   (id) => { location.href = `${d.formUrl}?id=${id}&mode=edit`; },
+    onDelete: async (id) => {
+      const ds = await import('/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-ds.min.js');
+      const ok = await ds.confirm({
+        title: 'Delete invoice?',
+        message: `Permanently delete ${(d.records || []).find(r => String(r.id) === String(id))?.tranid || id}?`,
+        confirmLabel: 'Delete',
+        variant: 'danger',
+      });
+      if (!ok) return;
+      d.records = d.records.filter(r => String(r.id) !== String(id));
+      applyFilter();
+    },
+  });
+  document.getElementById('new-btn').addEventListener('click', () => {
+    location.href = `${d.formUrl}?id=new`;
+  });
+
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const csv = ['Invoice no.,Customer,Date,Due,Amount,Status', ...d.records.map(r =>
+      `"${r.tranid}","${r.customer}","${r.date}","${r.duedate}",${r.amount},"${r.status}"`
+    )].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'invoices-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('print-btn').addEventListener('click', () => window.print());
+</script>

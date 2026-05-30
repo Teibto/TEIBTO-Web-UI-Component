@@ -1,0 +1,140 @@
+<!-- customer-list.html — Customer master list. -->
+
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">Customers</div>
+      <div class="tbt-page-header__subtitle">Customer master file</div>
+    </div>
+    <tbt-badge id="hdr-count" variant="primary">0</tbt-badge>
+  </div>
+</tbt-section>
+
+<tbt-section title="Filters">
+  <tbt-field-grid columns="3">
+    <tbt-dropdown id="f-category"   name="category"   label="Category"></tbt-dropdown>
+    <tbt-dropdown id="f-subsidiary" name="subsidiary" label="Subsidiary"></tbt-dropdown>
+    <tbt-dropdown id="f-salesrep"   name="salesrep"   label="Sales rep"></tbt-dropdown>
+  </tbt-field-grid>
+</tbt-section>
+
+<tbt-section title="Summary">
+  <div class="tbt-stats-grid">
+    <tbt-stat id="stat-total"   label="Total customers" variant="primary" icon="user"></tbt-stat>
+    <tbt-stat id="stat-credit"  label="Total credit"    variant="success" icon="money"></tbt-stat>
+    <tbt-stat id="stat-vip"     label="VIP customers"   variant="info"    icon="star"></tbt-stat>
+    <tbt-stat id="stat-overdue" label="Over credit"     variant="warning" icon="alert"></tbt-stat>
+  </div>
+</tbt-section>
+
+<tbt-section title="Customers">
+  <div slot="actions" style="display:flex;align-items:center;gap:var(--tbt-space-3)">
+    <tbt-search id="f-search" placeholder="Search name or tax ID…" debounce="300"></tbt-search>
+    <tbt-button id="new-btn" variant="primary" icon="add" size="sm">New customer</tbt-button>
+  </div>
+  <tbt-table id="rec-table" paginate page-size="20" responsive max-height="420px" pref-key="customer-list"></tbt-table>
+</tbt-section>
+
+<div class="tbt-action-bar">
+  <tbt-button id="export-btn" variant="primary"   icon="export">Export CSV</tbt-button>
+  <tbt-button id="print-btn"  variant="secondary" icon="print">Print</tbt-button>
+</div>
+
+<script type="module">
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+
+  const fCategory   = document.getElementById('f-category');
+  const fSubsidiary = document.getElementById('f-subsidiary');
+  const fSalesrep   = document.getElementById('f-salesrep');
+  const fSearch     = document.getElementById('f-search');
+  fCategory.options   = [{ value: '', label: 'All categories' }, ...d.categories];
+  fSubsidiary.options = [{ value: '', label: 'All subsidiaries' }, ...d.subsidiaries];
+  fSalesrep.options   = [{ value: '', label: 'All sales reps' }, ...d.salesreps];
+  fCategory.value = fSubsidiary.value = fSalesrep.value = '';
+
+  function recomputeStats(rows) {
+    const credit = rt.sumBy(rows, 'creditlimit');
+    const vip    = rows.filter(r => r.category === 'CAT_VIP').length;
+    const over   = rows.filter(r => r.outstanding > r.creditlimit).length;
+    document.getElementById('stat-total').value   = String(rows.length);
+    document.getElementById('stat-credit').value  = rt.currency(credit);
+    document.getElementById('stat-vip').value     = String(vip);
+    document.getElementById('stat-overdue').value = String(over);
+    document.getElementById('hdr-count').textContent = rows.length + ' customers';
+  }
+
+  const table = document.getElementById('rec-table');
+  table.columns = [
+    { key: 'no',           label: 'No.',         align: 'right', resizable: false },
+    { key: 'entityid',     label: 'Customer ID', sortable: true, mobileTitle: true,
+      href: row => `${d.formUrl}?id=${row.id}` },
+    { key: 'companyname',  label: 'Company',     sortable: true },
+    { key: 'taxid',        label: 'Tax ID' },
+    { key: 'categoryLabel',label: 'Category',    sortable: true },
+    { key: 'salesrepName', label: 'Sales rep' },
+    { key: 'creditText',   label: 'Credit',      align: 'right', sortable: true },
+    { key: 'actions',      label: 'Actions',     align: 'center', html: true, resizable: false },
+  ];
+
+  function renderRows(rows) {
+    table.rows = rows.map((r, i) => ({
+      ...r,
+      no:         i + 1,
+      creditText: rt.currency(r.creditlimit),
+      actions:    rt.rowActions(r.id),
+    }));
+    recomputeStats(rows);
+  }
+
+  function applyFilter() {
+    const c = fCategory.value, s = fSubsidiary.value, r = fSalesrep.value;
+    const q = (fSearch.value || '').toLowerCase();
+    renderRows((d.records || []).filter(x =>
+      (!c || x.category   === c) &&
+      (!s || x.subsidiary === s) &&
+      (!r || x.salesrep   === r) &&
+      (!q || (`${x.companyname} ${x.taxid}`).toLowerCase().includes(q))
+    ));
+  }
+  [fCategory, fSubsidiary, fSalesrep].forEach(el => el.addEventListener('tbt-change', applyFilter));
+  fSearch.addEventListener('tbt-search', applyFilter);
+  applyFilter();
+
+  table.addEventListener('tbt-row-click', (e) => {
+    location.href = `${d.formUrl}?id=${e.detail.row.id}`;
+  });
+  rt.wireRowActions(table, {
+    onView:   (id) => { location.href = `${d.formUrl}?id=${id}`; },
+    onEdit:   (id) => { location.href = `${d.formUrl}?id=${id}&mode=edit`; },
+    onDelete: async (id) => {
+      const ds = await import('/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-ds.min.js');
+      const target = (d.records || []).find(r => String(r.id) === String(id));
+      const ok = await ds.confirm({
+        title: 'Delete customer?',
+        message: `Permanently delete ${target?.entityid || id}?`,
+        confirmLabel: 'Delete',
+        variant: 'danger',
+      });
+      if (!ok) return;
+      d.records = d.records.filter(r => String(r.id) !== String(id));
+      applyFilter();
+    },
+  });
+  document.getElementById('new-btn').addEventListener('click', () => {
+    location.href = `${d.formUrl}?id=new`;
+  });
+
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const csv = ['ID,Company,Tax ID,Category,Sales rep,Credit', ...d.records.map(r =>
+      `"${r.entityid}","${r.companyname}","${r.taxid}","${r.categoryLabel}","${r.salesrepName}",${r.creditlimit}`
+    )].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'customers-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('print-btn').addEventListener('click', () => window.print());
+</script>

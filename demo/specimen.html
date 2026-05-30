@@ -121,6 +121,7 @@
     <tbt-sidebar-item icon="toggle-right"        label="Toggle"        href="#toggle"></tbt-sidebar-item>
 
     <div class="nav-group">Display</div>
+    <tbt-sidebar-item icon="chart-bar"           label="Stat"          href="#stat"></tbt-sidebar-item>
     <tbt-sidebar-item icon="layout-list"         label="Field"         href="#field"></tbt-sidebar-item>
     <tbt-sidebar-item icon="section"             label="Section"       href="#section-comp"></tbt-sidebar-item>
     <tbt-sidebar-item icon="table"               label="Table"         href="#table"></tbt-sidebar-item>
@@ -411,6 +412,133 @@
   <tbt-button variant="primary" disabled>Disabled</tbt-button>
 </div>
 
+<!-- ─── SPLIT BUTTON ──────────────────────────────── -->
+<h2 id="split-button">tbt-split-button</h2>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-3);padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-split-button id="sb1" label="Save" icon="device-floppy"
+    .actions=${[
+      { value: 'submit', label: 'Save & Submit', icon: 'circle-check' },
+      { value: 'print',  label: 'Save & Print',  icon: 'printer' },
+      { value: 'draft',  label: 'Save as Draft', icon: 'file' },
+    ]}>
+  </tbt-split-button>
+  <tbt-split-button label="Submit" variant="secondary"
+    .actions=${[{ value: 'reject', label: 'Reject' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="Delete" variant="danger" icon="trash"
+    .actions=${[{ value: 'archive', label: 'Archive instead' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="More" variant="ghost"
+    .actions=${[
+      { value: 'export', label: 'Export CSV' },
+      { value: 'copy',   label: 'Copy link' },
+    ]}>
+  </tbt-split-button>
+  <tbt-split-button label="Small" size="sm"
+    .actions=${[{ value: 'x', label: 'Option' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="Large" size="lg"
+    .actions=${[{ value: 'x', label: 'Option' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="Loading" loading
+    .actions=${[{ value: 'x', label: 'Option' }]}>
+  </tbt-split-button>
+  <tbt-split-button label="Disabled" disabled
+    .actions=${[{ value: 'x', label: 'Option' }]}>
+  </tbt-split-button>
+  <div id="sb1-output" style="width:100%;font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">tbt-click / tbt-action → (click a button)</div>
+</div>
+<script>
+  (function () {
+    const sb = document.getElementById('sb1');
+    const out = document.getElementById('sb1-output');
+    sb.addEventListener('tbt-click',  () => { out.textContent = 'tbt-click → main action (Save)'; });
+    sb.addEventListener('tbt-action', e => { out.textContent = `tbt-action → ${e.detail.value} — "${e.detail.label}"`; });
+  })();
+</script>
+
+<!-- ─── TOOLTIP ──────────────────────────────────── -->
+<h2 id="tooltip">tbt-tooltip</h2>
+<div class="demo-label">Placements</div>
+<div class="demo-row" style="padding:var(--tbt-space-8) var(--tbt-space-4)">
+  <tbt-tooltip content="Top tooltip (default)" placement="top">
+    <tbt-button variant="secondary">Top</tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Bottom tooltip" placement="bottom">
+    <tbt-button variant="secondary">Bottom</tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Left tooltip" placement="left">
+    <tbt-button variant="secondary">Left</tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Right tooltip" placement="right">
+    <tbt-button variant="secondary">Right</tbt-button>
+  </tbt-tooltip>
+</div>
+
+<div class="demo-label">Icon buttons with tooltip</div>
+<div class="demo-row">
+  <tbt-tooltip content="Save document (Ctrl+S)">
+    <tbt-button variant="primary" icon="device-floppy"></tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Print document">
+    <tbt-button variant="secondary" icon="printer"></tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Export as PDF">
+    <tbt-button variant="secondary" icon="file-type-pdf"></tbt-button>
+  </tbt-tooltip>
+  <tbt-tooltip content="Delete record" placement="bottom">
+    <tbt-button variant="danger" icon="trash"></tbt-button>
+  </tbt-tooltip>
+</div>
+
+<div class="demo-label">No delay</div>
+<div class="demo-row">
+  <tbt-tooltip content="Instant tooltip — delay=0" delay="0">
+    <tbt-button variant="ghost">Hover me</tbt-button>
+  </tbt-tooltip>
+</div>
+
+<!-- ─── POPOVER ──────────────────────────────────── -->
+<h2 id="popover">tbt-popover</h2>
+<div class="demo-label">Action menu</div>
+<div class="demo-row" style="padding-bottom:var(--tbt-space-8)">
+  <tbt-popover>
+    <tbt-button variant="secondary" icon="dots-vertical">More</tbt-button>
+    <div slot="content" style="padding:var(--tbt-space-1)">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <tbt-button variant="ghost" icon="edit" size="sm" style="justify-content:flex-start;width:100%">Edit</tbt-button>
+        <tbt-button variant="ghost" icon="copy" size="sm" style="justify-content:flex-start;width:100%">Duplicate</tbt-button>
+        <tbt-button variant="ghost" icon="printer" size="sm" style="justify-content:flex-start;width:100%">Print</tbt-button>
+        <hr style="border:none;border-top:1px solid var(--tbt-border);margin:4px 0">
+        <tbt-button variant="ghost" icon="trash" size="sm" style="justify-content:flex-start;width:100%;color:var(--tbt-danger)">Delete</tbt-button>
+      </div>
+    </div>
+  </tbt-popover>
+
+  <tbt-popover placement="top">
+    <tbt-button variant="secondary" icon="info-circle">Info</tbt-button>
+    <div slot="content" style="padding:var(--tbt-space-4)">
+      <p style="font-size:var(--tbt-size-sm);font-weight:var(--tbt-weight-semibold);color:var(--tbt-text-primary);margin:0 0 4px">About this field</p>
+      <p style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary);margin:0;max-width:240px">Calculated automatically based on the exchange rate at the time of document creation.</p>
+    </div>
+  </tbt-popover>
+
+  <tbt-popover placement="right">
+    <tbt-button variant="ghost" icon="filter">Quick filter</tbt-button>
+    <div slot="content" style="padding:var(--tbt-space-4);display:flex;flex-direction:column;gap:var(--tbt-space-3)">
+      <tbt-dropdown id="pop-dd" label="Status" placeholder="All statuses"></tbt-dropdown>
+      <tbt-button variant="primary" size="sm" icon="check">Apply</tbt-button>
+    </div>
+  </tbt-popover>
+</div>
+<script type="module">
+  document.getElementById('pop-dd').options = [
+    { value: 'all', label: 'All statuses' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'pending', label: 'Pending' },
+  ];
+</script>
+
 <!-- ─── BADGE ─────────────────────────────────────── -->
 <h2 id="badge">tbt-badge</h2>
 <div class="demo-row">
@@ -421,6 +549,64 @@
   <tbt-badge variant="neutral">Draft</tbt-badge>
   <tbt-badge variant="primary">Active</tbt-badge>
 </div>
+
+<!-- ─── CHIP ──────────────────────────────────────── -->
+<h2 id="chip">tbt-chip</h2>
+<div class="demo-label">Default — toggle</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)">
+  <tbt-chip id="ch-cat">All</tbt-chip>
+  <tbt-chip selected>Pending</tbt-chip>
+  <tbt-chip>Approved</tbt-chip>
+  <tbt-chip>Rejected</tbt-chip>
+</div>
+
+<div class="demo-label">Variants — selected</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)">
+  <tbt-chip variant="primary"  selected>Primary</tbt-chip>
+  <tbt-chip variant="success"  selected>Success</tbt-chip>
+  <tbt-chip variant="warning"  selected>Warning</tbt-chip>
+  <tbt-chip variant="danger"   selected>Danger</tbt-chip>
+  <tbt-chip variant="info"     selected>Info</tbt-chip>
+</div>
+
+<div class="demo-label">Sizes</div>
+<div style="display:flex;align-items:center;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)">
+  <tbt-chip size="sm">Small</tbt-chip>
+  <tbt-chip>Medium</tbt-chip>
+  <tbt-chip size="lg">Large</tbt-chip>
+</div>
+
+<div class="demo-label">With icon</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)">
+  <tbt-chip icon="circle-check" variant="success" selected>Approved</tbt-chip>
+  <tbt-chip icon="clock"        variant="warning" selected>Pending</tbt-chip>
+  <tbt-chip icon="x-circle"     variant="danger"  selected>Rejected</tbt-chip>
+</div>
+
+<div class="demo-label">Removable</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-4)" id="chip-removable-row">
+  <tbt-chip removable>design-system</tbt-chip>
+  <tbt-chip removable selected>web-components</tbt-chip>
+  <tbt-chip removable>lit</tbt-chip>
+</div>
+
+<div class="demo-label">Disabled</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2)">
+  <tbt-chip disabled>Disabled unselected</tbt-chip>
+  <tbt-chip disabled selected>Disabled selected</tbt-chip>
+</div>
+<div id="chip-output" style="margin-top:var(--tbt-space-3);font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">tbt-toggle → (click a chip)</div>
+<script type="module">
+  document.querySelectorAll('#chip-removable-row tbt-chip').forEach(chip => {
+    chip.addEventListener('tbt-remove', () => chip.remove());
+  });
+  document.querySelectorAll('tbt-chip:not([disabled])').forEach(chip => {
+    chip.addEventListener('tbt-toggle', e => {
+      document.getElementById('chip-output').textContent =
+        `tbt-toggle → selected: ${e.detail.selected}`;
+    });
+  });
+</script>
 
 <!-- ─── ALERT ─────────────────────────────────────── -->
 <h2 id="alert">tbt-alert</h2>
@@ -456,6 +642,37 @@
   <tbt-input label="Read only" value="Wichit Wongta" readonly></tbt-input>
   <tbt-input label="Disabled" value="Cannot edit" disabled></tbt-input>
 </div>
+
+<!-- ─── NUMBER INPUT ──────────────────────────────────── -->
+<h2 id="number-input">tbt-number-input</h2>
+<div class="form-grid">
+  <tbt-number-input label="Amount" value="1250000" prefix="฿" decimal="2" required></tbt-number-input>
+  <tbt-number-input label="Discount" suffix="%" decimal="2" step="0.5" min="0" max="100" value="7.5"></tbt-number-input>
+  <tbt-number-input label="Quantity" value="42" step="1" min="0" placeholder="Enter qty"></tbt-number-input>
+  <tbt-number-input label="Unit price" prefix="$" decimal="2" value="199.99"></tbt-number-input>
+  <tbt-number-input label="With error" prefix="฿" error="Amount must be greater than 0"></tbt-number-input>
+  <tbt-number-input label="With helper" prefix="฿" helper="Enter amount before VAT"></tbt-number-input>
+  <tbt-number-input label="Read only" prefix="฿" value="750000" decimal="2" readonly></tbt-number-input>
+  <tbt-number-input label="Disabled" prefix="฿" value="1000" disabled></tbt-number-input>
+</div>
+
+<!-- ─── TAG INPUT ────────────────────────────────────── -->
+<h2 id="tag-input">tbt-tag-input</h2>
+<div class="form-grid">
+  <tbt-tag-input id="ti1" label="Keywords" placeholder="Add keyword…" helper="Press Enter to add a tag"></tbt-tag-input>
+  <tbt-tag-input id="ti2" label="Labels (pre-filled)" placeholder="Add label…"></tbt-tag-input>
+  <tbt-tag-input label="Max 3 tags" max="3" placeholder="Up to 3 tags…" helper="Maximum 3 tags allowed"></tbt-tag-input>
+  <tbt-tag-input label="Required" required error="At least one tag is required"></tbt-tag-input>
+  <tbt-tag-input label="Disabled" disabled></tbt-tag-input>
+</div>
+<div id="ti1-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">tbt-change → (add or remove a tag)</div>
+<script type="module">
+  const ti2 = document.getElementById('ti2');
+  ti2.value = ['design-system', 'web-components', 'lit'];
+  document.getElementById('ti1').addEventListener('tbt-change', e => {
+    document.getElementById('ti1-output').textContent = `tbt-change → values: [${e.detail.values.join(', ')}]`;
+  });
+</script>
 
 <!-- ─── TEXTAREA ─────────────────────────────────────── -->
 <h2 id="textarea">tbt-textarea</h2>
@@ -639,6 +856,86 @@
   <tbt-toggle label="Auto-approve" label-on="Enabled" label-off="Disabled"></tbt-toggle>
   <tbt-toggle label="Disabled off" disabled></tbt-toggle>
   <tbt-toggle label="Disabled on" disabled checked></tbt-toggle>
+</div>
+
+<!-- ─── COLOR PICKER ─────────────────────────────────── -->
+<h2 id="color-picker">tbt-color-picker</h2>
+<div style="display:flex;flex-direction:column;gap:var(--tbt-space-4);padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-color-picker id="cp1" label="Category color" value="#0D1171"></tbt-color-picker>
+  <tbt-color-picker label="No value"></tbt-color-picker>
+  <tbt-color-picker label="With custom input" allow-custom></tbt-color-picker>
+  <tbt-color-picker label="Required" required></tbt-color-picker>
+  <tbt-color-picker label="With error" error="Color is required"></tbt-color-picker>
+  <tbt-color-picker label="Disabled" value="#10B981" disabled></tbt-color-picker>
+  <div id="cp1-output" style="font-size:var(--tbt-size-sm);color:var(--tbt-text-secondary)">tbt-change → (click a swatch)</div>
+</div>
+<script>
+  document.getElementById('cp1').addEventListener('tbt-change', e => {
+    document.getElementById('cp1-output').textContent = `tbt-change → ${e.detail.value}`;
+  });
+</script>
+
+<!-- ─── LIST ─────────────────────────────────────── -->
+<h2 id="list">tbt-list + tbt-list-item</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--tbt-space-6)">
+  <div>
+    <div class="demo-label">Default with icons</div>
+    <div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:0 var(--tbt-space-5)">
+      <tbt-list divided>
+        <tbt-list-item icon="user"        label="Name"       value="Wichit Wongta"></tbt-list-item>
+        <tbt-list-item icon="mail"        label="Email"      value="wichit@teibto.com"></tbt-list-item>
+        <tbt-list-item icon="phone"       label="Phone"      value="+66 81 234 5678"></tbt-list-item>
+        <tbt-list-item icon="building"    label="Department" value="Finance"></tbt-list-item>
+        <tbt-list-item icon="map-pin"     label="Location"   value="Bangkok, Thailand"></tbt-list-item>
+      </tbt-list>
+    </div>
+  </div>
+
+  <div>
+    <div class="demo-label">Rich values + actions</div>
+    <div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:0 var(--tbt-space-5)">
+      <tbt-list divided>
+        <tbt-list-item label="Document No." value="PO-2569-0042"></tbt-list-item>
+        <tbt-list-item label="Status">
+          <tbt-badge variant="warning">Pending approval</tbt-badge>
+        </tbt-list-item>
+        <tbt-list-item label="Amount" value="฿107,000.00"></tbt-list-item>
+        <tbt-list-item label="Created by" value="Wichit Wongta">
+          <tbt-button slot="action" variant="ghost" icon="external-link" size="sm"></tbt-button>
+        </tbt-list-item>
+        <tbt-list-item label="Notes" value="—" muted></tbt-list-item>
+      </tbt-list>
+    </div>
+  </div>
+</div>
+
+<div class="demo-label" style="margin-top:var(--tbt-space-5)">Compact</div>
+<div style="background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);padding:0 var(--tbt-space-5);max-width:360px">
+  <tbt-list compact divided>
+    <tbt-list-item label="Script ID"  value="customscript_tbt_po_sl"></tbt-list-item>
+    <tbt-list-item label="Deploy"     value="customdeploy_tbt_po_sl"></tbt-list-item>
+    <tbt-list-item label="Type"       value="Suitelet"></tbt-list-item>
+    <tbt-list-item label="Status">
+      <tbt-badge variant="success">Released</tbt-badge>
+    </tbt-list-item>
+  </tbt-list>
+</div>
+
+<!-- ─── STAT ─────────────────────────────────────────── -->
+<h2 id="stat">tbt-stat</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-6)">
+  <tbt-stat label="Total revenue" value="฿1,200,000" trend="+12% vs last month" icon="cash" variant="primary"></tbt-stat>
+  <tbt-stat label="Orders" value="348" trend="+8 this week" icon="shopping-cart" variant="success"></tbt-stat>
+  <tbt-stat label="Overdue invoices" value="12" trend="-3 resolved" icon="file-invoice" variant="warning"></tbt-stat>
+  <tbt-stat label="Returns" value="5" trend="+2 vs last week" icon="arrow-back-up" variant="danger"></tbt-stat>
+  <tbt-stat label="Pending approvals" value="7" trend="0 change" icon="clock" variant="info"></tbt-stat>
+  <tbt-stat label="Customers" value="1,042" icon="users"></tbt-stat>
+</div>
+<div class="demo-label">No trend / no icon</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-stat label="Revenue" value="฿980,000"></tbt-stat>
+  <tbt-stat label="No data yet"></tbt-stat>
+  <tbt-stat label="Down this quarter" value="฿250K" trend="-18%" trend-variant="danger" icon="trending-down" variant="danger"></tbt-stat>
 </div>
 
 <!-- ─── FIELD + FIELD-GRID ─────────────────────────── -->
@@ -856,6 +1153,76 @@
   });
 </script>
 
+<!-- ─── DRAWER ──────────────────────────────────────── -->
+<h2 id="drawer">tbt-drawer</h2>
+<div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2);margin-bottom:var(--tbt-space-3)">
+  <tbt-button variant="secondary" icon="layout-sidebar-right" id="open-drawer-right">Right (default)</tbt-button>
+  <tbt-button variant="secondary" icon="layout-sidebar"      id="open-drawer-left">Left</tbt-button>
+  <tbt-button variant="secondary" icon="layout-bottombar"    id="open-drawer-bottom">Bottom</tbt-button>
+  <tbt-button variant="secondary" icon="arrows-maximize"     id="open-drawer-lg">Large</tbt-button>
+</div>
+
+<tbt-drawer id="drawer-right" title="Filter options">
+  <div style="display:flex;flex-direction:column;gap:var(--tbt-space-4)">
+    <tbt-dropdown id="drawer-status" label="Status" placeholder="All statuses"></tbt-dropdown>
+    <tbt-datepicker label="Date from"></tbt-datepicker>
+    <tbt-datepicker label="Date to"></tbt-datepicker>
+  </div>
+  <tbt-button slot="footer" variant="primary" icon="filter">Apply filters</tbt-button>
+  <tbt-button slot="footer" variant="secondary" id="drawer-right-close">Cancel</tbt-button>
+</tbt-drawer>
+
+<tbt-drawer id="drawer-left" title="Navigation" placement="left" size="sm">
+  <div style="display:flex;flex-direction:column;gap:var(--tbt-space-2)">
+    <tbt-button variant="ghost" icon="home">Dashboard</tbt-button>
+    <tbt-button variant="ghost" icon="file-invoice">Invoices</tbt-button>
+    <tbt-button variant="ghost" icon="shopping-cart">Sales orders</tbt-button>
+  </div>
+</tbt-drawer>
+
+<tbt-drawer id="drawer-bottom" title="Quick actions" placement="bottom" size="sm">
+  <div style="display:flex;flex-wrap:wrap;gap:var(--tbt-space-2)">
+    <tbt-button variant="primary" icon="printer">Print</tbt-button>
+    <tbt-button variant="secondary" icon="mail">Email</tbt-button>
+    <tbt-button variant="secondary" icon="download">Export PDF</tbt-button>
+  </div>
+</tbt-drawer>
+
+<tbt-drawer id="drawer-lg" title="Document details" size="lg">
+  <tbt-field-grid columns="2">
+    <tbt-field label="Document No." value="PO-2569-0042"></tbt-field>
+    <tbt-field label="Vendor" value="บจก. เทสโต้ ซัพพลาย"></tbt-field>
+    <tbt-field label="Date" value="21 May 2026"></tbt-field>
+    <tbt-field label="Status"><tbt-badge variant="warning">Pending approval</tbt-badge></tbt-field>
+    <tbt-field label="Amount" value="฿107,000.00"></tbt-field>
+  </tbt-field-grid>
+  <tbt-button slot="footer" variant="primary" icon="circle-check">Approve</tbt-button>
+  <tbt-button slot="footer" variant="danger"  icon="x">Reject</tbt-button>
+  <tbt-button slot="footer" variant="secondary" id="drawer-lg-close">Close</tbt-button>
+</tbt-drawer>
+
+<script type="module">
+  const drawers = {
+    right:  document.getElementById('drawer-right'),
+    left:   document.getElementById('drawer-left'),
+    bottom: document.getElementById('drawer-bottom'),
+    lg:     document.getElementById('drawer-lg'),
+  };
+  document.getElementById('open-drawer-right').addEventListener('click',  () => drawers.right.open  = true);
+  document.getElementById('open-drawer-left').addEventListener('click',   () => drawers.left.open   = true);
+  document.getElementById('open-drawer-bottom').addEventListener('click', () => drawers.bottom.open = true);
+  document.getElementById('open-drawer-lg').addEventListener('click',     () => drawers.lg.open     = true);
+  document.getElementById('drawer-right-close').addEventListener('click', () => drawers.right.open  = false);
+  document.getElementById('drawer-lg-close').addEventListener('click',    () => drawers.lg.open     = false);
+  Object.values(drawers).forEach(d => d.addEventListener('tbt-close', () => d.open = false));
+  document.getElementById('drawer-status').options = [
+    { value: 'all', label: 'All statuses' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'rejected', label: 'Rejected' },
+  ];
+</script>
+
 <!-- ─── MENUBAR ─────────────────────────────────────── -->
 <h2 id="menubar">tbt-menubar</h2>
 <div style="border-radius:var(--tbt-radius-lg);overflow:hidden;box-shadow:var(--tbt-shadow-md)">
@@ -1030,6 +1397,66 @@
   document.getElementById('subtab-audit').entries = sampleLog;
 </script>
 
+<!-- ─── TIMELINE ─────────────────────────────────────────── -->
+<h2 id="timeline">tbt-timeline</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--tbt-space-6)">
+  <div>
+    <div class="demo-label">Full detail</div>
+    <tbt-timeline id="tl-full" max-height="380px"></tbt-timeline>
+  </div>
+  <div>
+    <div class="demo-label">Compact</div>
+    <tbt-timeline id="tl-compact" compact max-height="380px"></tbt-timeline>
+  </div>
+</div>
+<script type="module">
+  const tlEntries = [
+    { label: 'Document created',    timestamp: new Date(Date.now() - 3*86400000).toISOString(), user: 'Wichit Wongta',  icon: 'file-plus',    variant: 'primary' },
+    { label: 'Vendor updated',      timestamp: new Date(Date.now() - 2*86400000).toISOString(), user: 'Wichit Wongta',  icon: 'edit',         variant: 'neutral',
+      content: 'Vendor changed from ABC Co. to XYZ Co., Ltd.' },
+    { label: 'Submitted',           timestamp: new Date(Date.now() - 28*3600000).toISOString(), user: 'Wichit Wongta',  icon: 'send',         variant: 'info' },
+    { label: 'Revision requested',  timestamp: new Date(Date.now() - 6*3600000).toISOString(),  user: 'Manager Somchai', icon: 'arrow-back-up', variant: 'warning',
+      content: 'Please clarify line item 3 unit price' },
+    { label: 'Resubmitted',         timestamp: new Date(Date.now() - 3*3600000).toISOString(),  user: 'Wichit Wongta',  icon: 'send',         variant: 'info' },
+    { label: 'Approved',            timestamp: new Date(Date.now() - 60*60000).toISOString(),   user: 'Manager Somchai', icon: 'circle-check', variant: 'success',
+      content: 'Approved — proceed with payment' },
+  ];
+  document.getElementById('tl-full').entries    = tlEntries;
+  document.getElementById('tl-compact').entries = tlEntries;
+</script>
+
+<!-- ─── EMPTY STATE ──────────────────────────────────────── -->
+<h2 id="empty-state">tbt-empty-state</h2>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--tbt-space-4)">
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">Default (no props)</div>
+    <tbt-empty-state></tbt-empty-state>
+  </div>
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">Custom icon + description</div>
+    <tbt-empty-state
+      icon="file-search"
+      title="No documents found"
+      description="Try adjusting your filters or create a new document.">
+    </tbt-empty-state>
+  </div>
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">With actions slot</div>
+    <tbt-empty-state icon="plus-circle" title="No items yet" description="Start by creating your first item.">
+      <tbt-button slot="actions" variant="primary" icon="plus">Create new</tbt-button>
+      <tbt-button slot="actions" variant="secondary">Import</tbt-button>
+    </tbt-empty-state>
+  </div>
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">Size sm</div>
+    <tbt-empty-state icon="search" title="No results" description="Try a different search term." size="sm"></tbt-empty-state>
+  </div>
+  <div style="border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);overflow:hidden">
+    <div class="demo-label">Size lg</div>
+    <tbt-empty-state icon="database-off" title="No records" description="Your database is empty." size="lg"></tbt-empty-state>
+  </div>
+</div>
+
 <!-- ─── BREADCRUMB ──────────────────────────────────────── -->
 <h2 id="breadcrumb">tbt-breadcrumb</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-3)">
@@ -1057,6 +1484,28 @@
 <script type="module">
   const p = document.getElementById('pag1');
   p.addEventListener('tbt-page-change', e => { p.page = e.detail.page; });
+</script>
+
+<!-- ─── PROGRESS ─────────────────────────────────────────── -->
+<h2 id="progress">tbt-progress</h2>
+<div style="display:flex;flex-direction:column;gap:var(--tbt-space-4);max-width:520px;padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-progress id="prog-demo" value="65" label="Uploading attachment…" show-value></tbt-progress>
+  <tbt-progress value="100" variant="success" label="Import complete" show-value></tbt-progress>
+  <tbt-progress value="40"  variant="warning" label="Storage almost full" show-value></tbt-progress>
+  <tbt-progress value="20"  variant="danger"  label="Validation failed"  show-value></tbt-progress>
+  <tbt-progress indeterminate label="Processing batch…"></tbt-progress>
+  <tbt-progress value="50" size="sm" label="Small" show-value></tbt-progress>
+  <tbt-progress value="50" size="md" label="Medium (default)" show-value></tbt-progress>
+  <tbt-progress value="50" size="lg" label="Large" show-value></tbt-progress>
+</div>
+<script>
+  (function () {
+    let v = 65;
+    setInterval(() => {
+      v = v >= 100 ? 0 : v + 5;
+      document.getElementById('prog-demo').value = v;
+    }, 600);
+  })();
 </script>
 
 <!-- ─── SKELETON ─────────────────────────────────────────── -->

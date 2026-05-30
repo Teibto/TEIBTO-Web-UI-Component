@@ -81,6 +81,14 @@ async function build() {
     path.join(DIST, 'tbt-theme.css')
   );
 
+  // tbt-page-runtime.js — shared client-side helpers for body templates.
+  // Authored directly in dist/ since it's a static helper (no transform needed).
+  // Verify it exists; warn loudly if missing.
+  const runtimePath = path.join(DIST, 'tbt-page-runtime.js');
+  if (!fs.existsSync(runtimePath)) {
+    console.warn('⚠ dist/tbt-page-runtime.js missing — expected hand-authored helper');
+  }
+
   // Size report
   const jsPath = path.join(DIST, 'tbt-ds.min.js');
   const rawKb = (fs.statSync(jsPath).size / 1024).toFixed(1);

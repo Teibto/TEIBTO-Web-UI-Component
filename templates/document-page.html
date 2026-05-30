@@ -1,0 +1,77 @@
+<!--
+  document-page.html — standard ERP document page body template.
+
+  Copy this fragment into a SuiteScript file as a template string and pass it
+  as `opts.body` to tbt_page.render(). Window-scoped `__DATA__` is injected
+  by the helper from `opts.data`.
+
+  Required keys on window.__DATA__:
+    tranId, vendor, date, dueDate, status, lines[]
+
+  Layout:
+    Page header → document info (field-grid) → line items → action bar
+-->
+
+<!-- Page header -->
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">Purchase order · <span id="hdr-tranid"></span></div>
+      <div class="tbt-page-header__subtitle">Created by <span id="hdr-author"></span></div>
+    </div>
+    <tbt-badge id="hdr-status" variant="warning">Pending</tbt-badge>
+  </div>
+</tbt-section>
+
+<!-- Document info -->
+<tbt-section title="Document info">
+  <tbt-field-grid columns="4">
+    <tbt-field id="f-tranid" label="Document no."></tbt-field>
+    <tbt-field id="f-vendor" label="Vendor"></tbt-field>
+    <tbt-field id="f-date"   label="Date"></tbt-field>
+    <tbt-field id="f-due"    label="Due date"></tbt-field>
+  </tbt-field-grid>
+</tbt-section>
+
+<!-- Line items + auto totals -->
+<tbt-lines-block
+  id="lines"
+  title="Line items"
+  add-label="Add line"
+  currency="฿"
+  vat-rate="0.07"
+  max-height="320px">
+</tbt-lines-block>
+
+<!-- Action bar -->
+<div class="tbt-action-bar">
+  <tbt-button id="save-btn"   variant="primary"   icon="save">Save</tbt-button>
+  <tbt-button id="submit-btn" variant="secondary" icon="submit">Submit for approval</tbt-button>
+  <tbt-button id="print-btn"  variant="secondary" icon="print">Print</tbt-button>
+  <tbt-button id="cancel-btn" variant="ghost"     icon="cancel">Cancel</tbt-button>
+</div>
+
+<script type="module">
+  const d = window.__DATA__;
+
+  document.getElementById('hdr-tranid').textContent = d.tranId;
+  document.getElementById('hdr-author').textContent = d.author || '';
+  document.getElementById('hdr-status').textContent = d.status || 'Pending';
+
+  document.getElementById('f-tranid').value = d.tranId;
+  document.getElementById('f-vendor').value = d.vendor;
+  document.getElementById('f-date').value   = d.date;
+  document.getElementById('f-due').value    = d.dueDate;
+
+  const lines = document.getElementById('lines');
+  lines.rows = d.lines || [];
+  lines.addEventListener('tbt-change', (e) => {
+    console.log('lines changed:', e.detail.total);
+  });
+
+  document.getElementById('save-btn').addEventListener('click', async () => {
+    const payload = { tranId: d.tranId, lines: lines.rows };
+    // POST payload to RESTlet here
+    console.log('save', payload);
+  });
+</script>

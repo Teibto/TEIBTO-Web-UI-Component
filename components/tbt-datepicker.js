@@ -33,6 +33,7 @@ class TbtDatepicker extends LitElement {
     max:      { type: String },
     required: { type: Boolean, reflect: true },
     disabled: { type: Boolean, reflect: true },
+    readonly: { type: Boolean, reflect: true },
     error:    { type: String, reflect: true },
     helper:   { type: String }
   };
@@ -70,6 +71,7 @@ class TbtDatepicker extends LitElement {
     }
     :host([error]) input { border-color: var(--tbt-danger); }
     :host([disabled]) input { background: var(--tbt-bg-hover); cursor: not-allowed; opacity: 0.65; }
+    :host([readonly]) input { background: var(--tbt-bg-hover); cursor: default; pointer-events: none; }
     .error-msg { margin-top: var(--tbt-space-1); font-size: var(--tbt-size-xs);
       color: var(--tbt-danger-text); display: flex; align-items: center; gap: 4px; }
     .error-icon { font-size: 12px; }
@@ -104,6 +106,7 @@ class TbtDatepicker extends LitElement {
           aria-describedby=${this.error ? 'dp-error' : this.helper ? 'dp-helper' : nothing}
           ?required=${this.required}
           ?disabled=${this.disabled}
+          ?readonly=${this.readonly}
           @change=${this._onChange}>
       </div>
       ${this.error ? html`

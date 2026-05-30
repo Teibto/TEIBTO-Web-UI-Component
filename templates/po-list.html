@@ -1,0 +1,140 @@
+<!-- po-list.html — Purchase order list. -->
+
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">Purchase orders</div>
+      <div class="tbt-page-header__subtitle">All purchase orders across vendors</div>
+    </div>
+    <tbt-badge id="hdr-count" variant="primary">0</tbt-badge>
+  </div>
+</tbt-section>
+
+<tbt-section title="Filters">
+  <tbt-field-grid columns="3">
+    <tbt-dropdown   id="f-vendor"  name="vendor" label="Vendor" searchable></tbt-dropdown>
+    <tbt-date-range id="f-period"  name-from="from" name-to="to" label="Period"></tbt-date-range>
+    <tbt-dropdown   id="f-status"  name="status" label="Status"></tbt-dropdown>
+  </tbt-field-grid>
+</tbt-section>
+
+<tbt-section title="Summary">
+  <div class="tbt-stats-grid">
+    <tbt-stat id="stat-total"    label="Total POs"        variant="primary" icon="purchase-order"></tbt-stat>
+    <tbt-stat id="stat-value"    label="Total value"      variant="success" icon="money"></tbt-stat>
+    <tbt-stat id="stat-pending"  label="Pending approval" variant="warning" icon="pending"></tbt-stat>
+    <tbt-stat id="stat-approved" label="Approved"         variant="info"    icon="approve"></tbt-stat>
+  </div>
+</tbt-section>
+
+<tbt-section title="Orders">
+  <div slot="actions" style="display:flex;align-items:center;gap:var(--tbt-space-3)">
+    <tbt-search id="f-search" placeholder="Search PO no…" debounce="300"></tbt-search>
+    <tbt-button id="new-btn" variant="primary" icon="add" size="sm">New purchase order</tbt-button>
+  </div>
+  <tbt-table id="rec-table" paginate page-size="20" responsive max-height="420px" pref-key="po-list"></tbt-table>
+</tbt-section>
+
+<div class="tbt-action-bar">
+  <tbt-button id="export-btn" variant="primary"   icon="export">Export CSV</tbt-button>
+  <tbt-button id="print-btn"  variant="secondary" icon="print">Print</tbt-button>
+</div>
+
+<script type="module">
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+
+  const fVendor = document.getElementById('f-vendor');
+  const fStatus = document.getElementById('f-status');
+  const fSearch = document.getElementById('f-search');
+  fVendor.options = [{ value: '', label: 'All vendors' }, ...d.vendors];
+  fStatus.options = [{ value: '', label: 'All statuses' }, ...d.statuses];
+  fVendor.value = fStatus.value = '';
+
+  const STATUS_VARIANT = { Draft: 'warning', 'Pending approval': 'info', Approved: 'success', Rejected: 'danger' };
+  const statusBadge = (s) => `<tbt-badge variant="${STATUS_VARIANT[s] || 'neutral'}">${s}</tbt-badge>`;
+
+  function recomputeStats(rows) {
+    const value     = rt.sumBy(rows, 'amount');
+    const pending   = rows.filter(r => r.status === 'Pending approval').length;
+    const approved  = rows.filter(r => r.status === 'Approved').length;
+    document.getElementById('stat-total').value    = String(rows.length);
+    document.getElementById('stat-value').value    = rt.currency(value);
+    document.getElementById('stat-pending').value  = String(pending);
+    document.getElementById('stat-approved').value = String(approved);
+    document.getElementById('hdr-count').textContent = rows.length + ' orders';
+  }
+
+  const table = document.getElementById('rec-table');
+  table.columns = [
+    { key: 'no',          label: 'No.',        align: 'right', resizable: false },
+    { key: 'tranid',      label: 'PO no.',     sortable: true, mobileTitle: true,
+      href: row => `${d.formUrl}?id=${row.id}` },
+    { key: 'vendor',      label: 'Vendor',     sortable: true },
+    { key: 'date',        label: 'Date',       sortable: true },
+    { key: 'due',         label: 'Due',        sortable: true },
+    { key: 'amountText',  label: 'Amount',     align: 'right', sortable: true },
+    { key: 'statusBadge', label: 'Status',     align: 'center', html: true },
+    { key: 'actions',     label: 'Actions',    align: 'center', html: true, resizable: false },
+  ];
+
+  function renderRows(rows) {
+    table.rows = rows.map((r, i) => ({
+      ...r,
+      no:          i + 1,
+      amountText:  rt.currency(r.amount),
+      statusBadge: statusBadge(r.status),
+      actions:     rt.rowActions(r.id),
+    }));
+    recomputeStats(rows);
+  }
+
+  function applyFilter() {
+    const v = fVendor.value, st = fStatus.value;
+    const q = (fSearch.value || '').toLowerCase();
+    renderRows((d.records || []).filter(r =>
+      (!v  || r.vendorId === v) &&
+      (!st || r.status   === st) &&
+      (!q  || r.tranid.toLowerCase().includes(q))
+    ));
+  }
+  [fVendor, fStatus].forEach(el => el.addEventListener('tbt-change', applyFilter));
+  fSearch.addEventListener('tbt-search', applyFilter);
+  applyFilter();
+
+  table.addEventListener('tbt-row-click', (e) => {
+    location.href = `${d.formUrl}?id=${e.detail.row.id}`;
+  });
+  rt.wireRowActions(table, {
+    onView:   (id) => { location.href = `${d.formUrl}?id=${id}`; },
+    onEdit:   (id) => { location.href = `${d.formUrl}?id=${id}&mode=edit`; },
+    onDelete: async (id) => {
+      const ds = await import('/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-ds.min.js');
+      const ok = await ds.confirm({
+        title: 'Delete purchase order?',
+        message: `Permanently delete ${(d.records || []).find(r => String(r.id) === String(id))?.tranid || id}?`,
+        confirmLabel: 'Delete',
+        variant: 'danger',
+      });
+      if (!ok) return;
+      d.records = d.records.filter(r => String(r.id) !== String(id));
+      applyFilter();
+    },
+  });
+  document.getElementById('new-btn').addEventListener('click', () => {
+    location.href = `${d.formUrl}?id=new`;
+  });
+
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const csv = ['PO no.,Vendor,Date,Due,Amount,Status', ...d.records.map(r =>
+      `"${r.tranid}","${r.vendor}","${r.date}","${r.due}",${r.amount},"${r.status}"`
+    )].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'purchase-orders-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('print-btn').addEventListener('click', () => window.print());
+</script>

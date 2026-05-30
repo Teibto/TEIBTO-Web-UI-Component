@@ -38,6 +38,7 @@ class TbtDropdown extends LitElement {
     options:     { type: Array },
     required:    { type: Boolean, reflect: true },
     disabled:    { type: Boolean, reflect: true },
+    readonly:    { type: Boolean, reflect: true },
     error:       { type: String, reflect: true },
     searchable:  { type: Boolean },
     _open:       { state: true },
@@ -68,6 +69,11 @@ class TbtDropdown extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     document.removeEventListener('click', this._onOutside);
+    if (this._repositionBound) {
+      window.removeEventListener('scroll', this._repositionBound, true);
+      window.removeEventListener('resize', this._repositionBound);
+      this._repositionBound = null;
+    }
   }
 
   updated(changed) {
@@ -81,11 +87,55 @@ class TbtDropdown extends LitElement {
         });
       }
       if (!this._open) this._activeIdx = -1;
+      // Promote popup into the browser top layer via the HTML5 Popover API.
+      // Top-layer elements escape ALL ancestor stacking contexts and overflow
+      // clipping, while staying inside shadow DOM (so CSS rules still apply).
+      // Browser support: Chrome 114+, Firefox 125+, Safari 17+.
+      if (this.searchable) {
+        const popup = this.shadowRoot?.querySelector('.dropdown');
+        if (this._open) {
+          if (popup) {
+            if (!popup.hasAttribute('popover')) popup.setAttribute('popover', 'manual');
+            try { popup.showPopover(); } catch (_) {}
+          }
+          this._positionPopup();
+          this._repositionBound = () => this._positionPopup();
+          window.addEventListener('scroll', this._repositionBound, true);
+          window.addEventListener('resize', this._repositionBound);
+        } else {
+          if (popup) { try { popup.hidePopover(); } catch (_) {} }
+          if (this._repositionBound) {
+            window.removeEventListener('scroll', this._repositionBound, true);
+            window.removeEventListener('resize', this._repositionBound);
+            this._repositionBound = null;
+          }
+        }
+      }
+    }
+  }
+
+  _positionPopup() {
+    const trigger = this.shadowRoot?.querySelector('.trigger');
+    const popup   = this.shadowRoot?.querySelector('.dropdown');
+    if (!trigger || !popup) return;
+    const rect = trigger.getBoundingClientRect();
+    const spaceBelow  = window.innerHeight - rect.bottom;
+    const popupHeight = Math.min(popup.scrollHeight || 240, 240);
+    const flipUp = spaceBelow < popupHeight + 8 && rect.top > popupHeight;
+    popup.style.left   = `${rect.left}px`;
+    popup.style.width  = `${rect.width}px`;
+    popup.style.zIndex = '9999';
+    if (flipUp) {
+      popup.style.top    = '';
+      popup.style.bottom = `${window.innerHeight - rect.top + 4}px`;
+    } else {
+      popup.style.bottom = '';
+      popup.style.top    = `${rect.bottom + 4}px`;
     }
   }
 
   _toggleOpen() {
-    if (!this.disabled) this._open = !this._open;
+    if (!this.disabled && !this.readonly) this._open = !this._open;
   }
 
   _pick(val) {
@@ -185,6 +235,7 @@ class TbtDropdown extends LitElement {
     select.placeholder-selected { color: var(--tbt-text-muted); }
     :host([error]) select { border-color: var(--tbt-danger); }
     :host([disabled]) select { background: var(--tbt-bg-hover); cursor: not-allowed; opacity: 0.65; }
+    :host([readonly]) select { background: var(--tbt-bg-hover); cursor: default; pointer-events: none; }
     .chevron {
       position: absolute;
       right: var(--tbt-space-3);
@@ -208,6 +259,7 @@ class TbtDropdown extends LitElement {
     :host { position: relative; }
     .trigger {
       display: flex; align-items: center; min-height: 38px;
+      box-sizing: border-box;   /* match <select> sizing so searchable vs native dropdown have equal height */
       padding: 8px var(--tbt-space-8) 8px var(--tbt-space-3);
       background: var(--tbt-bg-card);
       border: 1px solid var(--tbt-border);
@@ -223,12 +275,24 @@ class TbtDropdown extends LitElement {
     .trigger.is-placeholder { color: var(--tbt-text-muted); }
     :host([error]) .trigger { border-color: var(--tbt-danger); }
     :host([disabled]) .trigger { background: var(--tbt-bg-hover); cursor: not-allowed; opacity: 0.65; }
+    :host([readonly]) .trigger { background: var(--tbt-bg-hover); cursor: default; pointer-events: none; }
     .dropdown {
-      display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      display: none;
+      /* position: fixed + top-layer via popover attribute (set in JS).
+         Top/left/width are set in JS from trigger's rect. Popover takes
+         the element to browser top layer → escapes ALL stacking contexts
+         and overflow boundaries, no portaling required.
+         CRITICAL: browser default for [popover] is inset:0 + margin:auto
+         which centers the popup in the viewport. We must clear all four
+         insets so our inline top/left actually positions the popup. */
+      position: fixed;
+      inset: auto;          /* clears browser default inset:0 */
       background: var(--tbt-bg-card); border: 1px solid var(--tbt-border);
       border-radius: var(--tbt-radius-md); box-shadow: var(--tbt-shadow-md);
-      z-index: var(--tbt-z-dropdown); max-height: 240px; overflow-y: auto;
+      z-index: 9999; max-height: 240px; overflow-y: auto;
+      margin: 0; padding: 0; color: var(--tbt-text-primary);
     }
+    .dropdown:popover-open { display: block; }
     :host([open]) .dropdown { display: block; }
     .option {
       display: flex; align-items: center; gap: var(--tbt-space-2);
@@ -331,7 +395,7 @@ class TbtDropdown extends LitElement {
           aria-controls=${listboxId}
           aria-owns=${listboxId}
           aria-activedescendant=${activeId}
-          tabindex=${this.disabled ? '-1' : '0'}
+          tabindex=${this.disabled || this.readonly ? '-1' : '0'}
           @click=${this._toggleOpen}
           @keydown=${this._onTriggerKeydown}>
           ${selected ? selected.label : this.placeholder}

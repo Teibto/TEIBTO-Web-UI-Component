@@ -7,6 +7,225 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Added
+
+- **Page composition utility classes** in `theme/tbt-theme.css` — token-only, no hex. Lets Suitelet body templates drop inline-style duplication:
+  - `.tbt-page-header` + `.tbt-page-header__title` + `.tbt-page-header__subtitle`
+  - `.tbt-stats-grid` — auto-fit grid for `tbt-stat` cards
+  - `.tbt-action-bar` — bottom button row with top divider
+  - `.tbt-modal-actions` — right-aligned modal footer buttons
+  - `.tbt-page-alerts` — wrapper around stacked `tbt-alert` pair
+- **`dist/tbt-page-runtime.js`** — shared client-side helper (`window.tbtPageRuntime`), auto-loaded by `tbt_page.render()`. Exposes:
+  - `currency(n, prefix='฿')` · `setStatusBadge(el, label)` · `showAlert(id, msg)` · `hideAlerts(...ids)` · `post(url, payload)` · `sumBy(rows, field)`
+- **`templates/_mock_lookups.js`** — shared mock lookup module (employees, currencies, subsidiaries, payment-terms, vendors, customers, etc.) so kit/starter Suitelets import via `define([…, './_mock_lookups'], …)` instead of duplicating arrays per file. Replace each list with N/search in production.
+
+### Changed
+
+- **`tbt-sidebar`** (v1.43.0) — added `brand` + `footer` slots; merged collapse toggle into the brand row to save vertical space. Backward-compatible: existing usages without brand/footer render unchanged.
+- **`tbt-app-shell`** (v1.43.0) — drawer + backdrop top offset uses `var(--tbt-menubar-height, 56px)` so pages without a menubar can set `--tbt-menubar-height: 0`.
+- **`netsuite/tbt_page.js`** — menubar removed; user info + theme toggle moved into the sidebar footer; floating hamburger button replaces menubar trigger on mobile (≤768px).
+- Refactored all 9 body templates to use utility classes + `tbtPageRuntime`. Net reduction: ~120 lines of duplicated inline style + helper functions across the suite.
+
+### Added
+
+- **`templates/time-tracking-*` + `sl_tt_*.js` — full Time tracking module.** Three Suitelets that compose a complete workflow on top of the standard Teibto layout, using only DS components and `var(--tbt-*)` tokens.
+  - `sl_tt_entry.js` + `time-tracking-entry.html` — Employee weekly entry: header + filters + summary stats + entries table (modal-driven add/edit) + approval flow + Save / Submit action bar.
+  - `sl_tt_approval.js` + `time-tracking-approval.html` — Manager queue: filters + summary + pending list (row-click → detail modal with full entry breakdown + Approve / Reject).
+  - `sl_tt_report.js` + `time-tracking-report.html` — Reporting dashboard: filters + KPI strip (utilization, billable, capacity, overtime) + top projects table + activity log + Export CSV / Print.
+- **`netsuite/tbt_page.js`** — added `time-tracking` to `DEFAULT_SIDEBAR` (icon: `time`).
+- **`templates/kit-*` — ready-to-use schema-driven kits.**
+  - `kit-doc.html` — universal `<tbt-doc-form>` body that picks a schema by name from the DS bundle, wires `tbt-submit` → POST to `restletUrl`, and shows success/error via `tbt-alert`.
+  - `sl_kit_customer.js` → `CUSTOMER_SCHEMA` — profile, contact, billing/shipping address, terms.
+  - `sl_kit_sales_order.js` → `SALES_ORDER_SCHEMA` — doc info, shipping, lines, approval.
+  - `sl_kit_purchase_order.js` → `PO_SCHEMA` — doc info, lines, approval, audit.
+  - Each kit thin entry only carries `record` + `optionLists` + `restletUrl`; layout, fields, icons, colors, and field widgets all come from DS — nothing outside the design system is referenced.
+- **`netsuite/tbt_page.js`** — server-side Suitelet page helper (SuiteScript 2.1 Fat Module). One `tbtPage.render({ title, active, data, body })` call emits the full `<head>` (theme CSS + bundled `tbt-ds.min.js`), `tbt-app-shell` + `tbt-menubar` + `tbt-sidebar` wrap, and a safely-escaped `window.__DATA__` injection. No per-page boilerplate.
+  - `DS_VERSION` constant — single source of truth for File Cabinet URLs. Bumping the DS = edit one line.
+  - Default menu + sidebar items (`opts.menu`, `opts.sidebar` to override per page).
+  - JSON injection escapes `</`, `<!--`, `-->`, U+2028, U+2029 — safe against script-tag and HTML-comment breakout.
+  - Throws `error.create({ name: 'TBT_PAGE_MISSING_ARG', … })` on missing `title` or `body` — surfaces, never silent-defaults.
+- **`templates/`** — three copy-paste page bodies + matching thin-entry Suitelets:
+  - `document-page.html` / `sl_starter_document.js` — header + field-grid + lines-block + action bar.
+  - `list-page.html` / `sl_starter_list.js` — search + new button + paginated `tbt-table`.
+  - `dashboard.html` / `sl_starter_dashboard.js` — KPI strip (`tbt-stat`) + pending tasks + audit log.
+- **`package.json` `tbt.file-cabinet-path`** — moved to `/SuiteScripts/Teibto/ds/v1.42.1/dist/`. Bundled `tbt-ds.min.js` + `tbt-theme.css` now live under the `dist/` subfolder of the versioned File Cabinet path.
+
+### Notes
+
+- The existing Rollup build (`npm run build`) already inlines Lit 3 into `dist/tbt-ds.min.js` via `nodeResolve` — no toolchain change required. Tabler icons remain a separate webfont CSS fetched at runtime.
+
+---
+
+## [1.42.1] — 2026-05-29
+
+### Fixed
+
+- **`tbt-icons-css`** — Icons rendered as tofu (empty squares) in deployed Suitelets despite Tabler CSS loading 200 OK.
+  - Root cause: Chromium does NOT fetch font files for `@font-face` declared only inside shadow DOM stylesheets. Codepoints got set on `::before` pseudo-elements but glyphs were missing.
+  - Fix: inject Tabler `<link>` into `document.head` once on module load (idempotent via `data-tbt-tabler` marker). `@font-face` now registers at document level → browser actually fetches `.woff2`.
+  - Existing per-component `${tablerLink}` retained — class rules (`.ti-*:before { content }`) do not cross shadow boundaries.
+  - Verified end-to-end via deployed `tbt-sidebar-item` in SDB Suitelet.
+
+---
+
+## [1.42.0] — 2026-05-29
+
+### Added
+
+- **`tbt-stat`** — Stat / KPI card สำหรับ dashboard metrics พร้อม trend indicator และ icon.
+  - Props: `value`, `label`, `trend` (ใส่ `+` หรือ `-` prefix เพื่อ auto-detect variant), `trend-variant` (success|danger|neutral override), `icon` (Tabler name), `variant` (primary|success|warning|danger|info)
+  - Grid layout: label/value/trend ใน column ซ้าย, icon span 2 rows ในคอลัมน์ขวา
+  - Accent line ด้านบน card ตาม `variant`
+  - Icon background/color ตาม `variant` อัตโนมัติ
+  - `value` fallback เป็น `—` เมื่อไม่มีค่า
+
+---
+
+## [1.41.0] — 2026-05-29
+
+### Added
+
+- **`tbt-list` + `tbt-list-item`** — Vertical data list สำหรับแสดง key/value rows พร้อม icon และ action slot. เหมาะสำหรับ profile card, drawer detail, settings panel.
+  - `tbt-list` props: `compact` (Boolean, ลด padding), `divided` (Boolean, เพิ่ม border ระหว่าง items)
+  - `tbt-list-item` props: `label`, `value` (fallback text), `icon` (Tabler name), `muted`
+  - `tbt-list-item` slots: default slot สำหรับ rich value (เช่น `<tbt-badge>`), `action` slot สำหรับ button ขวามือ
+  - CSS custom properties: `--tbt-list-label-width` (default 140px), รับ `compact`/`divided` จาก parent ผ่าน CSS inheritance
+  - `tbt-list-item` มี `role="listitem"` อัตโนมัติ
+
+---
+
+## [1.40.0] — 2026-05-29
+
+### Added
+
+- **`tbt-popover`** — Click-triggered floating panel สำหรับ action menu, info card, และ quick form. Wrapper component — default slot คือ trigger, `content` slot คือเนื้อหา popup.
+  - Props: `open` (Boolean, reflect), `placement` (top|bottom|left|right, default: bottom)
+  - Events: `tbt-open`, `tbt-close`
+  - ปิดอัตโนมัติเมื่อคลิกนอก popover หรือกด Escape
+  - Set `aria-expanded` + `aria-haspopup` บน slotted trigger อัตโนมัติ
+  - `aria-hidden="true"` เมื่อปิด; `role="dialog"` บน panel
+
+---
+
+## [1.39.0] — 2026-05-28
+
+### Added
+
+- **`tbt-tooltip`** — Tooltip แสดงเมื่อ hover หรือ focus บน trigger element. Wrapper component — slotted content คือ trigger, `content` prop คือข้อความที่แสดง.
+  - Props: `content` (String), `placement` (top|bottom|left|right, default: top), `delay` (ms, default: 200)
+  - ARIA: `role="tooltip"` + `aria-describedby` ใน shadow root
+  - ไม่แสดงเมื่อ `content` ว่าง; ยกเลิก timer อัตโนมัติเมื่อ disconnect
+
+---
+
+## [1.38.0] — 2026-05-28
+
+### Added
+
+- **`tbt-drawer`** — Slide-in drawer panel สำหรับ filter panel, detail view, และ side form. ใช้ `<dialog>` + `showModal()` พร้อม focus trap อัตโนมัติ.
+  - Props: `open` (Boolean, reflect), `placement` (right|left|bottom, default: right), `title`, `size` (sm|md|lg|full, default: md), `closable` (Boolean, default: true)
+  - Slots: default body slot, `footer` slot
+  - Events: `tbt-close` — fired เมื่อกด ×, คลิก backdrop, หรือกด Escape
+  - CSS transition: slide-in/out 280ms cubic-bezier
+  - Responsive sizes: sm=320px, md=420px, lg=560px, full=100% (right/left); sm=30%, md=50%, lg=70% height (bottom)
+
+---
+
+## [1.37.0] — 2026-05-28
+
+### Added
+
+- **`tbt-chip`** — Toggleable chip / filter tag. ใช้สำหรับ filter bar, category selection, และ toggle-able tags.
+  - Props: `variant` (neutral|primary|success|warning|danger|info), `selected` (Boolean, reflect), `removable`, `disabled`, `icon` (Tabler icon name), `size` (sm|md|lg)
+  - Events: `tbt-toggle → { selected: boolean }`, `tbt-remove`
+  - Keyboard: Enter/Space toggles; remove button aria-labeled "Remove"
+  - Selected state ใช้ variant color (primary by default); unselected เป็น neutral
+
+---
+
+## [1.36.0] — 2026-05-28
+
+### Added
+
+- **`tbt-empty-state`** — Empty state display สำหรับ table, list, search result ที่ไม่มีข้อมูล. รองรับ icon, title, description, actions slot, และ 3 sizes.
+  - Props: `icon` (Tabler icon name, default: 'inbox'), `title` (default: 'No data'), `description`, `size` (sm|md|lg)
+  - Slot: `actions` สำหรับ CTA buttons
+  - Icon wrap มี `aria-hidden="true"` เพื่อไม่ให้ screen reader อ่านซ้ำ
+
+---
+
+## [1.35.0] — 2026-05-28
+
+### Added
+
+- **`tbt-tag-input`** — Tag / chip input สำหรับ keywords, labels, และ multi-value text entry. พิมพ์แล้วกด Enter เพื่อเพิ่ม tag, ลบด้วย × button หรือ Backspace เมื่อ input ว่าง. Form-associated รองรับ required validation.
+  - Props: `label`, `name`, `placeholder`, `required`, `disabled`, `error`, `helper`, `max` (จำนวน tag สูงสุด, 0 = ไม่จำกัด)
+  - Value: property `.value` รับ/คืน `string[]`; form value เป็น comma-separated string
+  - Event: `tbt-change → { values: string[] }`
+  - Keyboard: Enter เพิ่ม tag, Backspace ลบ tag สุดท้ายเมื่อ input ว่าง, Escape ล้าง input
+  - ไม่เพิ่ม tag ซ้ำ; focus กลับ input อัตโนมัติหลังลบ tag
+
+---
+
+## [1.34.0] — 2026-05-28
+
+### Added
+
+- **`tbt-progress`** — Horizontal progress bar สำหรับ upload, import batch, และ processing feedback. รองรับ determinate (0–100%), indeterminate (sliding animation), 4 variants, 3 sizes, label + show-value display.
+  - Props: `value` (0–100), `label`, `variant` (primary|success|warning|danger), `size` (sm|md|lg), `show-value`, `indeterminate`
+  - Accessible: `role="progressbar"` + `aria-valuenow` / `aria-valuemin` / `aria-valuemax` / `aria-busy`
+
+---
+
+## [1.33.0] — 2026-05-28
+
+### Added
+
+- **`tbt-timeline`** — Vertical event timeline สำหรับ document history, process flow, audit trail. แต่ละ entry มี label, timestamp, user, icon, variant, content. รองรับ `compact` mode และ `max-height` scrollable container.
+  - Entry fields: `label`, `timestamp`, `user`, `icon`, `variant` (primary|success|warning|danger|info|neutral), `content`
+  - Props: `entries` (Array), `compact` (Boolean), `max-height` (CSS string)
+  - Accessible: `<ol aria-label="Timeline">` + `<li>` structure
+
+---
+
+## [1.32.0] — 2026-05-28
+
+### Added
+
+- **`tbt-number-input`** — Formatted number input สำหรับ ERP financial fields. แสดง comma thousands separator โดยอัตโนมัติ, prefix/suffix สำหรับ currency/unit, Arrow key increment/decrement, min/max clamping, form-associated.
+  - Props: `value`, `label`, `name`, `min`, `max`, `step`, `decimal`, `prefix`, `suffix`, `placeholder`, `required`, `disabled`, `readonly`, `error`, `helper`
+  - Event: `tbt-change → { value: number | null }` (null เมื่อ clear)
+  - พฤติกรรม: focus → raw number, blur → formatted (comma-separated), Enter → commit
+
+---
+
+## [1.31.0] — 2026-05-28
+
+### Added
+
+- **`tbt-split-button`** — Split button สำหรับ ERP document workflows (Save / Save & Submit / Save & Print ฯลฯ). Primary action + dropdown secondary actions ในปุ่มเดียว, รองรับ variant/size/icon/loading/disabled, keyboard nav ครบ (Arrow, Esc, Tab), axe-clean.
+  - Props: `label`, `variant` (primary|secondary|danger|ghost), `icon`, `actions` (Array), `loading`, `disabled`, `size` (sm|md|lg)
+  - Events: `tbt-click` (main button), `tbt-action → { value, label }` (secondary action)
+
+---
+
+## [1.30.0] — 2026-05-28
+
+### Added
+
+- **`tbt-color-picker`** — Color swatch picker for ERP category/tag coloring. 20-color default palette (4×5 grid), optional custom hex input (`allow-custom`), full keyboard navigation (Arrow keys / Enter / Esc), form-associated, accessible labels/roles.
+  - Props: `value`, `label`, `name`, `palette`, `allow-custom`, `disabled`, `required`, `error`
+  - Event: `tbt-change → { value: string }` (hex string, e.g. `#0D1171`)
+
+### Chore
+
+- `scripts/lint-governance.js` — เพิ่ม `HEX_EXEMPT` set เพื่อ exempt `tbt-color-picker.js` จาก Rule 1 (palette hex data ไม่ใช่ CSS styling)
+- `components/index.js` — register `tbt-color-picker`
+
+### Test
+
+- เพิ่ม `tests/tbt-color-picker.test.js` — 14 cases รวม axe pass
+
 ---
 
 ## [1.29.0] — 2026-05-28

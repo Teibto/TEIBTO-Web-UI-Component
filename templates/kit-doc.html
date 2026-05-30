@@ -1,0 +1,72 @@
+<!--
+  kit-doc.html — universal "schema-driven document form" body template.
+
+  Drives the tbt-doc-form scaffold with any of the pre-built schemas exported
+  from tbt-doc-schemas.js (CUSTOMER_SCHEMA, SALES_ORDER_SCHEMA, PO_SCHEMA,
+  INVOICE_SCHEMA, QUOTATION_SCHEMA, FULFILLMENT_SCHEMA).
+
+  Required keys on window.__DATA__:
+    schemaName   string  — named export from the DS bundle (e.g. "PO_SCHEMA")
+    optionLists  object  — { [key]: [{value,label}] } matching schema field options
+    record       object  — prefill values (empty {} for new)
+    restletUrl   string  — POST endpoint to save
+
+  Optional keys:
+    lines         array  — for schemas with type:'lines' section
+    approvalSteps array  — for schemas with type:'approval' section
+    auditEntries  array  — for schemas with type:'audit' section
+-->
+
+<tbt-alert id="ok-alert"  variant="success" dismissible style="display:none;margin-bottom:var(--tbt-space-4)"></tbt-alert>
+<tbt-alert id="err-alert" variant="danger"  dismissible style="display:none;margin-bottom:var(--tbt-space-4)"></tbt-alert>
+
+<tbt-doc-form id="doc-form"></tbt-doc-form>
+
+<script type="module">
+  import * as ds from '/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-ds.min.js';
+
+  const d        = window.__DATA__;
+  const form     = document.getElementById('doc-form');
+  const okAlert  = document.getElementById('ok-alert');
+  const errAlert = document.getElementById('err-alert');
+
+  // ── 1. Schema (from DS bundle) ──
+  const schema = ds[d.schemaName];
+  if (!schema) throw new Error('Unknown schema: ' + d.schemaName);
+  form.schema = schema;
+
+  // ── 2. Option lookups + prefilled record ──
+  form.optionLists = d.optionLists || {};
+  form.value       = d.record      || {};
+  if (d.lines)         form.lines         = d.lines;
+  if (d.approvalSteps) form.approvalSteps = d.approvalSteps;
+  if (d.auditEntries)  form.auditEntries  = d.auditEntries;
+
+  // ── 3. Submit → POST to RESTlet ──
+  form.addEventListener('tbt-submit', async (e) => {
+    okAlert.style.display = errAlert.style.display = 'none';
+    try {
+      const res  = await fetch(d.restletUrl, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(e.detail.data),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.message || ('HTTP ' + res.status));
+      okAlert.textContent   = body.message || 'Saved successfully.';
+      okAlert.style.display = '';
+      okAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } catch (err) {
+      errAlert.textContent   = 'Save failed: ' + err.message;
+      errAlert.style.display = '';
+      errAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+
+  // ── 4. Non-submit actions (cancel, print, email, delete, …) ──
+  form.addEventListener('tbt-action', (e) => {
+    const { action } = e.detail;
+    if (action === 'cancel') history.back();
+    // other actions can be wired per-page or via a dispatch table
+  });
+</script>

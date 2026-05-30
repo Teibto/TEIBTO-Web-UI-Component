@@ -1,6 +1,6 @@
 /**
  * TBT-DS — component barrel
- * @version 1.26.2
+ * @version 1.42.1
  * @author Wichit Wongta
  *
  * Import this single file to register all tbt-* custom elements.
@@ -19,11 +19,15 @@ export * from './tbt-pagination.js';
 
 /* Actions */
 export * from './tbt-button.js';
+export * from './tbt-split-button.js';
 export * from './tbt-modal.js';
 export * from './tbt-confirm.js';
+export * from './tbt-drawer.js';
+export * from './tbt-popover.js';
 
 /* Loading */
 export * from './tbt-skeleton.js';
+export * from './tbt-progress.js';
 
 /* Dev tooling */
 export * from './tbt-playground.js';
@@ -31,6 +35,8 @@ export * from './tbt-playground.js';
 /* Feedback */
 export * from './tbt-icon.js';
 export * from './tbt-badge.js';
+export * from './tbt-chip.js';
+export * from './tbt-tooltip.js';
 export * from './tbt-alert.js';
 export * from './tbt-toast.js';
 
@@ -43,12 +49,19 @@ export * from './tbt-dropdown.js';
 export * from './tbt-multiselect.js';
 export * from './tbt-datepicker.js';
 export * from './tbt-search.js';
+export * from './tbt-color-picker.js';
+export * from './tbt-number-input.js';
+export * from './tbt-tag-input.js';
 export * from './tbt-form.js';
 export * from './tbt-address.js';
 
 /* Display */
+export * from './tbt-stat.js';
 export * from './tbt-approval-flow.js';
 export * from './tbt-audit-log.js';
+export * from './tbt-timeline.js';
+export * from './tbt-empty-state.js';
+export * from './tbt-list.js';
 export * from './tbt-field.js';
 export * from './tbt-field-grid.js';
 export * from './tbt-section.js';

@@ -24,7 +24,8 @@ class TbtSearch extends LitElement {
     placeholder: { type: String },
     value:       { type: String },
     debounce:    { type: Number },
-    disabled:    { type: Boolean, reflect: true }
+    disabled:    { type: Boolean, reflect: true },
+    readonly:    { type: Boolean, reflect: true }
   };
 
   constructor() {
@@ -42,13 +43,18 @@ class TbtSearch extends LitElement {
 
   static styles = css`
     :host {
-      display: inline-block;
+      display: block;            /* fill grid cell instead of inline-block intrinsic width */
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
       font-family: var(--tbt-font);
     }
     .wrap {
       position: relative;
-      display: inline-flex;
+      display: flex;             /* flex (not inline-flex) so child input can shrink */
       align-items: center;
+      width: 100%;
+      min-width: 0;
     }
     .icon {
       position: absolute;
@@ -65,7 +71,9 @@ class TbtSearch extends LitElement {
       border: 1px solid var(--tbt-border);
       border-radius: var(--tbt-radius-md);
       padding: 8px 36px 8px 34px;
-      min-width: 220px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
       min-height: 36px;
       outline: 0;
       transition: border-color var(--tbt-transition-fast),
@@ -93,6 +101,11 @@ class TbtSearch extends LitElement {
     :host([disabled]) input {
       opacity: 0.55;
       cursor: not-allowed;
+    }
+    :host([readonly]) input {
+      background: var(--tbt-bg-hover);
+      cursor: default;
+      pointer-events: none;
     }
   `;
 
@@ -131,6 +144,7 @@ class TbtSearch extends LitElement {
           .value=${this.value}
           placeholder=${this.placeholder}
           ?disabled=${this.disabled}
+          ?readonly=${this.readonly}
           @input=${this._onInput}>
         ${this.value ? html`
           <button class="clear" @click=${this._clear} aria-label="Clear search">

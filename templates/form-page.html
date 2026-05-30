@@ -1,0 +1,83 @@
+<!--
+  form-page.html — standard "create / edit" form body template.
+
+  Required keys on window.__DATA__:
+    record           — existing values to prefill (empty {} for new)
+    options.vendor   — [{ value, label }] for vendor dropdown
+    options.subsidiary
+    options.currency
+    restletUrl       — POST endpoint to save the form
+
+  Layout:
+    Page header → tbt-form (field-grid) → action bar
+-->
+
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title"><span id="hdr-mode">New</span> purchase order</div>
+      <div class="tbt-page-header__subtitle">Fill in document info, then submit for approval.</div>
+    </div>
+  </div>
+</tbt-section>
+
+<div class="tbt-page-alerts">
+  <tbt-alert id="save-alert" variant="success" dismissible hidden>Saved successfully.</tbt-alert>
+</div>
+
+<tbt-section title="Document info">
+  <tbt-form id="po-form">
+    <tbt-field-grid columns="2">
+      <tbt-input      id="f-tranid"     name="tranid"   label="Document no." required></tbt-input>
+      <tbt-dropdown   id="f-vendor"     name="vendor"   label="Vendor"       required></tbt-dropdown>
+      <tbt-datepicker id="f-date"       name="date"     label="Date"         required></tbt-datepicker>
+      <tbt-datepicker id="f-due"        name="dueDate"  label="Due date"></tbt-datepicker>
+      <tbt-dropdown   id="f-subsidiary" name="subsidiary" label="Subsidiary"></tbt-dropdown>
+      <tbt-dropdown   id="f-currency"   name="currency" label="Currency"></tbt-dropdown>
+      <tbt-textarea   id="f-memo"       name="memo"     label="Memo" rows="3"></tbt-textarea>
+    </tbt-field-grid>
+
+    <div class="tbt-action-bar">
+      <tbt-button type="submit" variant="primary"   icon="save">Save</tbt-button>
+      <tbt-button id="cancel"   variant="ghost"     icon="cancel">Cancel</tbt-button>
+    </div>
+  </tbt-form>
+</tbt-section>
+
+<script type="module">
+  const d = window.__DATA__;
+  const form = document.getElementById('po-form');
+
+  // 1. Populate dropdown options from server-injected data
+  document.getElementById('f-vendor').options     = d.options.vendor;
+  document.getElementById('f-subsidiary').options = d.options.subsidiary;
+  document.getElementById('f-currency').options   = d.options.currency;
+
+  // 2. Prefill values from existing record (empty for new)
+  if (d.record && d.record.tranid) {
+    document.getElementById('hdr-mode').textContent = 'Edit';
+    for (const [name, value] of Object.entries(d.record)) {
+      const el = form.querySelector(`[name="${name}"]`);
+      if (el) el.value = value;
+    }
+  }
+
+  // 3. Submit → POST to RESTlet
+  form.addEventListener('tbt-submit', async (e) => {
+    const payload = e.detail.data;
+    try {
+      const res  = await fetch(d.restletUrl, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || 'Save failed');
+      document.getElementById('save-alert').hidden = false;
+    } catch (err) {
+      alert('Save failed: ' + err.message);
+    }
+  });
+
+  document.getElementById('cancel').addEventListener('click', () => history.back());
+</script>

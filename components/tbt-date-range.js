@@ -34,6 +34,7 @@ class TbtDateRange extends LitElement {
     to:       { type: String },
     required: { type: Boolean, reflect: true },
     disabled: { type: Boolean, reflect: true },
+    readonly: { type: Boolean, reflect: true },
     error:    { type: String, reflect: true },
   };
 
@@ -130,6 +131,7 @@ class TbtDateRange extends LitElement {
           .value=${this.from}
           ?required=${this.required}
           ?disabled=${this.disabled}
+          ?readonly=${this.readonly}
           ?error=${!!this.error}
           @tbt-change=${this._onFromChange}>
         </tbt-datepicker>
@@ -140,6 +142,7 @@ class TbtDateRange extends LitElement {
           .value=${this.to}
           ?required=${this.required}
           ?disabled=${this.disabled}
+          ?readonly=${this.readonly}
           ?error=${!!this.error}
           @tbt-change=${this._onToChange}>
         </tbt-datepicker>

@@ -1,23 +1,31 @@
 /**
  * @component tbt-sidebar, tbt-sidebar-item
- * @version 1.26.2
+ * @version 1.43.0
  * @author Wichit Wongta
  *
  * Collapsible left-side navigation panel.
  *
  * Usage:
  *   <tbt-sidebar collapsible>
+ *     <div slot="brand">…logo + title…</div>
  *     <tbt-sidebar-item icon="home"         label="Dashboard"  href="/dashboard"></tbt-sidebar-item>
  *     <tbt-sidebar-item icon="file-invoice" label="เอกสาร"     active></tbt-sidebar-item>
- *     <tbt-sidebar-item icon="shopping-cart" label="Purchase"  href="/po"></tbt-sidebar-item>
+ *     <div slot="footer">…user block + actions…</div>
  *   </tbt-sidebar>
+ *
+ * Slots:
+ *   (default) — tbt-sidebar-item elements
+ *   brand     — top header (logo + title); hidden when empty
+ *   footer    — bottom block (user info + actions); hidden when empty
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
 /**
  * @fires tbt-sidebar-toggle - Fired when sidebar collapsed/expanded; detail: { collapsed: boolean }
- * @slot - tbt-sidebar-item elements
+ * @slot        - tbt-sidebar-item elements
+ * @slot brand  - Top header block (logo + title); hidden when empty
+ * @slot footer - Bottom block (user info + actions); hidden when empty
  */
 class TbtSidebar extends LitElement {
   static properties = {
@@ -57,15 +65,6 @@ class TbtSidebar extends LitElement {
       --_item-justify: center;
       --_item-ph: 8px;
     }
-    .header {
-      display: var(--_sidebar-toggle-display, flex);
-      align-items: center;
-      justify-content: flex-end;
-      padding: var(--tbt-space-3) var(--tbt-space-3);
-      border-bottom: 1px solid var(--tbt-border);
-      min-height: 48px;
-      flex-shrink: 0;        /* keep toggle pinned at top */
-    }
     .toggle-btn {
       display: flex;
       align-items: center;
@@ -78,19 +77,42 @@ class TbtSidebar extends LitElement {
       cursor: pointer;
       color: var(--tbt-text-secondary);
       font-size: 16px;
+      flex-shrink: 0;
       transition: background var(--tbt-transition-fast);
     }
     .toggle-btn:hover {
       background: var(--tbt-bg-hover);
       color: var(--tbt-text-primary);
     }
-    :host(:not([collapsible])) .header {
-      display: none;
-    }
     nav {
       padding: var(--tbt-space-2) 0;
       flex: 1;               /* fill remaining vertical space */
       overflow-y: auto;      /* scroll nav items when they overflow */
+    }
+    .brand,
+    .footer {
+      display: none;         /* default hidden — shown via :has() / [collapsible] when present */
+      align-items: center;
+      gap: var(--tbt-space-3);
+      padding: var(--tbt-space-3) var(--tbt-space-4);
+      flex-shrink: 0;
+      min-height: 56px;
+    }
+    /* Brand row also hosts the collapse toggle — visible whenever slotted OR collapsible */
+    .brand:has(*),
+    :host([collapsible]) .brand {
+      display: flex;
+      border-bottom: 1px solid var(--tbt-border);
+    }
+    .footer:has(*) {
+      display: flex;
+      border-top: 1px solid var(--tbt-border);
+    }
+    :host([collapsed]) .brand,
+    :host([collapsed]) .footer {
+      padding: var(--tbt-space-3) 8px;
+      justify-content: center;
+      gap: 0;
     }
   `;
 
@@ -106,14 +128,19 @@ class TbtSidebar extends LitElement {
   render() {
     return html`
       ${tablerLink}
-      <div class="header">
-        <button class="toggle-btn" @click=${this._toggle} aria-label="Toggle sidebar">
-          <i class="ti ti-${this.collapsed ? 'layout-sidebar-right' : 'layout-sidebar'}" aria-hidden="true"></i>
-        </button>
+      <div class="brand">
+        <slot name="brand"></slot>
+        ${this.collapsible ? html`
+          <button class="toggle-btn" @click=${this._toggle} aria-label="Toggle sidebar">
+            <i class="ti ti-${this.collapsed ? 'layout-sidebar-right' : 'layout-sidebar'}" aria-hidden="true"></i>
+          </button>` : ''}
       </div>
       <nav>
         <slot></slot>
       </nav>
+      <div class="footer">
+        <slot name="footer"></slot>
+      </div>
     `;
   }
 }
