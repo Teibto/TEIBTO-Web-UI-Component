@@ -15,6 +15,7 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- **`tbt-chart` (v1.43.0) — SVG chart component for dashboards.** Bar, line, area, donut, pie, and sparkline in one element, single-series (`.data`) or multi-series (`.series`). Pure Lit + inline SVG; every colour is a `var(--tbt-*)` token via `currentColor`, so dark mode applies automatically and no hex appears — no canvas, no CDN library, CSP-safe. A `ResizeObserver` draws in real pixel coordinates (crisp text/strokes, no viewBox stretch). Native `<title>` tooltips + `role="img"` for a11y; `tbt-chart-select` event on bar/slice/point click. Design recorded in `rfcs/0001-tbt-chart.md`. Wired into `templates/dashboard.html` (sales bar + status donut) and demoed in `demo/specimen.html`.
 - **`templates/bill-receipt-*` + `sl_bill_receipt_*.js` — vendor bill receipt (รับวางบิล) module.** Two Suitelets composed entirely from DS components + `var(--tbt-*)` tokens:
   - `sl_bill_receipt_list.js` + `bill-receipt-list.html` — voucher list: search + status filter + `tbt-table` with status badges and view/edit row actions.
   - `sl_bill_receipt_form.js` + `bill-receipt-form.html` — voucher document: header + document-info field-grid + summary stats + vendor-invoice lines (`tbt-table` + add/edit modal, auto-VAT) + `tbt-approval-flow` + `tbt-audit-log`. Edit only while status is `Draft`; `Submitted` exposes approve/reject; `Approved`/`Paid` are read-only.

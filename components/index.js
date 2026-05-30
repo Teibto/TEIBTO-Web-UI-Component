@@ -57,6 +57,7 @@ export * from './tbt-address.js';
 
 /* Display */
 export * from './tbt-stat.js';
+export * from './tbt-chart.js';
 export * from './tbt-approval-flow.js';
 export * from './tbt-audit-log.js';
 export * from './tbt-timeline.js';
