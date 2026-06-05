@@ -1,6 +1,6 @@
 /**
  * TBT-DS — component barrel
- * @version 1.42.1
+ * @version 1.43.0
  * @author Wichit Wongta
  *
  * Import this single file to register all tbt-* custom elements.
@@ -42,6 +42,7 @@ export * from './tbt-toast.js';
 
 /* Form inputs */
 export * from './tbt-checkbox.js';
+export * from './tbt-radio.js';
 export * from './tbt-toggle.js';
 export * from './tbt-input.js';
 export * from './tbt-textarea.js';
@@ -57,6 +58,8 @@ export * from './tbt-address.js';
 
 /* Display */
 export * from './tbt-stat.js';
+export * from './tbt-chart.js';
+export * from './tbt-tree.js';
 export * from './tbt-approval-flow.js';
 export * from './tbt-audit-log.js';
 export * from './tbt-timeline.js';
@@ -66,6 +69,7 @@ export * from './tbt-field.js';
 export * from './tbt-field-grid.js';
 export * from './tbt-section.js';
 export * from './tbt-svg.js';
+export * from './tbt-avatar.js';
 export * from './tbt-table.js';
 export * from './tbt-data-table.js';
 export * from './tbt-summary.js';

@@ -858,6 +858,61 @@
   <tbt-toggle label="Disabled on" disabled checked></tbt-toggle>
 </div>
 
+<h2 id="radio">tbt-radio</h2>
+<div style="display:flex;gap:var(--tbt-space-8);flex-wrap:wrap;padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-radio id="demo-radio" label="Payment method" name="pm" value="cash"></tbt-radio>
+  <tbt-radio id="demo-radio2" label="Priority" name="pri" orientation="horizontal" value="normal"></tbt-radio>
+</div>
+
+<h2 id="tree">tbt-tree</h2>
+<div style="padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg);max-width:360px">
+  <tbt-tree id="demo-tree" selected="1-1"></tbt-tree>
+</div>
+<script type="module">
+  document.getElementById('demo-radio').options = [
+    { value: 'cash', label: 'Cash' }, { value: 'credit', label: 'Credit card' }, { value: 'transfer', label: 'Bank transfer' },
+  ];
+  document.getElementById('demo-radio2').options = [
+    { value: 'low', label: 'Low' }, { value: 'normal', label: 'Normal' }, { value: 'high', label: 'High' },
+  ];
+  document.getElementById('demo-tree').nodes = [
+    { id: '1', label: 'Assets', icon: 'folder', children: [
+      { id: '1-1', label: 'Cash & equivalents' },
+      { id: '1-2', label: 'Accounts receivable' },
+    ]},
+    { id: '2', label: 'Liabilities', icon: 'folder', children: [
+      { id: '2-1', label: 'Accounts payable' },
+    ]},
+    { id: '3', label: 'Equity', icon: 'folder' },
+  ];
+</script>
+
+<h2 id="avatar">tbt-avatar</h2>
+<div style="display:flex;align-items:center;gap:var(--tbt-space-5);flex-wrap:wrap;padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-avatar name="Wichit Wongta" size="xs"></tbt-avatar>
+  <tbt-avatar name="Mana Jaidee" size="sm" status="online"></tbt-avatar>
+  <tbt-avatar name="Somchai Rakngan" size="md" status="busy"></tbt-avatar>
+  <tbt-avatar name="Naree Dee" size="lg" status="away"></tbt-avatar>
+  <tbt-avatar name="Square Shape" size="lg" shape="square"></tbt-avatar>
+  <tbt-avatar-group max="3">
+    <tbt-avatar name="A B"></tbt-avatar>
+    <tbt-avatar name="C D"></tbt-avatar>
+    <tbt-avatar name="E F"></tbt-avatar>
+    <tbt-avatar name="G H"></tbt-avatar>
+    <tbt-avatar name="I J"></tbt-avatar>
+  </tbt-avatar-group>
+</div>
+
+<h2 id="svg">tbt-svg (illustrations)</h2>
+<div style="display:flex;gap:var(--tbt-space-6);flex-wrap:wrap;padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
+  <tbt-svg name="empty" label="empty"></tbt-svg>
+  <tbt-svg name="no-data" label="no-data"></tbt-svg>
+  <tbt-svg name="no-results" label="no-results"></tbt-svg>
+  <tbt-svg name="maintenance" label="maintenance"></tbt-svg>
+  <tbt-svg name="inbox-zero" label="inbox-zero"></tbt-svg>
+  <tbt-svg name="no-access" label="no-access"></tbt-svg>
+</div>
+
 <!-- ─── COLOR PICKER ─────────────────────────────────── -->
 <h2 id="color-picker">tbt-color-picker</h2>
 <div style="display:flex;flex-direction:column;gap:var(--tbt-space-4);padding:var(--tbt-space-4);background:var(--tbt-bg-card);border:1px solid var(--tbt-border);border-radius:var(--tbt-radius-lg)">
@@ -937,6 +992,80 @@
   <tbt-stat label="No data yet"></tbt-stat>
   <tbt-stat label="Down this quarter" value="฿250K" trend="-18%" trend-variant="danger" icon="trending-down" variant="danger"></tbt-stat>
 </div>
+
+<!-- ─── CHART ───────────────────────────────────────── -->
+<h2 id="chart">tbt-chart</h2>
+<div class="demo-label">Bar (single, value labels) · Donut (categorical + legend)</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-bar" type="bar" value-prefix="฿" show-values height="240"></tbt-chart>
+  <tbt-chart id="demo-donut" type="donut" height="240"></tbt-chart>
+</div>
+<div class="demo-label">Line + area (multi-series, legend)</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-line" type="line" show-legend height="240"></tbt-chart>
+  <tbt-chart id="demo-area" type="area" height="240"></tbt-chart>
+</div>
+<div class="demo-label">Sparkline (no axis, inline)</div>
+<div style="max-width:220px;margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-spark" type="sparkline" height="48"></tbt-chart>
+</div>
+<script type="module">
+  const months = (vals) => vals.map((v, i) => ({ label: ['Jan','Feb','Mar','Apr','May','Jun'][i], value: v }));
+  document.getElementById('demo-bar').data = months([120000, 98000, 150000, 132000, 175000]);
+  document.getElementById('demo-donut').data = [
+    { label: 'Approved', value: 86, variant: 'success' },
+    { label: 'Pending',  value: 28, variant: 'warning' },
+    { label: 'Draft',    value: 11, variant: 'info' },
+    { label: 'Rejected', value: 3,  variant: 'danger' },
+  ];
+  const series = [
+    { name: '2025', data: months([80, 92, 76, 110, 95]) },
+    { name: '2026', data: months([120, 98, 150, 132, 175]) },
+  ];
+  document.getElementById('demo-line').series = series;
+  document.getElementById('demo-area').series = series;
+  document.getElementById('demo-spark').data = months([12, 18, 9, 22, 17, 25]);
+</script>
+
+<div class="demo-label">Analytical · Combo (dual axis) · Waterfall</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-combo" type="combo" right-suffix="%" show-legend height="240"></tbt-chart>
+  <tbt-chart id="demo-wf" type="waterfall" value-prefix="฿" show-values height="240"></tbt-chart>
+</div>
+<div class="demo-label">Stacked 100% · Pareto (80/20)</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-stack" type="stacked" percent height="240"></tbt-chart>
+  <tbt-chart id="demo-pareto" type="pareto" value-prefix="฿" height="240"></tbt-chart>
+</div>
+<div class="demo-label">Gauge (value vs target)</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--tbt-space-4);margin-bottom:var(--tbt-space-4)">
+  <tbt-chart id="demo-gauge" type="gauge" value="72" max="100" target="80" value-suffix="%" height="160"></tbt-chart>
+  <tbt-chart id="demo-gauge2" type="gauge" variant="success" value="2450000" max="3000000" target="2800000" value-prefix="฿" height="160"></tbt-chart>
+</div>
+<script type="module">
+  const mo = (vals) => vals.map((v, i) => ({ label: ['Q1','Q2','Q3','Q4'][i], value: v }));
+  document.getElementById('demo-combo').series = [
+    { name: 'Revenue', kind: 'bar',  data: mo([1200000, 1500000, 1350000, 1800000]) },
+    { name: 'Margin %', kind: 'line', axis: 'right', data: mo([18, 22, 20, 26]) },
+  ];
+  document.getElementById('demo-wf').data = [
+    { label: 'Opening', value: 800000, total: true },
+    { label: 'Sales',   value: 1200000 },
+    { label: 'Refunds', value: -180000 },
+    { label: 'Costs',   value: -640000 },
+    { label: 'Closing', total: true },
+  ];
+  document.getElementById('demo-stack').series = [
+    { name: 'Hardware', data: mo([40, 55, 48, 60]) },
+    { name: 'Software', data: mo([30, 25, 35, 28]) },
+    { name: 'Services', data: mo([20, 30, 25, 35]) },
+  ];
+  document.getElementById('demo-pareto').data = [
+    { label: 'ABC Co.', value: 420000 }, { label: 'XYZ Ltd', value: 280000 },
+    { label: 'DEF',     value: 150000 }, { label: 'GHI',     value: 90000 },
+    { label: 'Others',  value: 60000 },
+  ];
+</script>
 
 <!-- ─── FIELD + FIELD-GRID ─────────────────────────── -->
 <h2 id="field">tbt-field + tbt-field-grid</h2>

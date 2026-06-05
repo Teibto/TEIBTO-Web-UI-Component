@@ -65,6 +65,16 @@ describe('tbt-table', () => {
     expect(detail.key).to.equal('id');
   });
 
+  it('clicking a body row fires tbt-row-click with the row data', async () => {
+    const el = await fixture(html`<tbt-table .columns=${COLS} .rows=${ROWS}></tbt-table>`);
+    await el.updateComplete;
+    let detail = null;
+    el.addEventListener('tbt-row-click', e => { detail = e.detail; });
+    el.shadowRoot.querySelectorAll('tbody tr')[1].click();
+    expect(detail).to.exist;
+    expect(detail.row).to.deep.equal(ROWS[1]);
+  });
+
   it('shows "Loading…" text when loading prop is set and rows are empty', async () => {
     const el = await fixture(html`<tbt-table .columns=${COLS} .rows=${[]} loading></tbt-table>`);
     await el.updateComplete;

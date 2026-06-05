@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Employee expense claim header record.
+  Field ids MUST match netsuite/expense_meta.js (F.*). See netsuite/DEPLOY.md.
+-->
+<customrecordtype scriptid="customrecord_tbt_expense_claim">
+  <recordname>TBT Expense Claim</recordname>
+  <includename>T</includename>
+  <includenumber>F</includenumber>
+  <showid>F</showid>
+  <iconbuiltin>T</iconbuiltin>
+  <icon>RECEIPT</icon>
+  <allowattachments>T</allowattachments>
+  <allowinlineediting>F</allowinlineediting>
+  <enablesystemnotes>T</enablesystemnotes>
+  <hierarchical>F</hierarchical>
+  <showcreationdate>T</showcreationdate>
+  <showlastmodified>T</showlastmodified>
+  <showowner>T</showowner>
+  <customrecordcustomfields>
+    <customrecordcustomfield scriptid="custrecord_tbt_exp_tranid">
+      <label>Claim No.</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_exp_employee">
+      <label>Employee</label>
+      <fieldtype>SELECT</fieldtype>
+      <selectrecordtype>-4</selectrecordtype><!-- -4 = Employee -->
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_exp_period">
+      <label>Period</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_exp_status">
+      <label>Status</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>T</ismandatory>
+      <defaultvalue>Draft</defaultvalue>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_exp_total">
+      <label>Total</label>
+      <fieldtype>CURRENCY</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+  </customrecordcustomfields>
+</customrecordtype>

@@ -17,6 +17,16 @@
   </div>
 </tbt-section>
 
+<!-- Charts -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:var(--tbt-space-4)">
+  <tbt-section title="Sales by month">
+    <tbt-chart id="chart-sales" type="bar" value-prefix="฿" show-values height="260"></tbt-chart>
+  </tbt-section>
+  <tbt-section title="Orders by status">
+    <tbt-chart id="chart-status" type="donut" height="260"></tbt-chart>
+  </tbt-section>
+</div>
+
 <!-- Two-column row -->
 <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:var(--tbt-space-4)">
   <tbt-section title="Pending tasks">
@@ -42,6 +52,9 @@
   setKpi('kpi-orders',  d.stats?.orders);
   setKpi('kpi-pending', d.stats?.pending);
   setKpi('kpi-overdue', d.stats?.overdue);
+
+  document.getElementById('chart-sales').data  = d.salesByMonth  || [];
+  document.getElementById('chart-status').data = d.ordersByStatus || [];
 
   const pending = document.getElementById('pending-table');
   pending.columns = [

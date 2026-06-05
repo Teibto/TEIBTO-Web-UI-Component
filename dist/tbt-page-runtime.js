@@ -2,7 +2,7 @@
  * tbt-page-runtime.js — shared client-side helpers for Suitelet body templates.
  *
  * Load alongside tbt-ds.min.js in the page <head>:
- *   <script src="/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-page-runtime.js"></script>
+ *   <script src="/sc/SuiteScripts/Teibto/ds/v1.43.0/dist/tbt-page-runtime.js"></script>
  *
  * Exposes a single global, window.tbtPageRuntime, with these helpers:
  *
@@ -75,6 +75,21 @@
     return (rows || []).reduce((s, r) => s + Number(r[field] || 0), 0);
   }
 
+  // Escape a value for safe interpolation into an HTML string. Required for any
+  // tbt-table `html: true` column, whose content is rendered via unsafeHTML —
+  // record-derived values must be escaped or they are an XSS vector.
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // Build a <tbt-badge> for an html-column cell with label + variant escaped.
+  // Use instead of string-building the badge inline with raw record values.
+  function badge(label, variant) {
+    return `<tbt-badge variant="${escapeHtml(variant || 'neutral')}">${escapeHtml(label)}</tbt-badge>`;
+  }
+
   // Build the HTML for a row-action cluster (view / edit / delete icons).
   // Renders inside a tbt-table cell with `html: true`. Wire via
   // wireRowActions(tableEl, { onView, onEdit, onDelete }) which uses event
@@ -116,6 +131,8 @@
     hideAlerts,
     post,
     sumBy,
+    escapeHtml,
+    badge,
     rowActions,
     wireRowActions,
   };

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teibto · tbt-chart gallery</title>
+  <!--
+    Standalone tbt-chart gallery — normal document flow (no app-shell), so a
+    fullPage screenshot captures every chart. Used as the visual-regression
+    baseline for charts (tests/visual/pages.spec.js) and as a focused reference.
+  -->
+  <link rel="stylesheet" href="../theme/tbt-theme.css">
+  <script type="module" src="../components/index.js"></script>
+  <style>
+    html, body { margin: 0; background: var(--tbt-bg-page); font-family: var(--tbt-font); }
+    .page { padding: var(--tbt-space-6); max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: var(--tbt-size-xl); color: var(--tbt-text-primary); margin: 0 0 var(--tbt-space-6); }
+    h2 { font-size: var(--tbt-size-md); color: var(--tbt-text-secondary); font-weight: var(--tbt-weight-medium); margin: var(--tbt-space-6) 0 var(--tbt-space-3); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--tbt-space-4); }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--tbt-space-4); }
+    .card { background: var(--tbt-bg-card); border: 1px solid var(--tbt-border); border-radius: var(--tbt-radius-lg); padding: var(--tbt-space-4); }
+  </style>
+</head>
+<body>
+<div class="page">
+  <h1>tbt-chart gallery</h1>
+
+  <h2>Basic — bar · line · area</h2>
+  <div class="grid3">
+    <div class="card"><tbt-chart id="c-bar"  type="bar"  value-prefix="฿" show-values height="200"></tbt-chart></div>
+    <div class="card"><tbt-chart id="c-line" type="line" show-legend height="200"></tbt-chart></div>
+    <div class="card"><tbt-chart id="c-area" type="area" height="200"></tbt-chart></div>
+  </div>
+
+  <h2>Part-to-whole — donut · pie · sparkline</h2>
+  <div class="grid3">
+    <div class="card"><tbt-chart id="c-donut" type="donut" height="200"></tbt-chart></div>
+    <div class="card"><tbt-chart id="c-pie"   type="pie"   height="200"></tbt-chart></div>
+    <div class="card"><tbt-chart id="c-spark" type="sparkline" height="64"></tbt-chart></div>
+  </div>
+
+  <h2>Analytical — combo · waterfall</h2>
+  <div class="grid2">
+    <div class="card"><tbt-chart id="c-combo" type="combo" right-suffix="%" show-legend height="220"></tbt-chart></div>
+    <div class="card"><tbt-chart id="c-wf" type="waterfall" value-prefix="฿" show-values height="220"></tbt-chart></div>
+  </div>
+
+  <h2>Analytical — stacked 100% · pareto</h2>
+  <div class="grid2">
+    <div class="card"><tbt-chart id="c-stack" type="stacked" percent height="220"></tbt-chart></div>
+    <div class="card"><tbt-chart id="c-pareto" type="pareto" value-prefix="฿" height="220"></tbt-chart></div>
+  </div>
+
+  <h2>Gauge</h2>
+  <div class="grid2">
+    <div class="card"><tbt-chart id="c-gauge1" type="gauge" value="72" max="100" target="80" value-suffix="%" height="160"></tbt-chart></div>
+    <div class="card"><tbt-chart id="c-gauge2" type="gauge" variant="success" value="2450000" max="3000000" target="2800000" value-prefix="฿" height="160"></tbt-chart></div>
+  </div>
+</div>
+
+<script type="module">
+  const m  = (labels, vals) => vals.map((v, i) => ({ label: labels[i], value: v }));
+  const Q  = (vals) => m(['Q1', 'Q2', 'Q3', 'Q4'], vals);
+  const MO = (vals) => m(['Jan', 'Feb', 'Mar', 'Apr', 'May'], vals);
+
+  document.getElementById('c-bar').data  = MO([120000, 98000, 150000, 132000, 175000]);
+  const series2 = [
+    { name: '2025', data: MO([80, 92, 76, 110, 95]) },
+    { name: '2026', data: MO([120, 98, 150, 132, 175]) },
+  ];
+  document.getElementById('c-line').series = series2;
+  document.getElementById('c-area').series = series2;
+
+  const split = [
+    { label: 'Approved', value: 86, variant: 'success' },
+    { label: 'Pending',  value: 28, variant: 'warning' },
+    { label: 'Draft',    value: 11, variant: 'info' },
+    { label: 'Rejected', value: 3,  variant: 'danger' },
+  ];
+  document.getElementById('c-donut').data = split;
+  document.getElementById('c-pie').data   = split;
+  document.getElementById('c-spark').data = m(['1','2','3','4','5','6'], [12, 18, 9, 22, 17, 25]);
+
+  document.getElementById('c-combo').series = [
+    { name: 'Revenue',  kind: 'bar',  data: Q([1200000, 1500000, 1350000, 1800000]) },
+    { name: 'Margin %', kind: 'line', axis: 'right', data: Q([18, 22, 20, 26]) },
+  ];
+  document.getElementById('c-wf').data = [
+    { label: 'Opening', value: 800000, total: true },
+    { label: 'Sales',   value: 1200000 },
+    { label: 'Refunds', value: -180000 },
+    { label: 'Costs',   value: -640000 },
+    { label: 'Closing', total: true },
+  ];
+  document.getElementById('c-stack').series = [
+    { name: 'Hardware', data: Q([40, 55, 48, 60]) },
+    { name: 'Software', data: Q([30, 25, 35, 28]) },
+    { name: 'Services', data: Q([20, 30, 25, 35]) },
+  ];
+  document.getElementById('c-pareto').data = [
+    { label: 'ABC Co.', value: 420000 }, { label: 'XYZ Ltd', value: 280000 },
+    { label: 'DEF',     value: 150000 }, { label: 'GHI',     value: 90000 },
+    { label: 'Others',  value: 60000 },
+  ];
+</script>
+</body>
+</html>

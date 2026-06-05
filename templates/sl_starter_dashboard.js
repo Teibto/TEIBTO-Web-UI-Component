@@ -18,6 +18,17 @@ define([ 'N/file', './tbt_page' ], (file, tbtPage) => ({
         pending: { value: '14',         trend: '+2',     variant: 'warning' },
         overdue: { value: '3',          trend: '-1',     variant: 'danger' },
       },
+      salesByMonth: [
+        { label: 'Jan', value: 1850000 }, { label: 'Feb', value: 2100000 },
+        { label: 'Mar', value: 1720000 }, { label: 'Apr', value: 2380000 },
+        { label: 'May', value: 2450000 },
+      ],
+      ordersByStatus: [
+        { label: 'Approved', value: 86,  variant: 'success' },
+        { label: 'Pending',  value: 28,  variant: 'warning' },
+        { label: 'Draft',    value: 11,  variant: 'info' },
+        { label: 'Rejected', value: 3,   variant: 'danger' },
+      ],
       pending: [
         { tranid: 'PO-2569-0042', type: 'Purchase order', amount: '฿107,000', due: '2026-06-19' },
         { tranid: 'INV-0007',     type: 'AP Invoice',     amount: '฿ 48,500', due: '2026-06-05' },

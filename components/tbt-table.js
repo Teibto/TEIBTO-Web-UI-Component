@@ -1,6 +1,6 @@
 /**
  * @component tbt-table
- * @version 1.26.2
+ * @version 1.43.0
  * @author Wichit Wongta
  *
  * Data table with sortable/resizable columns, scroll, pagination, and responsive card view.
@@ -148,8 +148,8 @@ class TbtTable extends LitElement {
     menu.style.cssText = `
       position: fixed;
       top: ${e.clientY}px; left: ${e.clientX}px;
-      background: var(--tbt-bg-card, #fff);
-      border: 1px solid var(--tbt-border, #e2e8f0);
+      background: var(--tbt-bg-card);
+      border: 1px solid var(--tbt-border);
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       padding: 4px 0;
@@ -161,16 +161,16 @@ class TbtTable extends LitElement {
     const isPinnedLeft  = this._stickyIndexes('left').includes(colIndex);
     const isPinnedRight = this._stickyIndexes('right').includes(colIndex);
     menu.innerHTML = `
-      <div data-act="pin-left"  style="padding:8px 14px;cursor:pointer;${isPinnedLeft ? 'background:var(--tbt-bg-hover, #f3f4f6)' : ''}">📌 Pin to left</div>
-      <div data-act="pin-right" style="padding:8px 14px;cursor:pointer;${isPinnedRight ? 'background:var(--tbt-bg-hover, #f3f4f6)' : ''}">📌 Pin to right</div>
-      <div data-act="unpin"     style="padding:8px 14px;cursor:pointer;color:var(--tbt-danger, #ef4444)">✕ Unpin</div>
+      <div data-act="pin-left"  style="padding:8px 14px;cursor:pointer;${isPinnedLeft ? 'background:var(--tbt-bg-hover)' : ''}">📌 Pin to left</div>
+      <div data-act="pin-right" style="padding:8px 14px;cursor:pointer;${isPinnedRight ? 'background:var(--tbt-bg-hover)' : ''}">📌 Pin to right</div>
+      <div data-act="unpin"     style="padding:8px 14px;cursor:pointer;color:var(--tbt-danger)">✕ Unpin</div>
     `;
     menu.querySelectorAll('[data-act]').forEach(el => {
-      el.addEventListener('mouseenter', () => el.style.background = 'var(--tbt-bg-hover, #f3f4f6)');
+      el.addEventListener('mouseenter', () => el.style.background = 'var(--tbt-bg-hover)');
       el.addEventListener('mouseleave', () => el.style.background = (
         (el.dataset.act === 'pin-left'  && isPinnedLeft)  ||
         (el.dataset.act === 'pin-right' && isPinnedRight)
-      ) ? 'var(--tbt-bg-hover, #f3f4f6)' : '');
+      ) ? 'var(--tbt-bg-hover)' : '');
     });
     menu.addEventListener('click', (ev) => {
       const t = ev.target.closest('[data-act]');
@@ -290,6 +290,7 @@ class TbtTable extends LitElement {
       background: var(--tbt-bg-card);   /* opaque so sticky cells visually cover scrolled cells */
     }
     tr:last-child td { border-bottom: 0; }
+    tbody tr { cursor: pointer; }
     tbody tr:hover td { background: var(--tbt-bg-hover); }
     td a {
       color: var(--tbt-text-link);
@@ -525,6 +526,14 @@ class TbtTable extends LitElement {
     this._page = 1;
   }
 
+  _emitRowClick(row) {
+    this.dispatchEvent(new CustomEvent('tbt-row-click', {
+      detail: { row },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
   /* ── Cell renderer (shared) ─────────────────────────── */
 
   _cell(col, row) {
@@ -644,7 +653,7 @@ class TbtTable extends LitElement {
                   <div class="empty">${this.loading ? 'Loading…' : this.emptyMessage}</div>
                 </td>
               </tr>` : pageRows.map(row => html`
-              <tr>
+              <tr @click=${() => this._emitRowClick(row)}>
                 ${this.columns.map((col, i) => {
                   const stickyCls = this._stickyClassFor(i);
                   const stickySt  = this._stickyStyleFor(i);

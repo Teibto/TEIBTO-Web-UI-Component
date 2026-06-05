@@ -1,0 +1,107 @@
+<!--
+  bill-receipt-list.html — Vendor bill receipt (รับวางบิล) list page body.
+
+  Layout (Teibto standard list):
+    Page header  — title + new button
+    Filters      — search + status dropdown (in section actions)
+    List table   — paginated tbt-table with status badge + row actions
+
+  Required keys on window.__DATA__:
+    rows      array of { id, tranid, vendor, receiveDate, dueDate, invoiceCount, total, status }
+    statuses  [{ value, label }]
+    formUrl   string — base URL of the bill-receipt form Suitelet (?id= appended)
+    newUrl    string — URL to open a blank form
+-->
+
+<!-- ── 1. Page header ─────────────────────────────────────────── -->
+<tbt-section>
+  <div class="tbt-page-header">
+    <div>
+      <div class="tbt-page-header__title">รับวางบิล</div>
+      <div class="tbt-page-header__subtitle">ใบวางบิลจากผู้จำหน่ายที่รอตรวจรับและตั้งเบิก</div>
+    </div>
+    <tbt-button id="new-btn" variant="primary" icon="add">สร้างใบวางบิล</tbt-button>
+  </div>
+</tbt-section>
+
+<div class="tbt-page-alerts">
+  <tbt-alert id="demo-alert" variant="warning" hidden>กำลังแสดงข้อมูลตัวอย่าง — ยังไม่ได้ติดตั้ง custom record (ดู netsuite/DEPLOY.md)</tbt-alert>
+</div>
+
+<!-- ── 2. List ────────────────────────────────────────────────── -->
+<tbt-section title="รายการใบวางบิล">
+  <div slot="actions" style="display:flex;gap:var(--tbt-space-3)">
+    <tbt-search id="search" placeholder="ค้นหาเลขที่ / ผู้จำหน่าย…" debounce="300"></tbt-search>
+    <tbt-dropdown id="f-status" name="status" placeholder="ทุกสถานะ"></tbt-dropdown>
+  </div>
+  <tbt-table id="table" paginate page-size="50" responsive max-height="560px"></tbt-table>
+</tbt-section>
+
+<script type="module">
+  const d  = window.__DATA__;
+  const rt = window.tbtPageRuntime;
+
+  if (d.demo) { const da = document.getElementById('demo-alert'); if (da) da.hidden = false; }
+
+  const STATUS_LABEL = {
+    Draft:     'ร่าง',
+    Submitted: 'รอตรวจรับ',
+    Approved:  'อนุมัติแล้ว',
+    Rejected:  'ตีกลับ',
+    Paid:      'ชำระแล้ว',
+  };
+  const STATUS_VARIANT = {
+    Draft: 'warning', Submitted: 'info', Approved: 'success', Rejected: 'danger', Paid: 'success',
+  };
+  const badge = (s) => rt.badge(STATUS_LABEL[s] || s, STATUS_VARIANT[s] || 'neutral');
+
+  /* ── Table ──────────────────────────────────────────────── */
+  const table = document.getElementById('table');
+  table.columns = [
+    { key: 'tranid',       label: 'เลขที่ใบวางบิล', sortable: true, mobileTitle: true },
+    { key: 'vendor',       label: 'ผู้จำหน่าย',      sortable: true },
+    { key: 'receiveDate',  label: 'วันที่รับวางบิล', sortable: true },
+    { key: 'dueDate',      label: 'ครบกำหนดชำระ',   sortable: true },
+    { key: 'invoiceText',  label: 'ใบแจ้งหนี้',      align: 'center' },
+    { key: 'totalText',    label: 'ยอดรวม',          align: 'right', sortable: true },
+    { key: 'statusBadge',  label: 'สถานะ',           html: true },
+    { key: 'actions',      label: '',                html: true, align: 'center' },
+  ];
+
+  function render(rows) {
+    table.rows = rows.map(r => ({
+      ...r,
+      invoiceText: String(r.invoiceCount) + ' ใบ',
+      totalText:   rt.currency(r.total),
+      statusBadge: badge(r.status),
+      actions:     rt.rowActions(r.id, { view: true, edit: true, delete: false }),
+    }));
+  }
+  render(d.rows || []);
+
+  /* ── Filters ────────────────────────────────────────────── */
+  const fStatus = document.getElementById('f-status');
+  fStatus.options = [{ value: '', label: 'ทุกสถานะ' }, ...(d.statuses || [])];
+  fStatus.value = '';
+
+  function applyFilters() {
+    const q = (document.getElementById('search').value || '').toLowerCase();
+    const s = fStatus.value;
+    render((d.rows || []).filter(r => {
+      const matchQ = !q || (r.tranid + ' ' + r.vendor).toLowerCase().includes(q);
+      const matchS = !s || r.status === s;
+      return matchQ && matchS;
+    }));
+  }
+  document.getElementById('search').addEventListener('tbt-search', applyFilters);
+  fStatus.addEventListener('tbt-change', applyFilters);
+
+  /* ── Navigation ─────────────────────────────────────────── */
+  const goForm = (id) => { window.location.href = d.formUrl + encodeURIComponent(id); };
+
+  table.addEventListener('tbt-row-click', (e) => goForm(e.detail.row.id));
+  rt.wireRowActions(table, { onView: goForm, onEdit: goForm });
+  document.getElementById('new-btn').addEventListener('click', () => {
+    window.location.href = d.newUrl;
+  });
+</script>

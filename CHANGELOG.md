@@ -9,6 +9,52 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- **Employee expense claim — production backend.** Second module on the
+  bill-receipt reference pattern (header + 1:N lines + status state machine):
+  `netsuite/expense_meta.js` (ids + state machine), `expense_lib.js`
+  (validate / list / load / employees / save), `rl_expense.js` (RESTlet, the
+  only writer — re-reads status, enforces permission → state-machine →
+  validation), SDF `customrecord_tbt_expense_claim` + `_line`, and
+  `sl_expense_claim.js` reading real data via the lib + `N/url` with a demo
+  fallback banner. Fixed the submit payload to send the employee internal id
+  (not the display name). DEPLOY.md + smoke test extended. Verified locally:
+  lint + build + 575 unit + smoke green (expense page: 3 lines, 3 approval
+  steps, demo banner shown, no console errors); real N/query/N/record →
+  sandbox checklist.
+- **Vendor bill receipt (รับวางบิล) — production backend.** Replaces the mock
+  scaffold with real SuiteScript:
+  - `netsuite/objects/customrecord_tbt_bill_receipt.xml` + `_line.xml` — SDF
+    custom records (header + 1:N invoice lines), field ids matching the meta module.
+  - `netsuite/bill_receipt_meta.js` — single source of truth: record/field ids +
+    status state machine (Draft→Submitted→Approved/Rejected→Paid).
+  - `netsuite/bill_receipt_lib.js` — `validate` / `list` (SuiteQL) / `load` /
+    `vendors` / `save` (N/record, replace-lines) + permission gate.
+  - `netsuite/rl_bill_receipt.js` — RESTlet, the only writer: re-reads current
+    status from the DB and enforces permission → state-machine → validation
+    server-side (never trusts the client).
+  - `sl_bill_receipt_list/form.js` now read real data via the lib and resolve
+    URLs via `N/url`; they fall back to demo data with a warning banner when the
+    custom record isn't deployed yet (also the path `npm run test:smoke` exercises).
+  - `netsuite/DEPLOY.md` — SDF deploy steps, script/deployment ids, approver-role
+    wiring, and a sandbox smoke checklist (this backend can't be unit-tested
+    outside NetSuite).
+
+## [1.43.0] — 2026-05-30
+
+### Fixed
+
+- **`tbt-line-items` (v1.43.0)** — the horizontal/vertical scroll wrapper (`.lines-wrap`) is now keyboard-focusable (`tabindex="0"` + `role="group"` + `aria-label`), fixing the axe `scrollable-region-focusable` violation so keyboard-only users can scroll the line grid. Also clears the same failure surfaced through `tbt-lines-block`, which composes `tbt-line-items`.
+- **`tbt-table` (v1.43.0)** — now emits `tbt-row-click` (`detail: { row }`) when a body row is clicked, with a `cursor: pointer` affordance. The event was already consumed by 8 list templates (and `tbtPageRuntime.wireRowActions`, whose capture-phase guard is documented as "fires before tbt-row-click") but `tbt-table` never dispatched it — every "click row to open document" interaction was a silent no-op. Covered by a new unit test.
+- **`tbt-table` + `tbt-line-items` (v1.43.0)** — removed hex color fallbacks from the right-click pin/unpin context menu (`var(--tbt-*, #hex)` → `var(--tbt-*)`, 14 occurrences). The menu mounts on `document.body`, where tokens resolve from `:root` in `tbt-theme.css`, so the fallbacks were dead weight. Satisfies governance rule 1 (no hex literals) — `npm run lint` now passes clean.
+
+### Added
+
+- **`tbt-chart` (v1.43.0) — SVG chart component for dashboards.** Bar, line, area, donut, pie, and sparkline in one element, single-series (`.data`) or multi-series (`.series`). Pure Lit + inline SVG; every colour is a `var(--tbt-*)` token via `currentColor`, so dark mode applies automatically and no hex appears — no canvas, no CDN library, CSP-safe. A `ResizeObserver` draws in real pixel coordinates (crisp text/strokes, no viewBox stretch). Native `<title>` tooltips + `role="img"` for a11y; `tbt-chart-select` event on bar/slice/point click. Design recorded in `rfcs/0001-tbt-chart.md`. Wired into `templates/dashboard.html` (sales bar + status donut) and demoed in `demo/specimen.html`.
+- **`tbt-chart` analytical types (v1.43.0)** — added `combo` (bars + lines on a dual axis), `waterfall` (P&L/cash-flow bridge with up/down/total colours), `stacked` (+ `percent` for 100% stacked), `pareto` (auto-sorted bars + cumulative-% line + 80% marker), and `gauge` (180° arc, value vs `target`). New props: `value`, `max`, `target`, `percent`, `right-suffix`; new per-series keys `kind`/`axis` (combo) and per-datum `total` (waterfall). Still pure SVG + tokens, no dependency. Design in `rfcs/0002-tbt-chart-analytical.md`; demoed in `demo/specimen.html`.
+- **`templates/bill-receipt-*` + `sl_bill_receipt_*.js` — vendor bill receipt (รับวางบิล) module.** Two Suitelets composed entirely from DS components + `var(--tbt-*)` tokens:
+  - `sl_bill_receipt_list.js` + `bill-receipt-list.html` — voucher list: search + status filter + `tbt-table` with status badges and view/edit row actions.
+  - `sl_bill_receipt_form.js` + `bill-receipt-form.html` — voucher document: header + document-info field-grid + summary stats + vendor-invoice lines (`tbt-table` + add/edit modal, auto-VAT) + `tbt-approval-flow` + `tbt-audit-log`. Edit only while status is `Draft`; `Submitted` exposes approve/reject; `Approved`/`Paid` are read-only.
+  - `scripts/dev-suitelet.mjs` — registered `/bill-receipt/list` + `/bill-receipt/form` preview routes.
 - **Page composition utility classes** in `theme/tbt-theme.css` — token-only, no hex. Lets Suitelet body templates drop inline-style duplication:
   - `.tbt-page-header` + `.tbt-page-header__title` + `.tbt-page-header__subtitle`
   - `.tbt-stats-grid` — auto-fit grid for `tbt-stat` cards

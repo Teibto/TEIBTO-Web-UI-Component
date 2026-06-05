@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Vendor bill receipt (รับวางบิล) header record.
+  Field ids MUST match netsuite/bill_receipt_meta.js (F.*). Deploy with SDF:
+  copy into <sdf-project>/src/Objects/ then `suitecloud object:import` is NOT
+  needed — this IS the source. See netsuite/DEPLOY.md.
+-->
+<customrecordtype scriptid="customrecord_tbt_bill_receipt">
+  <recordname>TBT Bill Receipt</recordname>
+  <includename>T</includename>
+  <includenumber>F</includenumber>
+  <showid>F</showid>
+  <enablemailmerge>F</enablemailmerge>
+  <iconbuiltin>T</iconbuiltin>
+  <icon>RECEIPT</icon>
+  <allowattachments>T</allowattachments>
+  <allowinlineediting>F</allowinlineediting>
+  <allowquickadd>F</allowquickadd>
+  <enablekeywords>F</enablekeywords>
+  <enablesystemnotes>T</enablesystemnotes>
+  <hierarchical>F</hierarchical>
+  <isordered>F</isordered>
+  <showcreationdate>T</showcreationdate>
+  <showlastmodified>T</showlastmodified>
+  <showowner>T</showowner>
+  <customrecordcustomfields>
+    <customrecordcustomfield scriptid="custrecord_tbt_br_tranid">
+      <label>Document No.</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>F</ismandatory>
+      <isformula>F</isformula>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_br_vendor">
+      <label>Vendor</label>
+      <fieldtype>SELECT</fieldtype>
+      <selectrecordtype>-3</selectrecordtype><!-- -3 = Vendor -->
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_br_receive_date">
+      <label>Receive date</label>
+      <fieldtype>DATE</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_br_due_date">
+      <label>Due date</label>
+      <fieldtype>DATE</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_br_contact">
+      <label>Delivered by</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_br_reference">
+      <label>Reference no.</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_br_status">
+      <label>Status</label>
+      <fieldtype>FREEFORMTEXT</fieldtype>
+      <ismandatory>T</ismandatory>
+      <defaultvalue>Draft</defaultvalue>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_tbt_br_total">
+      <label>Total</label>
+      <fieldtype>CURRENCY</fieldtype>
+      <ismandatory>F</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+  </customrecordcustomfields>
+</customrecordtype>

@@ -52,7 +52,7 @@
   fCustomer.value = fStatus.value = '';
 
   const STATUS_VARIANT = { Draft: 'warning', 'Pending approval': 'info', Approved: 'success', Paid: 'success', Overdue: 'danger', Rejected: 'danger' };
-  const statusBadge = (s) => `<tbt-badge variant="${STATUS_VARIANT[s] || 'neutral'}">${s}</tbt-badge>`;
+  const statusBadge = (s) => rt.badge(s, STATUS_VARIANT[s] || 'neutral');
 
   const TODAY = '2026-05-30';
   function recomputeStats(rows) {
@@ -110,7 +110,7 @@
     onView:   (id) => { location.href = `${d.formUrl}?id=${id}`; },
     onEdit:   (id) => { location.href = `${d.formUrl}?id=${id}&mode=edit`; },
     onDelete: async (id) => {
-      const ds = await import('/sc/SuiteScripts/Teibto/ds/v1.42.1/dist/tbt-ds.min.js');
+      const ds = await import('/sc/SuiteScripts/Teibto/ds/v1.43.0/dist/tbt-ds.min.js');
       const ok = await ds.confirm({
         title: 'Delete invoice?',
         message: `Permanently delete ${(d.records || []).find(r => String(r.id) === String(id))?.tranid || id}?`,

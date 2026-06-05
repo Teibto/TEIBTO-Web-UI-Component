@@ -61,9 +61,11 @@ Copy template ที่เหมาะกับ scope แล้ว fill in spec 
 ### Verification (รันก่อนตอบ done)
 - npm run build  → bundle ผ่าน
 - npm run lint   → governance ผ่าน
-- curl -s -o /dev/null -w "%{http_code}" http://localhost:8090/<route>  → 200
-- grep ตรวจ key content (title, mock data values, sidebar active) ใน rendered HTML
-- รายงานสรุป pass/fail
+- npm test       → unit tests ผ่าน
+- curl -s -o /dev/null -w "%{http_code}" http://localhost:8090/<route>  → 200 (server-side render)
+- **npm run test:smoke** → โหลดหน้าจริงในเบราว์เซอร์: ไม่มี console error + component render จริง
+  (curl เช็คแค่ HTML — build/curl ผ่านแต่ runtime พังได้ ดู tbt-ds-pitfalls §21)
+- รายงานสรุป pass/fail พร้อมตัวเลขจริง
 ```
 
 ---

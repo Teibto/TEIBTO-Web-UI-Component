@@ -31,6 +31,7 @@
 </tbt-section>
 
 <div class="tbt-page-alerts">
+  <tbt-alert id="demo-alert" variant="warning" hidden>กำลังแสดงข้อมูลตัวอย่าง — ยังไม่ได้ติดตั้ง custom record (ดู netsuite/DEPLOY.md)</tbt-alert>
   <tbt-alert id="ok-alert"  variant="success" dismissible hidden></tbt-alert>
   <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
 </div>
@@ -97,8 +98,10 @@
   const d  = window.__DATA__;
   const rt = window.tbtPageRuntime;
 
+  if (d.demo) { const da = document.getElementById('demo-alert'); if (da) da.hidden = false; }
+
   /* ── Header ─────────────────────────────────────────────── */
-  document.getElementById('hdr-claimno').textContent = d.claim.id;
+  document.getElementById('hdr-claimno').textContent = d.claim.tranid || d.claim.id || '(new)';
   document.getElementById('hdr-employee').textContent= d.claim.employee;
   document.getElementById('hdr-period').textContent  = d.claim.period;
   rt.setStatusBadge(document.getElementById('hdr-status'), d.claim.status);
@@ -227,8 +230,15 @@
   /* ── Action bar ─────────────────────────────────────────── */
   async function submit(action, label) {
     rt.hideAlerts('ok-alert', 'err-alert');
+    // Send the employee internal id (RESTlet writes a SELECT field), not the name.
+    const claim = {
+      id: d.claim.id, tranid: d.claim.tranid,
+      employee: (fEmployee && fEmployee.value) || d.claim.employeeId,
+      period: d.claim.period,
+    };
     try {
-      await rt.post(d.restletUrl, { action, claim: d.claim, lines: d.lines });
+      const res = await rt.post(d.restletUrl, { action, claim, lines: d.lines });
+      if (res && res.status) rt.setStatusBadge(document.getElementById('hdr-status'), res.status);
       rt.showAlert('ok-alert', label + ' successful.');
     } catch (err) {
       rt.showAlert('err-alert', label + ' failed: ' + err.message);
