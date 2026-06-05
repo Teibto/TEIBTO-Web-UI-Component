@@ -37,6 +37,34 @@ describe('tbt-tree', () => {
     expect(el.shadowRoot.textContent).to.not.include('Cash');
   });
 
+  it('ArrowLeft collapses an expanded branch from the keyboard', async () => {
+    const el = await fixture(html`<tbt-tree .nodes=${NODES}></tbt-tree>`);
+    await el.updateComplete;
+    const assets = el.shadowRoot.querySelector('.row[aria-expanded="true"]');
+    assets.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true }));
+    await el.updateComplete;
+    expect(el.shadowRoot.textContent).to.not.include('Cash');
+  });
+
+  it('ArrowRight expands a collapsed branch from the keyboard', async () => {
+    const el = await fixture(html`<tbt-tree .nodes=${NODES} .expanded=${[]}></tbt-tree>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.textContent).to.not.include('Cash');
+    const assets = el.shadowRoot.querySelector('.row[aria-expanded="false"]');
+    assets.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }));
+    await el.updateComplete;
+    expect(el.shadowRoot.textContent).to.include('Cash');
+  });
+
+  it('ArrowRight fires tbt-toggle with expanded=true', async () => {
+    const el = await fixture(html`<tbt-tree .nodes=${NODES} .expanded=${[]}></tbt-tree>`);
+    await el.updateComplete;
+    const assets = el.shadowRoot.querySelector('.row[aria-expanded="false"]');
+    setTimeout(() => assets.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })));
+    const ev = await oneEvent(el, 'tbt-toggle');
+    expect(ev.detail).to.deep.equal({ id: '1', expanded: true });
+  });
+
   it('selects a node and fires tbt-select on click', async () => {
     const el = await fixture(html`<tbt-tree .nodes=${NODES}></tbt-tree>`);
     await el.updateComplete;
