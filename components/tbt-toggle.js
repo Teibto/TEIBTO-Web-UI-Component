@@ -16,7 +16,7 @@
  * Event: tbt-change → { checked: Boolean }
  * Value: Boolean — el.value reads this.checked, compatible with tbt-form
  */
-import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
 /**
  * @fires tbt-change - Fired when toggled; detail: { checked: boolean }
@@ -132,6 +132,7 @@ class TbtToggle extends LitElement {
           ?disabled=${this.disabled}
           role="switch"
           aria-checked=${this.checked}
+          aria-label=${this.label ? nothing : 'Toggle'}
           @change=${this._onChange}>
         <span class="track" aria-hidden="true">
           <span class="thumb"></span>
