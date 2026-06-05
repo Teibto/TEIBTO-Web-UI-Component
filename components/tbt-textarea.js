@@ -147,7 +147,7 @@ class TbtTextarea extends LitElement {
         @input=${this._onInput}
         @change=${this._onChange}></textarea>
       ${this.error ? html`
-        <div id=${errId} class="error-msg">
+        <div id=${errId} class="error-msg" role="alert">
           <i class="ti ti-alert-circle error-icon" aria-hidden="true"></i>
           ${this.error}
         </div>` : ''}

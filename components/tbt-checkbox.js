@@ -175,7 +175,7 @@ class TbtCheckbox extends LitElement {
           </span>` : ''}
       </label>
       ${this.error ? html`
-        <div class="hint error-msg">
+        <div class="hint error-msg" role="alert">
           <i class="ti ti-alert-circle error-icon" aria-hidden="true"></i>
           ${this.error}
         </div>` : ''}

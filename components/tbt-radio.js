@@ -124,7 +124,7 @@ class TbtRadio extends LitElement {
             <span class="opt-lbl">${o.label}</span>
           </label>`)}
       </div>
-      ${this.error ? html`<div class="hint error-msg">
+      ${this.error ? html`<div class="hint error-msg" role="alert">
         <i class="ti ti-alert-circle error-icon" aria-hidden="true"></i>${this.error}
       </div>` : ''}
       ${this.helper && !this.error ? html`<div class="hint helper">${this.helper}</div>` : ''}
