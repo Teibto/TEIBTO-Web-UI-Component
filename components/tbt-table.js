@@ -270,6 +270,11 @@ class TbtTable extends LitElement {
     }
     th.sortable { cursor: pointer; }
     th.sortable:hover { color: var(--tbt-text-primary); }
+    th.sortable:focus-visible {
+      outline: 2px solid var(--tbt-primary);
+      outline-offset: -2px;
+      color: var(--tbt-text-primary);
+    }
     th .sort-icon {
       display: inline-block;
       margin-left: 4px;
@@ -526,6 +531,13 @@ class TbtTable extends LitElement {
     this._page = 1;
   }
 
+  _onSortKeydown(e, key) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this._setSort(key);
+    }
+  }
+
   _emitRowClick(row) {
     this.dispatchEvent(new CustomEvent('tbt-row-click', {
       detail: { row },
@@ -627,7 +639,9 @@ class TbtTable extends LitElement {
                         ? ((this.serverSort ? this.sortAsc : this._sortAsc) ? 'ascending' : 'descending')
                         : 'none')
                     : nothing}
+                  tabindex=${col.sortable ? '0' : nothing}
                   @click=${col.sortable ? () => this._setSort(col.key) : nothing}
+                  @keydown=${col.sortable ? (e) => this._onSortKeydown(e, col.key) : nothing}
                   @contextmenu=${(e) => this._showStickyMenu(e, i)}
                   title="Right-click to pin/unpin this column">
                   ${col.label}
