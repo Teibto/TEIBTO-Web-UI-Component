@@ -19,6 +19,43 @@ describe('tbt-line-items', () => {
     expect(el.rows[0].item).to.equal('Laptop');
   });
 
+  it('refreshes Account dropdown when accountOptions is set AFTER rows (async load)', async () => {
+    const el = await fixture(html`<tbt-line-items></tbt-line-items>`);
+    await el.updateComplete;
+    el.rows = [{ item: 'A', desc: '', qty: 1, unit: 'Pcs', price: 100, account: '5000' }];
+    await el.updateComplete;
+    // Before options arrive, the Account <select> has no options
+    let sel = el.shadowRoot.querySelector('select[data-f="account"]');
+    expect(sel, 'account select exists').to.exist;
+    expect(sel.querySelectorAll('option')).to.have.length(0);
+    // Options arrive late (e.g. async chart-of-accounts fetch resolving after rows)
+    el.accountOptions = [
+      { value: '5000', label: '5000 Cost of goods' },
+      { value: '6000', label: '6000 Expenses' },
+    ];
+    await el.updateComplete;
+    sel = el.shadowRoot.querySelector('select[data-f="account"]');
+    const labels = [...sel.querySelectorAll('option')].map(o => o.textContent.trim());
+    expect(labels).to.deep.equal(['5000 Cost of goods', '6000 Expenses']);
+    expect(sel.value, 'row account value preserved').to.equal('5000');
+  });
+
+  it('refreshes Unit dropdown when unitOptions is set AFTER rows', async () => {
+    const el = await fixture(html`<tbt-line-items></tbt-line-items>`);
+    await el.updateComplete;
+    el.rows = [{ item: 'A', desc: '', qty: 1, unit: 'Kg', price: 1, account: '' }];
+    await el.updateComplete;
+    el.unitOptions = [
+      { value: 'Kg',  label: 'Kg'  },
+      { value: 'Ton', label: 'Ton' },
+    ];
+    await el.updateComplete;
+    const sel = el.shadowRoot.querySelector('select[data-f="unit"]');
+    const labels = [...sel.querySelectorAll('option')].map(o => o.textContent.trim());
+    expect(labels).to.deep.equal(['Kg', 'Ton']);
+    expect(sel.value).to.equal('Kg');
+  });
+
   it('addRow() appends one blank row', async () => {
     const el = await fixture(html`<tbt-line-items></tbt-line-items>`);
     await el.updateComplete;
