@@ -4210,6 +4210,10 @@
           "members": [
             {
               "kind": "method",
+              "name": "_finalizeClose"
+            },
+            {
+              "kind": "method",
               "name": "_close"
             },
             {
@@ -6985,6 +6989,15 @@
               "name": "_toggle"
             },
             {
+              "kind": "method",
+              "name": "_onTriggerKeydown",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "_open",
               "privacy": "public",
@@ -7301,6 +7314,11 @@
               "default": "true"
             },
             {
+              "kind": "field",
+              "name": "_filteredOpts",
+              "readonly": true
+            },
+            {
               "kind": "method",
               "name": "_toggleOpen"
             },
@@ -7328,6 +7346,15 @@
             {
               "kind": "method",
               "name": "_onTriggerKeydown",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onSearchKeydown",
               "parameters": [
                 {
                   "name": "e"
@@ -7387,6 +7414,16 @@
               },
               "default": "''",
               "attribute": "_query"
+            },
+            {
+              "kind": "field",
+              "name": "_activeIdx",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "attribute": "_activeIdx"
             },
             {
               "kind": "field",
@@ -7559,6 +7596,14 @@
               },
               "default": "''",
               "fieldName": "_query"
+            },
+            {
+              "name": "_activeIdx",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "fieldName": "_activeIdx"
             }
           ],
           "superclass": {
@@ -10443,6 +10488,18 @@
             },
             {
               "kind": "method",
+              "name": "_onSortKeydown",
+              "parameters": [
+                {
+                  "name": "e"
+                },
+                {
+                  "name": "key"
+                }
+              ]
+            },
+            {
+              "kind": "method",
               "name": "_emitRowClick",
               "parameters": [
                 {
@@ -12174,6 +12231,24 @@
               "parameters": [
                 {
                   "name": "node"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "_onItemKeydown",
+              "parameters": [
+                {
+                  "name": "e"
+                },
+                {
+                  "name": "node"
+                },
+                {
+                  "name": "hasKids"
+                },
+                {
+                  "name": "open"
                 }
               ]
             },

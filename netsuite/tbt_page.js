@@ -35,7 +35,7 @@ define([ 'N/error' ], (error) => {
 
   /* ── Single source of truth ──────────────────────────────────────── */
 
-  const DS_VERSION = '1.43.0';
+  const DS_VERSION = '1.43.1';
   const FC_BASE    = `/sc/SuiteScripts/Teibto/ds/v${DS_VERSION}/dist`;
   const LOGO_URL   = '/sc/SuiteScripts/Teibto/assets/teibtologo.png';
   const BRAND      = 'Teibto ERP';

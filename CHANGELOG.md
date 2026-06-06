@@ -7,6 +7,37 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+## [1.43.1] — 2026-06-06
+
+### Fixed
+
+- **a11y: keyboard option navigation for `tbt-multiselect`.** Options were
+  mouse-only — keyboard users could open the listbox but not move to or toggle
+  any option. Ported the roving-highlight pattern from `tbt-dropdown`
+  (`_activeIdx`, Arrow/Home/End, `aria-activedescendant`); Enter/Space toggles
+  the highlighted option and keeps the list open.
+- **a11y: keyboard-operable column sort for `tbt-table`.** Sortable `<th>` is
+  now focusable (`tabindex=0`) and sorts on Enter/Space, with a focus-visible
+  outline. Non-sortable headers stay out of the tab order.
+- **`tbt-line-items`: refresh Account/Unit dropdowns when their options change.**
+  `accountOptions`/`unitOptions` set AFTER `rows` (e.g. an async
+  chart-of-accounts fetch) left existing rows' selects stale; `updated()` now
+  rebuilds the tbody for them, preserving each row's selected value.
+- **a11y: keyboard expand/collapse for `tbt-tree`.** ArrowRight expands a
+  collapsed branch, ArrowLeft collapses an expanded one, alongside Enter/Space
+  select.
+- **a11y: keyboard open/close for `tbt-menu-group`.** ArrowDown opens (focusing
+  the first item), Escape closes (restoring focus to the trigger); corrected
+  `aria-haspopup` from `"true"` to `"menu"`.
+- **a11y: `tbt-drawer` restores focus to the opener on close**, matching
+  `tbt-modal`.
+- **a11y: form error messages announced via `role="alert"`** in `tbt-input`,
+  `tbt-textarea`, `tbt-checkbox`, `tbt-radio`, `tbt-dropdown`, `tbt-datepicker`,
+  `tbt-date-range`, and `tbt-file-upload` (matching `tbt-number-input` /
+  `tbt-tag-input`).
+- **a11y: fallback accessible name for unlabeled `tbt-toggle`** (aria-label
+  applied only when no visible label is present).
+
 ### Added
 
 - **Employee expense claim — production backend.** Second module on the
