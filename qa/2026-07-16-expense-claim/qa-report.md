@@ -54,3 +54,16 @@ flow save → submit → approve เดินจบบน record จริง, a
 `03-filled-form.png` กรอกครบ · `04-saved-draft.png` save แล้ว ·
 `05-submitted.png` รออนุมัติ · `06-approved-readonly.png` อนุมัติแล้ว (view) ·
 `07-dark.png` dark · `08-mobile-375.png` 375px
+
+## Addendum — verify รอบ v1.45.0 (#29 #48 #49, วันเดียวกัน)
+
+Deploy v1.45.0 + counter record + libs แล้ว verify ต่อบน SB2:
+
+- **#29 datepicker**: ฟอร์มรับวางบิล id=2 — `f-receive` = `2026-07-16`, `f-due` =
+  `2026-08-15` (ISO แทน locale), ช่องว่างแสดง hint `YYYY-MM-DD` (shots/09, 11)
+- **#49 counter no-reuse**: สร้าง EXP-2569-0003 → ลบผ่าน nlapi → สร้างใหม่ได้
+  **EXP-2569-0004** ไม่ reuse (shots/10) — fixture คงเหลือ: EXP-2569-0004 (id=4, Draft)
+- **#48**: `APPROVER_ROLES=[3,1038]` deploy แล้ว — ยังไม่ e2e ด้วย role 1038 จริง
+  (ไม่มี credential); admin path regression ผ่าน
+- ข้อจำกัดรอบนี้: มี browser session อื่นใช้ user เดียวกัน — session ตีกันทำให้เจอ
+  HTTP 401/หลุดเป็นระยะ (login ใหม่แล้วเทสผ่านทุกครั้ง)
