@@ -1,0 +1,20 @@
+# .gitleaks.toml — per-repo allowlist for scripts/secret-scan.sh (R6 gate)
+#
+# ทำไมต้องมี: step [1/2] ของ secret-scan.sh สแกน working tree รวม untracked
+# ไฟล์ด้วย — `.env` (local dev credentials, git-ignored ด้วย `.env*`) เลยทำให้
+# gate แดงทุกครั้งบนเครื่อง dev ทั้งที่ไฟล์นี้ commit ไม่ได้อยู่แล้ว (#66)
+#
+# Trade-off ที่ยอมรับ: ถ้ามีคน `git add -f .env` โดยตั้งใจ scan จะไม่จับ —
+# ต้องฝ่า .gitignore เองและยังมี PR review gate อยู่
+#
+# @author Wichit Wongta @since 2026-07-17
+
+[extend]
+# ใช้ default rules ของ gitleaks ทั้งหมด — เพิ่มเฉพาะ allowlist ข้างล่าง
+useDefault = true
+
+[allowlist]
+description = "Local-only files that git already refuses to commit"
+paths = [
+  '''^\.env$''',
+]

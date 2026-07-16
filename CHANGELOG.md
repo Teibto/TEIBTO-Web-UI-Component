@@ -7,7 +7,11 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
-_(nothing yet)_
+### Fixed
+
+- `.gitleaks.toml`: allowlist local git-ignored `.env` so the R6 secret-scan
+  gate no longer fails on every dev machine that has local credentials —
+  tracked files and the staged-snapshot scan are still fully covered (#66)
 
 ## [1.45.1] - 2026-07-17
 
