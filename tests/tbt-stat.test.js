@@ -68,6 +68,19 @@ describe('tbt-stat', () => {
     expect(iconWrap.querySelector('i.ti-cash')).to.exist;
   });
 
+  it('resolves ERP alias icons through ICON_ALIASES (money → currency-baht)', async () => {
+    const el = await fixture(html`<tbt-stat label="Net" value="฿1M" icon="money"></tbt-stat>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('i.ti-currency-baht'), 'alias "money" must map to a real Tabler glyph').to.exist;
+    expect(el.shadowRoot.querySelector('i.ti-money')).to.be.null;
+  });
+
+  it('resolves ERP alias icons through ICON_ALIASES (payment → credit-card)', async () => {
+    const el = await fixture(html`<tbt-stat label="Total" value="฿1M" icon="payment"></tbt-stat>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('i.ti-credit-card')).to.exist;
+  });
+
   it('omits icon-wrap when icon not provided', async () => {
     const el = await fixture(html`<tbt-stat label="Revenue" value="฿1M"></tbt-stat>`);
     await el.updateComplete;

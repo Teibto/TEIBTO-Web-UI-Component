@@ -9,6 +9,14 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Fixed
 
+- **`tbt-stat` icon rendered the raw attribute name instead of resolving the
+  ERP alias map** (#25, found by the 2026-07-16 UX QA baseline). The card
+  emitted `ti ti-money` / `ti ti-payment` — classes that do not exist in the
+  Tabler webfont — so two of the four summary cards on the bill receipt form
+  showed empty colored boxes. `ICON_ALIASES` is now exported from
+  `tbt-icon.js` and `tbt-stat` resolves through it (`money` →
+  `currency-baht`, `payment` → `credit-card`); raw Tabler names still pass
+  through unchanged.
 - **Bill receipt line loss on submit: SuiteQL date round-trip + destructive
   replace order** (found by the SB2 smoke run, 2026-07-16). `load()` returned
   line dates in the account's date format (`16/7/2026`); submitting a reloaded
