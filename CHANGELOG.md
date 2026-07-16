@@ -7,6 +7,18 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Fixed
+
+- **`scripts/sync-sdf.js`: SDF staging path missed the `dist/` layer.** The
+  v1.42.1 decision moved File Cabinet files under
+  `/SuiteScripts/Teibto/ds/v<X.Y.Z>/dist/` and all runtime code (`tbt_page.js`
+  `FC_BASE`, every template, `dev-suitelet.mjs`) follows it — but `sync-sdf.js`
+  still staged files flat at `v<X.Y.Z>/`, so every SDF deploy landed on a path
+  no page references (404). Unnoticed because v1.43.0 was never uploaded to the
+  account. Also added `tbt-page-runtime.js` to the sync list — `tbt_page.js`
+  emits a `<script>` tag for it, but it was never copied to staging, so
+  server-rendered Suitelet pages would 404 on the runtime as well.
+
 ## [1.43.1] — 2026-07-16
 
 ### Fixed
