@@ -18,6 +18,7 @@
  *     status:     'pending' | 'current' | 'approved' | 'rejected' | 'skipped'
  *     timestamp?: string      ISO 8601 — when action was taken
  *     comment?:   string      optional approver note
+ *     statusLabel?: string    override the badge text (e.g. Thai UI) — defaults per status
  *   }
  *
  * Props:
@@ -238,7 +239,8 @@ class TbtApprovalFlow extends LitElement {
 
   /* ── Horizontal step ── */
   _renderHStep(step) {
-    const { icon, label, cls } = this._meta(step.status);
+    const { icon, label: defLabel, cls } = this._meta(step.status);
+    const label = step.statusLabel ?? defLabel;
     return html`
       <div class="step-wrap">
         <div class="dot ${cls}">
@@ -256,7 +258,8 @@ class TbtApprovalFlow extends LitElement {
 
   /* ── Vertical step ── */
   _renderVStep(step, isLast) {
-    const { icon, label, cls } = this._meta(step.status);
+    const { icon, label: defLabel, cls } = this._meta(step.status);
+    const label = step.statusLabel ?? defLabel;
     return html`
       <div class="step-wrap">
         ${!isLast ? html`

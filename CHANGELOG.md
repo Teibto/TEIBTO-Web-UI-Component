@@ -9,6 +9,23 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Fixed
 
+- **Bill receipt form lost its record identity after the first save — a
+  second "บันทึกร่าง" created a duplicate record** (#22). `save()` in
+  `bill_receipt_lib.js` now returns `{ id, tranid }`, the RESTlet passes the
+  generated tranid back, and the form adopts it: header/title update, the URL
+  gains `&id=` via `history.replaceState`, and action buttons re-evaluate per
+  the returned status. "ส่งตรวจรับ" on a never-saved form now saves as draft
+  first instead of failing with a raw backend transition error (#26).
+- **Bill receipt UX polish** (#26): validation and transition messages from
+  the backend are now Thai (they surface verbatim in the form's alert);
+  approval-flow badges show Thai (`tbt-approval-flow` gained an additive
+  per-step `statusLabel` override); Thai `placeholder`/`empty-message` on the
+  vendor dropdown, lines table, list table, and audit log; the header
+  subtitle no longer renders a dangling "· รับเมื่อ" on a new form; single
+  primary per state ("ส่งตรวจรับ" primary, "บันทึกร่าง" secondary); back
+  button uses the arrow icon and falls back to the list page when opened as
+  a direct link (`data.listUrl`); the list shows the edit pencil only on
+  Draft rows.
 - **`tbt-section` header crushed its title into mid-word line breaks when the
   actions slot was wide on narrow screens** (#23, 375px: "รายการใบวางบิล" broke
   around the search box). The header now wraps — the actions slot moves to its

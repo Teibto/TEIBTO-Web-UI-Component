@@ -62,6 +62,19 @@ describe('tbt-approval-flow', () => {
     expect(text).to.include('Manager');
   });
 
+  it('step.statusLabel overrides the default English badge text', async () => {
+    const steps = [
+      { label: 'ผู้รับวางบิล', status: 'approved', statusLabel: 'อนุมัติแล้ว' },
+      { label: 'หัวหน้าบัญชี', status: 'pending' },
+    ];
+    const el = await fixture(html`<tbt-approval-flow .steps=${steps}></tbt-approval-flow>`);
+    await el.updateComplete;
+    const text = el.shadowRoot.textContent;
+    expect(text).to.include('อนุมัติแล้ว');
+    expect(text).to.not.include('Approved');
+    expect(text).to.include('Pending'); // no override → default kept
+  });
+
   it('passes axe (horizontal)', async () => {
     const el = await fixture(html`<tbt-approval-flow .steps=${STEPS}></tbt-approval-flow>`);
     await el.updateComplete;

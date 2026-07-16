@@ -23,6 +23,11 @@ define(['N/file', 'N/url', './tbt_page', './bill_receipt_lib', './bill_receipt_m
       scriptId: 'customscript_tbt_rl_bill_receipt',
       deploymentId: 'customdeploy_tbt_rl_bill_receipt',
     });
+    // "กลับ" fallback when the form was opened as a direct link (no history).
+    const listUrl = url.resolveScript({
+      scriptId: 'customscript_tbt_sl_bill_receipt_list',
+      deploymentId: 'customdeploy_tbt_sl_bill_receipt_list',
+    });
 
     let data;
     try {
@@ -35,12 +40,14 @@ define(['N/file', 'N/url', './tbt_page', './bill_receipt_lib', './bill_receipt_m
         approvalSteps: approvalFor(loaded.voucher.status),
         auditEntries: [],   // wire to a system-note search per record if needed
         restletUrl,
+        listUrl,
         demo: false,
       };
     } catch (e) {
       // Record type not deployed yet, or id not found → demo fallback.
       log.audit({ title: 'sl_bill_receipt_form falling back to demo', details: e.message });
       data = mockData(id, restletUrl);
+      data.listUrl = listUrl;
     }
 
     ctx.response.write(tbtPage.render({
@@ -70,6 +77,9 @@ function approvalFor(status) {
   else if (status === 'Approved' || status === 'Paid') { steps[0].status = 'approved'; steps[1].status = 'approved'; }
   else if (status === 'Rejected') { steps[0].status = 'approved'; steps[1].status = 'rejected'; }
   else { steps[0].status = 'current'; }
+  // Thai badge text (the component defaults are English).
+  const TH = { approved: 'อนุมัติแล้ว', current: 'รอดำเนินการ', pending: 'ยังไม่ถึงขั้นนี้', rejected: 'ตีกลับ', skipped: 'ข้าม' };
+  steps.forEach((s) => { s.statusLabel = TH[s.status] || s.status; });
   return steps;
 }
 
