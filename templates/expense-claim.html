@@ -1,34 +1,53 @@
 <!--
-  expense-claim.html — Employee expense claim entry.
+  expense-claim.html — Employee expense claim (เบิกค่าใช้จ่าย) document page body.
 
-  Layout (Teibto standard):
-    Page header    — claim no + employee + total + status badge
-    Filters        — employee / period / category / status
-    Summary stats  — Total claimed / Approved / Pending / Reimbursable
-    Expense lines  — tbt-table (action: Add expense → modal)
-    Approval flow  — tbt-approval-flow
-    Action bar     — Save draft / Submit / Cancel
+  Layout (Teibto ERP document — NetSuite-style anatomy, RFC 0007):
+    Page header   — claim no + status badge + summary strip (count/billable/reimburse/total)
+    Action bar    — TOP, sticky: Submit / Save draft / Approve / Reject / Back
+    Alerts        — success / error banners
+    Document info — employee / period (edit)
+    Subtabs       — รายการค่าใช้จ่าย (tbt-table + Add → modal) · การอนุมัติ
+
+  Edit vs view: editable while status === 'Draft' or 'Rejected' (the state
+  machine allows save/submit from Rejected). Submitted shows Approve / Reject;
+  Approved / Paid are read-only.
 
   Required keys on window.__DATA__:
-    claim          { id, employee, employeeId, period, status }
+    claim          { id, tranid, employee, employeeId, period, status }
     lines          array of { id, date, category, categoryLabel, merchant, amount, billable, receipt, memo }
     categories     [{ value, label }]
     employees      [{ value, label }]
-    statuses       [{ value, label }]
     approvalSteps  array
     restletUrl     string
+    listUrl        string — blank claim form ("กลับ" fallback for direct links)
 -->
 
-<!-- ── 1. Page header ─────────────────────────────────────────── -->
-<tbt-section>
+<!-- ── 1. Page header: identity + status + summary strip (RFC 0007) ── -->
+<tbt-section not-collapsible>
   <div class="tbt-page-header">
     <div>
-      <div class="tbt-page-header__title">Expense claim · <span id="hdr-claimno"></span></div>
-      <div class="tbt-page-header__subtitle"><span id="hdr-employee"></span> · <span id="hdr-period"></span></div>
+      <div class="tbt-page-header__title">ใบเบิกค่าใช้จ่าย · <span id="hdr-tranid"></span>
+        <tbt-badge id="hdr-status" variant="neutral">—</tbt-badge>
+      </div>
+      <div class="tbt-page-header__subtitle" id="hdr-subtitle"></div>
     </div>
-    <tbt-badge id="hdr-status" variant="warning">Draft</tbt-badge>
+    <div class="tbt-page-header__stats">
+      <span class="tbt-page-header__stat">รายการ<b id="hdr-stat-count">0 รายการ</b></span>
+      <span class="tbt-page-header__stat">เรียกเก็บลูกค้าได้<b id="hdr-stat-billable">฿0.00</b></span>
+      <span class="tbt-page-header__stat">เบิกคืนพนักงาน<b id="hdr-stat-reimb">฿0.00</b></span>
+      <span class="tbt-page-header__stat">ยอดเบิกรวม<b id="hdr-stat-total">฿0.00</b></span>
+    </div>
   </div>
 </tbt-section>
+
+<!-- ── 2. Action bar — บนสุดแบบ NetSuite, sticky ระหว่าง scroll ── -->
+<div class="tbt-action-bar tbt-action-bar--top">
+  <tbt-button id="submit-btn"  variant="primary"   icon="submit">ส่งอนุมัติ</tbt-button>
+  <tbt-button id="save-btn"    variant="secondary" icon="save">บันทึกร่าง</tbt-button>
+  <tbt-button id="approve-btn" variant="primary"   icon="approve">อนุมัติ</tbt-button>
+  <tbt-button id="reject-btn"  variant="danger"    icon="reject">ตีกลับ</tbt-button>
+  <tbt-button id="back-btn"    variant="ghost"     icon="back">กลับ</tbt-button>
+</div>
 
 <div class="tbt-page-alerts">
   <tbt-alert id="demo-alert" variant="warning" hidden>กำลังแสดงข้อมูลตัวอย่าง — ยังไม่ได้ติดตั้ง custom record (ดู netsuite/DEPLOY.md)</tbt-alert>
@@ -36,137 +55,140 @@
   <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
 </div>
 
-<!-- ── 2. Filters ─────────────────────────────────────────────── -->
-<tbt-section title="Filters">
-  <tbt-field-grid columns="4">
-    <tbt-dropdown   id="f-employee" name="employee" label="Employee" required></tbt-dropdown>
-    <tbt-date-range id="f-period"   name-from="from" name-to="to" label="Period"></tbt-date-range>
-    <tbt-dropdown   id="f-category" name="category" label="Category"></tbt-dropdown>
-    <tbt-dropdown   id="f-status"   name="status"   label="Status"></tbt-dropdown>
+<!-- ── 3. Document info ───────────────────────────────────────── -->
+<tbt-section title="ข้อมูลใบเบิกค่าใช้จ่าย">
+  <tbt-field-grid columns="3">
+    <tbt-dropdown id="f-employee" name="employee" label="พนักงาน" placeholder="เลือกพนักงาน…" required></tbt-dropdown>
+    <tbt-input    id="f-period"   name="period"   label="งวดที่เบิก" placeholder="เช่น พฤษภาคม 2569" required></tbt-input>
   </tbt-field-grid>
 </tbt-section>
 
-<!-- ── 3. Summary stats ───────────────────────────────────────── -->
-<tbt-section title="Summary">
-  <div class="tbt-stats-grid">
-    <tbt-stat id="stat-total"   label="Total claimed"  variant="primary" icon="money"></tbt-stat>
-    <tbt-stat id="stat-billed"  label="Billable"       variant="success" icon="invoice"></tbt-stat>
-    <tbt-stat id="stat-pending" label="Pending review" variant="warning" icon="pending"></tbt-stat>
-    <tbt-stat id="stat-reimb"   label="Reimbursable"   variant="info"    icon="payment"></tbt-stat>
-  </div>
+<!-- ── 4. Subtabs: รายการค่าใช้จ่าย / การอนุมัติ (RFC 0007) ── -->
+<tbt-section not-collapsible>
+  <tbt-tabs active="0">
+    <tbt-tabs-panel label="รายการค่าใช้จ่าย">
+      <div class="tbt-panel-toolbar">
+        <tbt-button id="add-line" variant="primary" icon="add" size="sm">เพิ่มค่าใช้จ่าย</tbt-button>
+      </div>
+      <tbt-table id="lines-table" responsive max-height="380px" empty-message="ยังไม่มีรายการค่าใช้จ่าย — กด &quot;เพิ่มค่าใช้จ่าย&quot; เพื่อเริ่มรายการแรก"></tbt-table>
+    </tbt-tabs-panel>
+    <tbt-tabs-panel label="การอนุมัติ">
+      <tbt-approval-flow id="approval-flow" orientation="horizontal"></tbt-approval-flow>
+    </tbt-tabs-panel>
+  </tbt-tabs>
 </tbt-section>
 
-<!-- ── 4. Expense lines ───────────────────────────────────────── -->
-<tbt-section title="Expense lines">
-  <tbt-button slot="actions" id="add-line" variant="primary" icon="add" size="sm">Add expense</tbt-button>
-  <tbt-table id="lines-table" paginate page-size="20" responsive max-height="380px"></tbt-table>
-</tbt-section>
-
-<!-- ── 5. Approval flow ───────────────────────────────────────── -->
-<tbt-section title="Approval">
-  <tbt-approval-flow id="approval-flow" orientation="horizontal"></tbt-approval-flow>
-</tbt-section>
-
-<!-- ── 6. Action bar ──────────────────────────────────────────── -->
-<div class="tbt-action-bar">
-  <tbt-button id="save-btn"   variant="primary"   icon="save">Save draft</tbt-button>
-  <tbt-button id="submit-btn" variant="primary"   icon="submit">Submit for approval</tbt-button>
-  <tbt-button id="cancel-btn" variant="ghost"     icon="cancel">Cancel</tbt-button>
-</div>
-
-<!-- ── 7. Add/Edit expense modal ──────────────────────────────── -->
-<tbt-modal id="exp-modal" title="Add expense" variant="default">
+<!-- ── 5. Add / edit expense modal ────────────────────────────── -->
+<tbt-modal id="exp-modal" title="เพิ่มค่าใช้จ่าย" variant="default">
   <tbt-form id="exp-form">
     <tbt-field-grid columns="2">
-      <tbt-datepicker id="m-date"     name="date"     label="Date"     required></tbt-datepicker>
-      <tbt-dropdown   id="m-category" name="category" label="Category" required></tbt-dropdown>
-      <tbt-input      id="m-merchant" name="merchant" label="Merchant" required></tbt-input>
-      <tbt-input      id="m-amount"   name="amount"   label="Amount (฿)" type="number" required></tbt-input>
-      <tbt-toggle     id="m-billable" name="billable" label="Billable to client" label-on="Yes" label-off="No"></tbt-toggle>
-      <tbt-input      id="m-receipt"  name="receipt"  label="Receipt URL" placeholder="https://…"></tbt-input>
-      <tbt-textarea   id="m-memo"     name="memo"     label="Memo" rows="2"></tbt-textarea>
+      <tbt-datepicker id="m-date"     name="date"     label="วันที่"                required></tbt-datepicker>
+      <tbt-dropdown   id="m-category" name="category" label="หมวดค่าใช้จ่าย" placeholder="เลือกหมวด…" required></tbt-dropdown>
+      <tbt-input      id="m-merchant" name="merchant" label="ร้านค้า/ผู้ให้บริการ"  required></tbt-input>
+      <tbt-input      id="m-amount"   name="amount"   label="จำนวนเงิน (฿)" type="number" required></tbt-input>
+      <tbt-toggle     id="m-billable" name="billable" label="เรียกเก็บลูกค้าได้" label-on="ใช่" label-off="ไม่ใช่"></tbt-toggle>
+      <tbt-input      id="m-receipt"  name="receipt"  label="ลิงก์ใบเสร็จ" placeholder="https://…"></tbt-input>
+      <tbt-textarea   id="m-memo"     name="memo"     label="หมายเหตุ" rows="2"></tbt-textarea>
     </tbt-field-grid>
   </tbt-form>
   <div slot="footer" class="tbt-modal-actions">
-    <tbt-button id="modal-delete" variant="danger"    icon="delete" style="margin-right:auto;display:none">Delete</tbt-button>
-    <tbt-button id="modal-cancel" variant="secondary" icon="cancel">Cancel</tbt-button>
-    <tbt-button id="modal-save"   variant="primary"   icon="save">Save expense</tbt-button>
+    <tbt-button id="modal-delete" variant="danger"    icon="delete" style="margin-right:auto;display:none">ลบ</tbt-button>
+    <tbt-button id="modal-cancel" variant="secondary" icon="cancel">ยกเลิก</tbt-button>
+    <tbt-button id="modal-save"   variant="primary"   icon="save">บันทึก</tbt-button>
   </div>
 </tbt-modal>
 
 <script type="module">
   const d  = window.__DATA__;
   const rt = window.tbtPageRuntime;
+  const v  = d.claim;
 
   if (d.demo) { const da = document.getElementById('demo-alert'); if (da) da.hidden = false; }
 
-  /* ── Header ─────────────────────────────────────────────── */
-  document.getElementById('hdr-claimno').textContent = d.claim.tranid || d.claim.id || '(new)';
-  document.getElementById('hdr-employee').textContent= d.claim.employee;
-  document.getElementById('hdr-period').textContent  = d.claim.period;
-  rt.setStatusBadge(document.getElementById('hdr-status'), d.claim.status);
+  const STATUS_LABEL = {
+    Draft: 'ร่าง', Submitted: 'รออนุมัติ', Approved: 'อนุมัติแล้ว', Rejected: 'ตีกลับ', Paid: 'จ่ายแล้ว',
+  };
+  const STATUS_VARIANT = {
+    Draft: 'warning', Submitted: 'info', Approved: 'success', Rejected: 'danger', Paid: 'success',
+  };
 
-  /* ── Filters ────────────────────────────────────────────── */
+  // State machine allows save/submit from Rejected too (fix → resubmit).
+  const isEditable = (status) => status === 'Draft' || status === 'Rejected';
+  const editable = isEditable(v.status);
+
+  /* ── Header ─────────────────────────────────────────────── */
+  function renderHeader() {
+    document.getElementById('hdr-tranid').textContent = v.tranid || '(ใหม่)';
+    // Compose the subtitle from the parts that exist — no dangling "·" on a
+    // fresh form where employee/period are still empty.
+    const parts = [];
+    if (v.employee) parts.push(v.employee);
+    if (v.period) parts.push('งวด ' + v.period);
+    document.getElementById('hdr-subtitle').textContent = parts.join(' · ');
+    const hdrStatus = document.getElementById('hdr-status');
+    hdrStatus.textContent = STATUS_LABEL[v.status] || v.status || '—';
+    hdrStatus.setAttribute('variant', STATUS_VARIANT[v.status] || 'neutral');
+  }
+  renderHeader();
+
+  /* ── Document info ──────────────────────────────────────── */
   const fEmployee = document.getElementById('f-employee');
-  const fCategory = document.getElementById('f-category');
-  const fStatus   = document.getElementById('f-status');
-  fEmployee.options = d.employees;
-  fCategory.options = [{ value: '', label: 'All categories' }, ...d.categories];
-  fStatus.options   = d.statuses;
-  fEmployee.value = d.claim.employeeId;
-  fCategory.value = '';
-  fStatus.value   = d.claim.status;
+  const fPeriod   = document.getElementById('f-period');
+  fEmployee.options = d.employees || [];
+  fEmployee.value   = v.employeeId || '';
+  fPeriod.value     = v.period || '';
+  if (!editable) {
+    [fEmployee, fPeriod].forEach(el => el.setAttribute('readonly', ''));
+  }
 
   /* ── Stats ──────────────────────────────────────────────── */
   function recomputeStats(rows) {
     const total    = rt.sumBy(rows, 'amount');
-    const billable = rt.sumBy(rows.filter(r => r.billable),  'amount');
-    const pending  = rt.sumBy(rows.filter(r => !r.approved), 'amount');
-    document.getElementById('stat-total').value   = rt.currency(total);
-    document.getElementById('stat-billed').value  = rt.currency(billable);
-    document.getElementById('stat-pending').value = rt.currency(pending);
-    document.getElementById('stat-reimb').value   = rt.currency(total - billable);
+    const billable = rt.sumBy(rows.filter(r => r.billable), 'amount');
+    document.getElementById('hdr-stat-count').textContent    = String(rows.length) + ' รายการ';
+    document.getElementById('hdr-stat-billable').textContent = rt.currency(billable);
+    document.getElementById('hdr-stat-reimb').textContent    = rt.currency(total - billable);
+    document.getElementById('hdr-stat-total').textContent    = rt.currency(total);
   }
 
   /* ── Expense lines table ────────────────────────────────── */
   const table = document.getElementById('lines-table');
   table.columns = [
-    { key: 'date',          label: 'Date',     sortable: true, mobileTitle: true },
-    { key: 'categoryLabel', label: 'Category', sortable: true },
-    { key: 'merchant',      label: 'Merchant' },
-    { key: 'amountText',    label: 'Amount',   align: 'right', sortable: true },
-    { key: 'billableText',  label: 'Billable', align: 'center' },
-    { key: 'receiptText',   label: 'Receipt',  align: 'center', html: true },
-    { key: 'memo',          label: 'Memo' },
+    { key: 'date',          label: 'วันที่',              sortable: true, mobileTitle: true },
+    { key: 'categoryLabel', label: 'หมวด',               sortable: true },
+    { key: 'merchant',      label: 'ร้านค้า/ผู้ให้บริการ' },
+    { key: 'amountText',    label: 'จำนวนเงิน',           align: 'right', sortable: true },
+    { key: 'billableText',  label: 'เรียกเก็บลูกค้า',      align: 'center' },
+    { key: 'receiptText',   label: 'ใบเสร็จ',             align: 'center', html: true },
+    { key: 'memo',          label: 'หมายเหตุ' },
   ];
 
   function renderLines(rows) {
     table.rows = rows.map(r => ({
       ...r,
       amountText:   rt.currency(r.amount),
-      billableText: r.billable ? 'Yes' : 'No',
+      billableText: r.billable ? 'ใช่' : '—',
       receiptText:  r.receipt ? `<tbt-icon name="attach" size="sm" color="primary"></tbt-icon>` : '—',
     }));
     recomputeStats(rows);
   }
   renderLines(d.lines || []);
 
-  /* ── Add/Edit modal ─────────────────────────────────────── */
-  const modal      = document.getElementById('exp-modal');
-  const mDate      = document.getElementById('m-date');
-  const mCategory  = document.getElementById('m-category');
-  const mMerchant  = document.getElementById('m-merchant');
-  const mAmount    = document.getElementById('m-amount');
-  const mBillable  = document.getElementById('m-billable');
-  const mReceipt   = document.getElementById('m-receipt');
-  const mMemo      = document.getElementById('m-memo');
-  const modalDelete= document.getElementById('modal-delete');
-  mCategory.options = d.categories;
-
+  /* ── Add / edit modal ───────────────────────────────────── */
+  const modal       = document.getElementById('exp-modal');
+  const mDate       = document.getElementById('m-date');
+  const mCategory   = document.getElementById('m-category');
+  const mMerchant   = document.getElementById('m-merchant');
+  const mAmount     = document.getElementById('m-amount');
+  const mBillable   = document.getElementById('m-billable');
+  const mReceipt    = document.getElementById('m-receipt');
+  const mMemo       = document.getElementById('m-memo');
+  const modalDelete = document.getElementById('modal-delete');
+  mCategory.options = d.categories || [];
   let editingId = null;
 
   function openModal(line) {
-    modal.setAttribute('title', line ? 'Edit expense' : 'Add expense');
+    modal.setAttribute('title', line ? 'แก้ไขค่าใช้จ่าย' : 'เพิ่มค่าใช้จ่าย');
     if (line) {
       editingId = line.id;
       mDate.value     = line.date;
@@ -175,7 +197,7 @@
       mAmount.value   = String(line.amount);
       mBillable.value = !!line.billable;
       mReceipt.value  = line.receipt || '';
-      mMemo.value     = line.memo    || '';
+      mMemo.value     = line.memo || '';
       modalDelete.style.display = '';
     } else {
       editingId = null;
@@ -190,6 +212,7 @@
   document.getElementById('add-line').addEventListener('click', () => openModal(null));
 
   table.addEventListener('tbt-row-click', (e) => {
+    if (!isEditable(v.status)) return;
     const orig = (d.lines || []).find(x => x.id === e.detail.row.id);
     if (orig) openModal(orig);
   });
@@ -197,20 +220,20 @@
   document.getElementById('modal-cancel').addEventListener('click', () => { modal.open = false; });
 
   document.getElementById('modal-save').addEventListener('click', () => {
-    const category = d.categories.find(c => c.value === mCategory.value);
+    const category = (d.categories || []).find(c => c.value === mCategory.value);
     const next = {
       id: editingId || ('EX-' + Date.now()),
-      date: mDate.value,
-      category: mCategory.value,
-      categoryLabel: category?.label || '',
-      merchant: mMerchant.value,
-      amount: Number(mAmount.value || 0),
-      billable: !!mBillable.value,
-      receipt: mReceipt.value,
-      memo: mMemo.value,
+      date:          mDate.value,
+      category:      mCategory.value,
+      categoryLabel: (category && category.label) || '',
+      merchant:      mMerchant.value,
+      amount:        Number(mAmount.value || 0),
+      billable:      !!mBillable.value,
+      receipt:       mReceipt.value,
+      memo:          mMemo.value,
     };
     if (!next.date || !next.category || !next.merchant || !next.amount) return;
-    const rows = d.lines.slice();
+    const rows = (d.lines || []).slice();
     const idx = rows.findIndex(r => r.id === editingId);
     if (idx >= 0) rows[idx] = next; else rows.push(next);
     d.lines = rows;
@@ -219,33 +242,79 @@
   });
 
   modalDelete.addEventListener('click', () => {
-    d.lines = d.lines.filter(r => r.id !== editingId);
+    d.lines = (d.lines || []).filter(r => r.id !== editingId);
     renderLines(d.lines);
     modal.open = false;
   });
 
-  /* ── Approval flow ──────────────────────────────────────── */
+  /* ── Approval ───────────────────────────────────────────── */
   document.getElementById('approval-flow').steps = d.approvalSteps || [];
 
-  /* ── Action bar ─────────────────────────────────────────── */
+  /* ── Action bar — show only the buttons valid for this status ── */
+  const show = (id, on) => { document.getElementById(id).style.display = on ? '' : 'none'; };
+  function renderButtons() {
+    const ed = isEditable(v.status);
+    show('save-btn',    ed);
+    show('submit-btn',  ed);
+    show('add-line',    ed);
+    show('approve-btn', v.status === 'Submitted');
+    show('reject-btn',  v.status === 'Submitted');
+  }
+  renderButtons();
+
+  function collect(action) {
+    return {
+      action,
+      claim: {
+        id: v.id,
+        tranid:   v.tranid,
+        employee: fEmployee.value,
+        period:   fPeriod.value,
+      },
+      lines: d.lines || [],
+    };
+  }
+
+  // Adopt the persisted identity/status returned by the RESTlet. Without this
+  // the page keeps v.id = null after the first save, so a second "บันทึกร่าง"
+  // CREATES A DUPLICATE record (same bug as bill receipt QA F1).
+  function applySaved(res) {
+    if (!res) return;
+    if (res.id) v.id = res.id;
+    if (res.tranid) v.tranid = res.tranid;
+    if (res.status) v.status = res.status;
+    renderHeader();
+    document.title = 'Teibto ERP · ใบเบิกค่าใช้จ่าย' + (v.tranid ? ' · ' + v.tranid : '');
+    if (v.id && !/[?&]id=/.test(location.search)) {
+      history.replaceState(null, '', location.href + '&id=' + encodeURIComponent(v.id));
+    }
+    renderButtons();
+  }
+
   async function submit(action, label) {
     rt.hideAlerts('ok-alert', 'err-alert');
-    // Send the employee internal id (RESTlet writes a SELECT field), not the name.
-    const claim = {
-      id: d.claim.id, tranid: d.claim.tranid,
-      employee: (fEmployee && fEmployee.value) || d.claim.employeeId,
-      period: d.claim.period,
-    };
     try {
-      const res = await rt.post(d.restletUrl, { action, claim, lines: d.lines });
-      if (res && res.status) rt.setStatusBadge(document.getElementById('hdr-status'), res.status);
-      rt.showAlert('ok-alert', label + ' successful.');
+      // First submit of a never-saved form: persist as draft first so the
+      // backend transitions Draft → Submitted instead of rejecting "new".
+      if (action === 'submit' && !v.id) {
+        applySaved(await rt.post(d.restletUrl, collect('save')));
+      }
+      const res = await rt.post(d.restletUrl, collect(action));
+      applySaved(res);
+      rt.showAlert('ok-alert', label + 'สำเร็จ' + (v.tranid ? ' · ' + v.tranid : ''));
     } catch (err) {
-      rt.showAlert('err-alert', label + ' failed: ' + err.message);
+      rt.showAlert('err-alert', label + 'ไม่สำเร็จ: ' + err.message);
     }
   }
 
-  document.getElementById('save-btn').addEventListener('click',   () => submit('save',   'Save'));
-  document.getElementById('submit-btn').addEventListener('click', () => submit('submit', 'Submit'));
-  document.getElementById('cancel-btn').addEventListener('click', () => history.back());
+  document.getElementById('save-btn').addEventListener('click',    () => submit('save',    'บันทึก'));
+  document.getElementById('submit-btn').addEventListener('click',  () => submit('submit',  'ส่งอนุมัติ'));
+  document.getElementById('approve-btn').addEventListener('click', () => submit('approve', 'อนุมัติ'));
+  document.getElementById('reject-btn').addEventListener('click',  () => submit('reject',  'ตีกลับ'));
+  document.getElementById('back-btn').addEventListener('click', () => {
+    // Direct-link opens have no history to go back to — fall back to a blank
+    // claim form (this module has no list page; the entry page is its landing).
+    if (history.length > 1) history.back();
+    else if (d.listUrl) location.href = d.listUrl;
+  });
 </script>

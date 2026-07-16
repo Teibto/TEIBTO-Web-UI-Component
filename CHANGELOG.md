@@ -19,6 +19,15 @@ Format: [Semantic Versioning](https://semver.org)
   ISO via `TO_CHAR`, `fromIso` fails loudly on non-ISO input, `replaceLines`
   converts before deleting, and all validation / transition / permission
   messages are Thai at the source.
+- **Expense claim page reworked to the ERP anatomy** (RFC 0007, #47) — page
+  header with summary strip (count / billable / reimburse / total), sticky
+  top action bar, Subtabs (รายการค่าใช้จ่าย · การอนุมัติ), `applySaved()`
+  adopts the server identity after save (no duplicate on double-save), Thai
+  throughout. `sl_expense_claim` now uses the production sidebar
+  (`tbt_nav`), drops the `_mock_lookups` dependency (not on the File
+  Cabinet), and sends `listUrl` for the back-button fallback. New sidebar
+  entry "เบิกค่าใช้จ่าย" (raw Tabler name `report-money` — `tbt-sidebar-item`
+  does not resolve `ICON_ALIASES`).
 
 ## [1.44.2] - 2026-07-16
 
