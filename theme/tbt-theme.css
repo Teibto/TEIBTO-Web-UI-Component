@@ -268,6 +268,21 @@
 }
 
 /* ============================================================
+ * Density: ERP mode (RFC 0007) — NetSuite-like compact spacing.
+ * Opt-in per page via <html data-density="erp"> (tbt_page sets it
+ * by default on Suitelet pages). Touches ONLY spacing/type/radius/
+ * shadow — color tokens are untouched, so it composes with any theme.
+ * ============================================================ */
+:root[data-density="erp"] {
+  --tbt-space-5: 12px;          /* section padding 20 -> 12 */
+  --tbt-space-6: 16px;          /* content padding 24 -> 16 */
+  --tbt-size-base: 13px;        /* body text 14 -> 13 */
+  --tbt-radius-lg: 6px;         /* cards 12 -> 6: flatter, ERP-like */
+  --tbt-shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06);
+  --tbt-table-cell-py: 5px;     /* table rows ~44px -> ~30px */
+}
+
+/* ============================================================
  * Page reset (apply to <body> in consumer pages)
  * ============================================================ */
 body.tbt-page {

@@ -9,6 +9,16 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- **ERP density mode** (RFC 0007, #40 — layer A). `<html data-density="erp">`
+  compacts the whole DS through tokens only: section padding 20→12px, content
+  padding 24→16px, base text 14→13px, card radius 12→6px, subtler shadow, and
+  table rows ~44→~30px via the new `--tbt-table-cell-py` hook in `tbt-table`.
+  `tbt_page.render` sets it by default on Suitelet pages (`opts.density:
+  'default'` opts out); pages that don't opt in are pixel-identical.
+
+
+### Added
+
 - **Production sidebar (`templates/tbt_nav.js`)** (#28) — Suitelet pages now
   render a nav of ONLY the modules deployed on the account, every href
   resolved through `N/url` at request time (nothing can 404). Bill receipt

@@ -255,7 +255,7 @@ class TbtTable extends LitElement {
       z-index: 1;
     }
     th {
-      padding: 10px var(--tbt-space-4);
+      padding: var(--tbt-table-cell-py, 10px) var(--tbt-space-4);
       text-align: left;
       font-size: var(--tbt-size-xs);
       font-weight: var(--tbt-weight-semibold);
@@ -286,7 +286,7 @@ class TbtTable extends LitElement {
     th[data-align="right"], td[data-align="right"] { text-align: right; }
     th[data-align="center"], td[data-align="center"] { text-align: center; }
     td {
-      padding: 10px var(--tbt-space-4);
+      padding: var(--tbt-table-cell-py, 10px) var(--tbt-space-4);
       color: var(--tbt-text-primary);
       border-bottom: 1px solid var(--tbt-border);
       vertical-align: middle;
