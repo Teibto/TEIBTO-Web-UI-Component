@@ -102,7 +102,7 @@ if (rule2Violations === 0) pass('No @latest in import URLs');
 
 // ─── Rule 3: Every tbt-*.js calls customElements.define ───────────────────
 // Utility modules (no LitElement class) are exempt from this rule
-const UTIL_MODULES = new Set(['tbt-icons-css.js', 'tbt-confirm.js', 'tbt-doc-schemas.js']);
+const UTIL_MODULES = new Set(['tbt-icons-css.js', 'tbt-confirm.js', 'tbt-doc-schemas.js', 'tbt-outside-click.js']);
 const tbtComponents = componentFiles.filter(f => f.startsWith('tbt-') && !UTIL_MODULES.has(f));
 let rule3Violations = 0;
 for (const file of tbtComponents) {

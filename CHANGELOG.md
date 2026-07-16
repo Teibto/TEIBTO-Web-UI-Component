@@ -22,6 +22,11 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Changed
 
+- Extract shared `watchOutsideClick()` helper (`components/tbt-outside-click.js`)
+  — `tbt-dropdown`, `tbt-multiselect`, `tbt-menu-group`, `tbt-color-picker`,
+  `tbt-split-button`, and `tbt-popover` no longer hand-roll the same document
+  click listener + `composedPath()` containment check; behavior unchanged,
+  now covered by `tests/tbt-outside-click.test.js` (#63)
 - `scripts/sync-version.js` now also rewrites `/ds/vX.Y.Z/` paths in
   `templates/*.html` and the `DS_VERSION` constant in `netsuite/tbt_page.js`,
   so template import paths can no longer drift on release (#62)
