@@ -143,7 +143,13 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
       ? record.create({ type: REC })
       : record.load({ type: REC, id: voucher.id });
 
-    if (isNew) rec.setValue(F.tranid, nextTranId());
+    if (isNew) {
+      const tranid = nextTranId();
+      rec.setValue(F.tranid, tranid);
+      // Custom records require the native Name field — mirror the tranid so
+      // NetSuite lists/search stay readable.
+      rec.setValue('name', tranid);
+    }
 
     if (editsFields) {
       rec.setValue(F.vendor, Number(voucher.vendor) || voucher.vendor);
@@ -171,6 +177,7 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
 
     lines.forEach((r) => {
       const lr = record.create({ type: LINE_REC });
+      lr.setValue('name', r.invoiceNo || 'line'); // native Name is mandatory
       lr.setValue(LF.parent, parentId);
       lr.setValue(LF.invoiceNo, r.invoiceNo || '');
       lr.setValue(LF.invoiceDate, fromIso(r.invoiceDate));

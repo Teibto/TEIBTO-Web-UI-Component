@@ -21,6 +21,15 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Fixed
 
+- **Bill receipt save failed on the account: custom records require the native
+  `Name` field** (found by the DEPLOY.md smoke run on SB2, 2026-07-16) —
+  `bill_receipt_lib.save` now mirrors the tranid into `name` on create, and
+  `replaceLines` sets each line's `name` to its invoice no. Before the fix the
+  RESTlet returned `{ok:false, "Please enter value(s) for: Name"}` on every save.
+- **`tbt-page-runtime.js` `post()` treated HTTP 200 + `{ok:false}` as success**
+  — the page showed "บันทึกสำเร็จ" while the server rejected the save. `post()`
+  now throws on `body.ok === false` as well as HTTP errors (regression tests
+  added in `tests/tbt-page-runtime.test.js`).
 - **`tbt_page.js`: resolve File Cabinet URLs via `N/file` instead of the
   path-style `/sc/SuiteScripts/...` (#17).** NetSuite returns "Page Not Found"
   for path-style File Cabinet URLs (verified on SB2) — every page rendered by
