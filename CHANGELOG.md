@@ -26,6 +26,18 @@ Format: [Semantic Versioning](https://semver.org)
   button uses the arrow icon and falls back to the list page when opened as
   a direct link (`data.listUrl`); the list shows the edit pencil only on
   Draft rows.
+- **`tbt-section` header crushed its title into mid-word line breaks when the
+  actions slot was wide on narrow screens** (#23, 375px: "รายการใบวางบิล" broke
+  around the search box). The header now wraps — the actions slot moves to its
+  own row below the title once the container is too narrow (`flex-wrap` +
+  12rem title basis).
+- **a11y fixes from the 2026-07-16 axe baseline** (#24): the `tbt-section`
+  toggle button gets an `aria-label` fallback when the section has no title
+  (was an axe *critical* — name-less button); `tbt-table` renders an
+  `aria-label` on header cells with no label (actions column); table header
+  text uses the new `--tbt-text-secondary-strong` token (4.5:1 on `bg-hover`,
+  plain secondary was 4.27); `tbt-dropdown` placeholder text moved from
+  muted (2.56:1 on white) to secondary (4.76:1).
 - **`tbt-stat` icon rendered the raw attribute name instead of resolving the
   ERP alias map** (#25, found by the 2026-07-16 UX QA baseline). The card
   emitted `ti ti-money` / `ti ti-payment` — classes that do not exist in the
@@ -47,6 +59,9 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- **`--tbt-text-secondary-strong` theme token** — secondary text that still
+  meets WCAG AA 4.5:1 on tinted surfaces (`bg-hover`); equals plain secondary
+  in dark themes where contrast is already sufficient.
 - **SDF script objects for the bill receipt module** (2026-07-16) — Suitelet
   list/form + RESTlet as `netsuite/objects/customscript_tbt_*.xml`, so
   `suitecloud project:deploy` creates the script records + deployments with the
