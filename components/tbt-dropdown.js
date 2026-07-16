@@ -350,7 +350,7 @@ class TbtDropdown extends LitElement {
         </div>` : ''}
       ${this.searchable ? this._renderSearchable(isPlaceholder) : this._renderNative(isPlaceholder)}
       ${this.error ? html`
-        <div class="error-msg">
+        <div class="error-msg" role="alert">
           <i class="ti ti-alert-circle error-icon" aria-hidden="true"></i>
           ${this.error}
         </div>` : ''}

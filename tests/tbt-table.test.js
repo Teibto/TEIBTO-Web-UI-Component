@@ -65,6 +65,42 @@ describe('tbt-table', () => {
     expect(detail.key).to.equal('id');
   });
 
+  it('sortable headers are keyboard focusable (tabindex=0); non-sortable are not', async () => {
+    const COLS2 = [
+      { key: 'id', label: 'ID', sortable: true },
+      { key: 'note', label: 'Note' },
+    ];
+    const el = await fixture(html`<tbt-table .columns=${COLS2} .rows=${ROWS}></tbt-table>`);
+    await el.updateComplete;
+    const ths = el.shadowRoot.querySelectorAll('thead th');
+    expect(ths[0].getAttribute('tabindex')).to.equal('0');
+    expect(ths[1].hasAttribute('tabindex')).to.be.false;
+  });
+
+  it('Enter on a sortable header sorts (server-sort mode fires tbt-sort)', async () => {
+    const el = await fixture(html`<tbt-table .columns=${COLS} .rows=${ROWS} server-sort></tbt-table>`);
+    await el.updateComplete;
+    let detail = null;
+    el.addEventListener('tbt-sort', e => { detail = e.detail; });
+    el.shadowRoot.querySelectorAll('thead th')[0]
+      .dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+    expect(detail).to.exist;
+    expect(detail.key).to.equal('id');
+  });
+
+  it('Space on a sortable header toggles sort direction (client mode)', async () => {
+    const el = await fixture(html`<tbt-table .columns=${COLS} .rows=${ROWS}></tbt-table>`);
+    await el.updateComplete;
+    const th = el.shadowRoot.querySelectorAll('thead th')[0];
+    th.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }));
+    await el.updateComplete;
+    expect(el._sortKey).to.equal('id');
+    expect(el._sortAsc).to.be.true;
+    th.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }));
+    await el.updateComplete;
+    expect(el._sortAsc).to.be.false;
+  });
+
   it('clicking a body row fires tbt-row-click with the row data', async () => {
     const el = await fixture(html`<tbt-table .columns=${COLS} .rows=${ROWS}></tbt-table>`);
     await el.updateComplete;

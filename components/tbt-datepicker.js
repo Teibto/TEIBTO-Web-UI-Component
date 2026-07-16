@@ -110,7 +110,7 @@ class TbtDatepicker extends LitElement {
           @change=${this._onChange}>
       </div>
       ${this.error ? html`
-        <div id="dp-error" class="error-msg">
+        <div id="dp-error" class="error-msg" role="alert">
           <i class="ti ti-alert-circle error-icon" aria-hidden="true"></i>
           ${this.error}
         </div>` : ''}

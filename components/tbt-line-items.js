@@ -301,14 +301,20 @@ class TbtLineItems extends LitElement {
      col-width changes onto <tbody> here so body cells get the same offsets
      and `.sticky-cell` classes that the header just gained. */
   updated(changedProperties) {
-    if (changedProperties.has('stickyLeft')  ||
-        changedProperties.has('stickyRight') ||
-        changedProperties.has('_colWidths')  ||
-        changedProperties.has('readonly')) {
+    if (changedProperties.has('stickyLeft')    ||
+        changedProperties.has('stickyRight')   ||
+        changedProperties.has('_colWidths')    ||
+        changedProperties.has('readonly')      ||
+        changedProperties.has('accountOptions') ||
+        changedProperties.has('unitOptions')) {
       // Body is hand-rendered → mirror prop changes (sticky offsets, running
       // No., view/edit mode switch) onto tbody manually. Without this, view
       // mode still shows the edit-mode dropdowns/inputs because Lit only
       // re-renders the Lit-managed <thead>, never the manual <tbody>.
+      // accountOptions/unitOptions are baked into each row's <select> innerHTML
+      // (not wired post-render like itemOptions), so they need a full rebuild —
+      // otherwise dropdowns set AFTER rows (e.g. an async chart-of-accounts
+      // fetch) leave existing rows' Account/Unit selects stale.
       this._renderTbody();
     } else if (changedProperties.has('itemOptions')) {
       // Options changed — refresh each row's dropdown options without re-render

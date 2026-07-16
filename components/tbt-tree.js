@@ -101,6 +101,21 @@ class TbtTree extends LitElement {
     }));
   }
 
+  // Enter/Space selects; ArrowRight expands a collapsed parent, ArrowLeft
+  // collapses an expanded one — so branches are reachable without a mouse.
+  _onItemKeydown(e, node, hasKids, open) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this._select(node);
+    } else if (e.key === 'ArrowRight' && hasKids && !open) {
+      e.preventDefault();
+      this._toggle(node.id);
+    } else if (e.key === 'ArrowLeft' && hasKids && open) {
+      e.preventDefault();
+      this._toggle(node.id);
+    }
+  }
+
   _renderNodes(nodes, depth) {
     return html`<ul role=${depth === 0 ? 'tree' : 'group'}>
       ${(nodes || []).map((node) => {
@@ -115,7 +130,7 @@ class TbtTree extends LitElement {
             tabindex=${node.disabled ? '-1' : '0'}
             style="padding-left:calc(var(--tbt-space-2) + ${depth} * var(--tbt-space-5))"
             @click=${() => this._select(node)}
-            @keydown=${(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this._select(node); } }}>
+            @keydown=${(e) => this._onItemKeydown(e, node, hasKids, open)}>
             <span class="chevron ${hasKids ? '' : 'spacer'}"
               @click=${hasKids ? (e) => { e.stopPropagation(); this._toggle(node.id); } : null}>
               ${hasKids ? html`<tbt-icon name="chevron-right" size="sm"></tbt-icon>` : ''}

@@ -268,14 +268,36 @@ class TbtMenuGroup extends LitElement {
       if (!e.composedPath().includes(this)) this._open = false;
     };
     document.addEventListener('click', this._onOutsideClick);
+    // Host-level so Escape closes the menu whether focus is on the trigger
+    // or on a slotted menu item (keydown bubbles up to the host).
+    this._onKeydown = (e) => {
+      if (e.key === 'Escape' && this._open) {
+        e.stopPropagation();
+        this._open = false;
+        this.shadowRoot.querySelector('.trigger')?.focus();
+      }
+    };
+    this.addEventListener('keydown', this._onKeydown);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     document.removeEventListener('click', this._onOutsideClick);
+    this.removeEventListener('keydown', this._onKeydown);
   }
 
   _toggle() { this._open = !this._open; }
+
+  _onTriggerKeydown(e) {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      this._open = true;
+      this.updateComplete.then(() => {
+        const first = this.querySelector('tbt-menu-item');
+        (first?.shadowRoot?.querySelector('a') || first)?.focus?.();
+      });
+    }
+  }
 
   updated(changed) {
     if (changed.has('_open')) {
@@ -287,9 +309,10 @@ class TbtMenuGroup extends LitElement {
     return html`
       ${tablerLink}
       <button class="trigger"
-        aria-haspopup="true"
+        aria-haspopup="menu"
         aria-expanded=${this._open ? 'true' : 'false'}
-        @click=${this._toggle}>
+        @click=${this._toggle}
+        @keydown=${this._onTriggerKeydown}>
         ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
         ${this.label}
         <span class="chevron" aria-hidden="true">▾</span>

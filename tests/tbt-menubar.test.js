@@ -89,6 +89,26 @@ describe('tbt-menu-group', () => {
     expect(el._open).to.be.true;
     expect(el.hasAttribute('open')).to.be.true;
   });
+
+  it('ArrowDown on the trigger opens the menu', async () => {
+    const el = await fixture(html`<tbt-menu-group label="Test"></tbt-menu-group>`);
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.trigger')
+      .dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, composed: true, cancelable: true }));
+    await el.updateComplete;
+    expect(el._open).to.be.true;
+  });
+
+  it('Escape closes the menu', async () => {
+    const el = await fixture(html`<tbt-menu-group label="Test"></tbt-menu-group>`);
+    await el.updateComplete;
+    el._open = true;
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.trigger')
+      .dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, composed: true, cancelable: true }));
+    await el.updateComplete;
+    expect(el._open).to.be.false;
+  });
 });
 
 describe('tbt-menu-item a11y', () => {
@@ -116,10 +136,10 @@ describe('tbt-menu-item a11y', () => {
 });
 
 describe('tbt-menu-group a11y', () => {
-  it('trigger has aria-haspopup="true"', async () => {
+  it('trigger has aria-haspopup="menu"', async () => {
     const el = await fixture(html`<tbt-menu-group label="ขาย"></tbt-menu-group>`);
     await el.updateComplete;
-    expect(el.shadowRoot.querySelector('.trigger').getAttribute('aria-haspopup')).to.equal('true');
+    expect(el.shadowRoot.querySelector('.trigger').getAttribute('aria-haspopup')).to.equal('menu');
   });
 
   it('aria-expanded="false" when closed', async () => {

@@ -20,7 +20,7 @@
  *
  * Event: tbt-change → { values: string[], labels: string[] }
  */
-import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
 /**
@@ -42,6 +42,7 @@ class TbtMultiselect extends LitElement {
     searchable:  { type: Boolean },
     _open:       { state: true },
     _query:      { state: true },
+    _activeIdx:  { state: true },
   };
 
   constructor() {
@@ -52,6 +53,7 @@ class TbtMultiselect extends LitElement {
     this.placeholder = 'Select…';
     this._open = false;
     this._query = '';
+    this._activeIdx = -1;
     this._uid = `ms${Math.random().toString(36).slice(2, 8)}`;
   }
 
@@ -114,6 +116,7 @@ class TbtMultiselect extends LitElement {
       transition: background var(--tbt-transition-fast);
     }
     .option:hover { background: var(--tbt-bg-hover); }
+    .option[data-kbd-active] { background: var(--tbt-bg-active); }
     .option.selected { background: var(--tbt-primary-bg); color: var(--tbt-primary-text); }
     .cb-visual {
       display: inline-block; flex-shrink: 0;
@@ -175,6 +178,7 @@ class TbtMultiselect extends LitElement {
   updated(changed) {
     if (changed.has('_open')) {
       this.toggleAttribute('open', this._open);
+      this._activeIdx = -1;
       if (this._open && this.searchable) {
         this._query = '';
         this.updateComplete.then(() => {
@@ -182,6 +186,13 @@ class TbtMultiselect extends LitElement {
         });
       }
     }
+  }
+
+  get _filteredOpts() {
+    const q = (this._query ?? '').toLowerCase();
+    return this.searchable && q
+      ? this.options.filter(o => String(o.label ?? '').toLowerCase().includes(q))
+      : this.options;
   }
 
   _toggleOpen() {
@@ -211,25 +222,63 @@ class TbtMultiselect extends LitElement {
   }
 
   _onTriggerKeydown(e) {
+    const opts = this._filteredOpts;
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      this._toggleOpen();
+      if (this._open && this._activeIdx >= 0) {
+        this._toggle(String(opts[this._activeIdx].value));
+      } else {
+        this._toggleOpen();
+      }
     } else if (e.key === 'Escape' && this._open) {
       e.preventDefault();
       this._open = false;
-    } else if (e.key === 'ArrowDown' && !this._open) {
+    } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      this._open = true;
+      if (!this._open) this._open = true;
+      else this._activeIdx = Math.min(this._activeIdx + 1, opts.length - 1);
+    } else if (e.key === 'ArrowUp' && this._open) {
+      e.preventDefault();
+      this._activeIdx = Math.max(this._activeIdx - 1, 0);
+    } else if (e.key === 'Home' && this._open) {
+      e.preventDefault();
+      this._activeIdx = 0;
+    } else if (e.key === 'End' && this._open) {
+      e.preventDefault();
+      this._activeIdx = opts.length - 1;
+    }
+  }
+
+  _onSearchKeydown(e) {
+    const opts = this._filteredOpts;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      this._open = false;
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      this._activeIdx = Math.min(this._activeIdx + 1, opts.length - 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      this._activeIdx = Math.max(this._activeIdx - 1, 0);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      this._activeIdx = 0;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      this._activeIdx = opts.length - 1;
+    } else if (e.key === 'Enter' && this._activeIdx >= 0) {
+      e.preventDefault();
+      this._toggle(String(opts[this._activeIdx].value));
     }
   }
 
   render() {
     const selected = this.options.filter(o => this.value.includes(String(o.value)));
-    const q = (this._query ?? '').toLowerCase();
-    const filtered = this.searchable && q
-      ? this.options.filter(o => String(o.label ?? '').toLowerCase().includes(q))
-      : this.options;
+    const filtered = this._filteredOpts;
     const listboxId = `${this._uid}-listbox`;
+    const activeId = this._activeIdx >= 0 && this._activeIdx < filtered.length
+      ? `${this._uid}-opt-${filtered[this._activeIdx].value}`
+      : nothing;
     return html`
       ${tablerLink}
       ${this.label ? html`
@@ -244,6 +293,7 @@ class TbtMultiselect extends LitElement {
         aria-label=${this.label || this.placeholder}
         aria-controls=${listboxId}
         aria-owns=${listboxId}
+        aria-activedescendant=${activeId}
         tabindex=${this.disabled || this.readonly ? '-1' : '0'}
         @click=${this._toggleOpen}
         @keydown=${this._onTriggerKeydown}>
@@ -263,16 +313,18 @@ class TbtMultiselect extends LitElement {
               aria-label="Search options"
               placeholder="Search…"
               .value=${this._query ?? ''}
-              @input=${e => { this._query = e.target.value; }}
-              @keydown=${e => { if (e.key === 'Escape') { e.preventDefault(); this._open = false; } }}>
+              @input=${e => { this._query = e.target.value; this._activeIdx = -1; }}
+              @keydown=${this._onSearchKeydown}>
           </div>` : ''}
         <div id=${listboxId} role="listbox" aria-multiselectable="true" aria-label=${this.label || this.placeholder}>
           ${filtered.length === 0
             ? html`<div class="empty-msg">No options match</div>`
-            : filtered.map(o => html`
-              <div class="option ${this.value.includes(String(o.value)) ? 'selected' : ''}"
+            : filtered.map((o, idx) => html`
+              <div id="${this._uid}-opt-${o.value}"
+                class="option ${this.value.includes(String(o.value)) ? 'selected' : ''}"
                 role="option"
                 aria-selected=${this.value.includes(String(o.value)) ? 'true' : 'false'}
+                ?data-kbd-active=${idx === this._activeIdx}
                 @click=${() => this._toggle(String(o.value))}>
                 <span class="cb-visual" aria-hidden="true"></span>
                 ${o.label}

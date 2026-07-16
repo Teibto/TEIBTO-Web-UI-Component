@@ -40,6 +40,12 @@ describe('tbt-input', () => {
     expect(el.shadowRoot.querySelector('.error-msg').textContent).to.include('Field is required');
   });
 
+  it('error message is a live region (role="alert")', async () => {
+    const el = await fixture(html`<tbt-input error="Field is required"></tbt-input>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.error-msg').getAttribute('role')).to.equal('alert');
+  });
+
   it('shows helper text when helper prop is set (no error)', async () => {
     const el = await fixture(html`<tbt-input helper="Enter your full name"></tbt-input>`);
     await el.updateComplete;

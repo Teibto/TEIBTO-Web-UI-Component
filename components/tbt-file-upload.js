@@ -259,7 +259,7 @@ class TbtFileUpload extends LitElement {
             </div>`)}
         </div>` : ''}
       ${this._sizeError || this.error ? html`
-        <div class="error-msg">
+        <div class="error-msg" role="alert">
           <i class="ti ti-alert-circle error-icon" aria-hidden="true"></i>
           ${this._sizeError || this.error}
         </div>` : ''}

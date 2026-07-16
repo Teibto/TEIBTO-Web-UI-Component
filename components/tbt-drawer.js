@@ -155,10 +155,20 @@ class TbtDrawer extends LitElement {
     if (!changedProps.has('open')) return;
     const dialog = this.shadowRoot?.querySelector('dialog');
     if (this.open) {
+      this._prevFocus = document.activeElement;
       dialog?.showModal();
     } else {
-      setTimeout(() => { if (!this.open) dialog?.close(); }, 280);
+      // Restore focus to the opener AFTER close() — a modal <dialog> traps
+      // focus while open, so the restore must wait for the close (deferred
+      // here for the slide-out animation). Mirrors tbt-modal.
+      setTimeout(() => { if (!this.open) this._finalizeClose(); }, 280);
     }
+  }
+
+  _finalizeClose() {
+    this.shadowRoot?.querySelector('dialog')?.close();
+    this._prevFocus?.focus?.();
+    this._prevFocus = null;
   }
 
   _close() {

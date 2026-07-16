@@ -87,4 +87,28 @@ describe('tbt-toggle', () => {
     const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
     expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
+
+  it('switch has a fallback accessible name when no label is set', async () => {
+    const el = await fixture(html`<tbt-toggle></tbt-toggle>`);
+    await el.updateComplete;
+    const input = el.shadowRoot.querySelector('input[role="switch"]');
+    expect(input.getAttribute('aria-label')).to.equal('Toggle');
+  });
+
+  it('does not set a redundant aria-label when a visible label is present', async () => {
+    const el = await fixture(html`<tbt-toggle label="Dark mode"></tbt-toggle>`);
+    await el.updateComplete;
+    const input = el.shadowRoot.querySelector('input[role="switch"]');
+    expect(input.hasAttribute('aria-label')).to.be.false;
+  });
+
+  it('passes axe with no label (fallback name)', async () => {
+    const el = await fixture(html`<tbt-toggle></tbt-toggle>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
+  });
 });

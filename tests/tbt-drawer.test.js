@@ -27,6 +27,24 @@ describe('tbt-drawer', () => {
     expect(el.hasAttribute('open')).to.be.false;
   });
 
+  it('restores focus to the saved opener on close (and clears it)', async () => {
+    // No fixture()/showModal here on purpose: a real modal <dialog> traps focus
+    // and pollutes fixture teardown across the full suite. _finalizeClose is the
+    // method the close-animation timer calls — drive it directly with a stub
+    // opener. Fully synchronous and isolated.
+    const drawer = document.createElement('tbt-drawer');
+    document.body.appendChild(drawer);
+    await drawer.updateComplete;
+    const opener = document.createElement('button');
+    let restored = 0;
+    opener.focus = () => { restored++; };
+    drawer._prevFocus = opener;
+    drawer._finalizeClose();
+    expect(restored, 'focus() restored to the saved opener').to.equal(1);
+    expect(drawer._prevFocus, 'saved focus cleared after restore').to.equal(null);
+    drawer.remove();
+  });
+
   it('renders title', async () => {
     const el = await fixture(html`<tbt-drawer title="Filter options"></tbt-drawer>`);
     await el.updateComplete;
