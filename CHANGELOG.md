@@ -9,6 +9,15 @@ Format: [Semantic Versioning](https://semver.org)
 
 _(nothing yet)_
 
+## [1.44.1] - 2026-07-16
+
+### Fixed
+
+- **Ghost button text contrast** — `tbt-button[variant="ghost"]` used plain
+  secondary (#64748B) which measures 4.43:1 on the page background, just
+  under WCAG AA 4.5; now uses `--tbt-text-secondary-strong`. Found by the
+  v1.44.0 post-deploy axe pass (last remaining serious violation).
+
 ## [1.44.0] - 2026-07-16
 
 ### Added
