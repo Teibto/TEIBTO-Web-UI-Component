@@ -29,7 +29,7 @@
   <div class="tbt-page-header">
     <div>
       <div class="tbt-page-header__title">ใบวางบิล · <span id="hdr-tranid"></span></div>
-      <div class="tbt-page-header__subtitle"><span id="hdr-vendor"></span> · รับเมื่อ <span id="hdr-date"></span></div>
+      <div class="tbt-page-header__subtitle" id="hdr-subtitle"></div>
     </div>
     <tbt-badge id="hdr-status" variant="neutral">—</tbt-badge>
   </div>
@@ -44,7 +44,7 @@
 <!-- ── 2. Document info ───────────────────────────────────────── -->
 <tbt-section title="ข้อมูลใบวางบิล">
   <tbt-field-grid columns="3">
-    <tbt-dropdown   id="f-vendor"  name="vendor"    label="ผู้จำหน่าย" required></tbt-dropdown>
+    <tbt-dropdown   id="f-vendor"  name="vendor"    label="ผู้จำหน่าย" placeholder="เลือกผู้จำหน่าย…" required></tbt-dropdown>
     <tbt-datepicker id="f-receive" name="receive"   label="วันที่รับวางบิล" required></tbt-datepicker>
     <tbt-datepicker id="f-due"     name="due"       label="ครบกำหนดชำระ" required></tbt-datepicker>
     <tbt-input      id="f-contact" name="contact"   label="ผู้นำส่งบิล"></tbt-input>
@@ -65,7 +65,7 @@
 <!-- ── 4. Bill lines ──────────────────────────────────────────── -->
 <tbt-section title="รายการใบแจ้งหนี้">
   <tbt-button slot="actions" id="add-line" variant="primary" icon="add" size="sm">เพิ่มใบแจ้งหนี้</tbt-button>
-  <tbt-table id="lines-table" responsive max-height="380px"></tbt-table>
+  <tbt-table id="lines-table" responsive max-height="380px" empty-message="ยังไม่มีใบแจ้งหนี้ — กด &quot;เพิ่มใบแจ้งหนี้&quot; เพื่อเริ่มรายการแรก"></tbt-table>
 </tbt-section>
 
 <!-- ── 5. Approval flow ───────────────────────────────────────── -->
@@ -75,17 +75,19 @@
 
 <!-- ── 6. History ─────────────────────────────────────────────── -->
 <tbt-section title="ประวัติการทำรายการ">
-  <tbt-audit-log id="audit-log" max-height="320px"></tbt-audit-log>
+  <tbt-audit-log id="audit-log" max-height="320px" empty-message="ยังไม่มีประวัติการทำรายการ"></tbt-audit-log>
 </tbt-section>
 
 <!-- ── 7. Action bar ──────────────────────────────────────────── -->
 <div class="tbt-action-bar">
-  <tbt-button id="save-btn"    variant="primary"   icon="save">บันทึกร่าง</tbt-button>
+  <!-- One primary per state: Draft → ส่งตรวจรับ (save is the secondary path);
+       Submitted → อนุมัติ. -->
   <tbt-button id="submit-btn"  variant="primary"   icon="submit">ส่งตรวจรับ</tbt-button>
+  <tbt-button id="save-btn"    variant="secondary" icon="save">บันทึกร่าง</tbt-button>
   <tbt-button id="approve-btn" variant="primary"   icon="approve">อนุมัติ</tbt-button>
   <tbt-button id="reject-btn"  variant="danger"    icon="reject">ตีกลับ</tbt-button>
   <tbt-button id="print-btn"   variant="secondary" icon="print">พิมพ์</tbt-button>
-  <tbt-button id="back-btn"    variant="ghost"     icon="cancel">กลับ</tbt-button>
+  <tbt-button id="back-btn"    variant="ghost"     icon="back">กลับ</tbt-button>
 </div>
 
 <!-- ── 8. Add / edit invoice modal ────────────────────────────── -->
@@ -126,12 +128,19 @@
   const lineTotal = (r) => Number(r.amount || 0) + Number(r.vat || 0);
 
   /* ── Header ─────────────────────────────────────────────── */
-  document.getElementById('hdr-tranid').textContent = v.tranid || '(ใหม่)';
-  document.getElementById('hdr-vendor').textContent = v.vendor || '';
-  document.getElementById('hdr-date').textContent   = v.receiveDate || '';
-  const hdrStatus = document.getElementById('hdr-status');
-  hdrStatus.textContent = STATUS_LABEL[v.status] || v.status || '—';
-  hdrStatus.setAttribute('variant', STATUS_VARIANT[v.status] || 'neutral');
+  function renderHeader() {
+    document.getElementById('hdr-tranid').textContent = v.tranid || '(ใหม่)';
+    // Compose the subtitle from the parts that exist — no dangling "· รับเมื่อ"
+    // on a fresh form where vendor/date are still empty.
+    const parts = [];
+    if (v.vendor) parts.push(v.vendor);
+    if (v.receiveDate) parts.push('รับเมื่อ ' + v.receiveDate);
+    document.getElementById('hdr-subtitle').textContent = parts.join(' · ');
+    const hdrStatus = document.getElementById('hdr-status');
+    hdrStatus.textContent = STATUS_LABEL[v.status] || v.status || '—';
+    hdrStatus.setAttribute('variant', STATUS_VARIANT[v.status] || 'neutral');
+  }
+  renderHeader();
 
   /* ── Document info ──────────────────────────────────────── */
   const fVendor  = document.getElementById('f-vendor');
@@ -285,11 +294,40 @@
     };
   }
 
+  // Adopt the persisted identity/status returned by the RESTlet. Without this
+  // the page keeps v.id = null after the first save, so a second "บันทึกร่าง"
+  // CREATES A DUPLICATE record (QA F1) and "ส่งตรวจรับ" hits the backend in
+  // status "new".
+  function applySaved(res) {
+    if (!res) return;
+    if (res.id) v.id = res.id;
+    if (res.tranid) v.tranid = res.tranid;
+    if (res.status) v.status = res.status;
+    renderHeader();
+    document.title = 'Teibto ERP · ใบวางบิล' + (v.tranid ? ' · ' + v.tranid : '');
+    if (v.id && !/[?&]id=/.test(location.search)) {
+      history.replaceState(null, '', location.href + '&id=' + encodeURIComponent(v.id));
+    }
+    // Re-evaluate which action buttons this status allows.
+    const nowEditable = v.status === 'Draft';
+    show('save-btn',    nowEditable);
+    show('submit-btn',  nowEditable);
+    show('add-line',    nowEditable);
+    show('approve-btn', v.status === 'Submitted');
+    show('reject-btn',  v.status === 'Submitted');
+  }
+
   async function submit(action, label) {
     rt.hideAlerts('ok-alert', 'err-alert');
     try {
-      await rt.post(d.restletUrl, collect(action));
-      rt.showAlert('ok-alert', label + 'สำเร็จ');
+      // First submit of a never-saved form: persist as draft first so the
+      // backend transitions Draft → Submitted instead of rejecting "new".
+      if (action === 'submit' && !v.id) {
+        applySaved(await rt.post(d.restletUrl, collect('save')));
+      }
+      const res = await rt.post(d.restletUrl, collect(action));
+      applySaved(res);
+      rt.showAlert('ok-alert', label + 'สำเร็จ' + (v.tranid ? ' · ' + v.tranid : ''));
     } catch (err) {
       rt.showAlert('err-alert', label + 'ไม่สำเร็จ: ' + err.message);
     }
@@ -300,5 +338,9 @@
   document.getElementById('approve-btn').addEventListener('click', () => submit('approve', 'อนุมัติ'));
   document.getElementById('reject-btn').addEventListener('click',  () => submit('reject',  'ตีกลับ'));
   document.getElementById('print-btn').addEventListener('click',   () => window.print());
-  document.getElementById('back-btn').addEventListener('click',     () => history.back());
+  document.getElementById('back-btn').addEventListener('click', () => {
+    // Direct-link opens have no history to go back to — fall back to the list.
+    if (history.length > 1) history.back();
+    else if (d.listUrl) location.href = d.listUrl;
+  });
 </script>

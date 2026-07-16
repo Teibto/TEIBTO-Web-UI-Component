@@ -22,25 +22,27 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
   // Validate the inbound voucher payload. Returns an array of error strings
   // (empty = valid). Server-side gate — never trust the client.
   function validate(voucher, lines) {
+    // Messages are user-facing (shown verbatim in the form's error alert) —
+    // Thai, matching the UI language.
     const errs = [];
-    if (!voucher) { errs.push('Missing voucher'); return errs; }
-    if (!voucher.vendor) errs.push('Vendor is required');
-    if (!voucher.receiveDate) errs.push('Receive date is required');
-    if (!voucher.dueDate) errs.push('Due date is required');
+    if (!voucher) { errs.push('ไม่พบข้อมูลใบวางบิล'); return errs; }
+    if (!voucher.vendor) errs.push('กรุณาเลือกผู้จำหน่าย');
+    if (!voucher.receiveDate) errs.push('กรุณาระบุวันที่รับวางบิล');
+    if (!voucher.dueDate) errs.push('กรุณาระบุวันครบกำหนดชำระ');
     if (voucher.receiveDate && voucher.dueDate && voucher.dueDate < voucher.receiveDate) {
-      errs.push('Due date must be on or after the receive date');
+      errs.push('วันครบกำหนดชำระต้องไม่ก่อนวันที่รับวางบิล');
     }
     const rows = lines || [];
-    if (!rows.length) errs.push('At least one vendor invoice line is required');
+    if (!rows.length) errs.push('ต้องมีใบแจ้งหนี้อย่างน้อย 1 รายการ — กด "เพิ่มใบแจ้งหนี้" ก่อนบันทึก');
     rows.forEach((r, i) => {
       const n = i + 1;
-      if (!r.invoiceNo) errs.push(`Line ${n}: invoice no. is required`);
-      if (!r.invoiceDate) errs.push(`Line ${n}: invoice date is required`);
+      if (!r.invoiceNo) errs.push(`รายการที่ ${n}: กรุณาระบุเลขที่ใบแจ้งหนี้`);
+      if (!r.invoiceDate) errs.push(`รายการที่ ${n}: กรุณาระบุวันที่ใบแจ้งหนี้`);
       else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(r.invoiceDate))) {
-        errs.push(`Line ${n}: invoice date must be YYYY-MM-DD (got "${r.invoiceDate}")`);
+        errs.push(`รายการที่ ${n}: วันที่ต้องอยู่ในรูปแบบ YYYY-MM-DD (ได้รับ "${r.invoiceDate}")`);
       }
-      if (!(Number(r.amount) > 0)) errs.push(`Line ${n}: amount must be greater than 0`);
-      if (Number(r.vat) < 0) errs.push(`Line ${n}: VAT cannot be negative`);
+      if (!(Number(r.amount) > 0)) errs.push(`รายการที่ ${n}: ยอดก่อนภาษีต้องมากกว่า 0`);
+      if (Number(r.vat) < 0) errs.push(`รายการที่ ${n}: ภาษีมูลค่าเพิ่มติดลบไม่ได้`);
     });
     return errs;
   }
@@ -155,12 +157,17 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
       ? record.create({ type: REC })
       : record.load({ type: REC, id: voucher.id });
 
+    // Returned to the client so the form can adopt the generated document no.
+    // after the first save (F1: without it the page stayed in "new" state).
+    let tranid = voucher.tranid || '';
     if (isNew) {
-      const tranid = nextTranId();
+      tranid = nextTranId();
       rec.setValue(F.tranid, tranid);
       // Custom records require the native Name field — mirror the tranid so
       // NetSuite lists/search stay readable.
       rec.setValue('name', tranid);
+    } else if (!tranid) {
+      tranid = String(rec.getValue(F.tranid) || '');
     }
 
     if (editsFields) {
@@ -175,7 +182,7 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
     const id = rec.save({ enableSourcing: true, ignoreMandatoryFields: false });
 
     if (editsFields) replaceLines(id, lines || []);
-    return id;
+    return { id, tranid };
   }
 
   // Replace all child lines for a voucher: delete existing, re-create from

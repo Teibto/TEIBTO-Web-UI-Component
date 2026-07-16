@@ -45,9 +45,10 @@ define(['N/record', './bill_receipt_meta', './bill_receipt_lib'],
         if (verrs.length) return err(verrs.join('; '));
       }
 
-      // 4. persist
-      const id = lib.save(voucher, lines, trans.to, trans.editsFields);
-      return { ok: true, id, status: trans.to, tranid: voucher.tranid || undefined };
+      // 4. persist — save() returns the generated tranid so the client can
+      // adopt the new document identity after the first save (F1).
+      const saved = lib.save(voucher, lines, trans.to, trans.editsFields);
+      return { ok: true, id: saved.id, status: trans.to, tranid: saved.tranid || undefined };
 
     } catch (e) {
       // Surface the real reason; log the stack for the admin.

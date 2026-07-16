@@ -63,16 +63,20 @@ define([], () => {
     pay:     { from: [STATUS.APPROVED],               to: STATUS.PAID,      editsFields: false },
   };
 
+  // Thai labels for user-facing transition errors (shown verbatim in the form).
+  const ACTION_TH = { save: 'บันทึก', submit: 'ส่งตรวจรับ', approve: 'อนุมัติ', reject: 'ตีกลับ', pay: 'บันทึกชำระ' };
+  const STATUS_TH = { Draft: 'ร่าง', Submitted: 'รอตรวจรับ', Approved: 'อนุมัติแล้ว', Rejected: 'ตีกลับ', Paid: 'ชำระแล้ว' };
+
   /**
    * Validate a requested action against the record's current status.
    * @returns {{ok:true, to:string, editsFields:boolean} | {ok:false, message:string}}
    */
   function checkTransition(action, currentStatus) {
     const t = TRANSITIONS[action];
-    if (!t) return { ok: false, message: 'Unknown action: ' + action };
+    if (!t) return { ok: false, message: 'ไม่รู้จักคำสั่ง: ' + action };
     const cur = currentStatus || null;
     if (t.from.indexOf(cur) === -1) {
-      return { ok: false, message: `Cannot ${action} a record in status "${cur || 'new'}"` };
+      return { ok: false, message: `ไม่สามารถ${ACTION_TH[action] || action}ในสถานะ "${STATUS_TH[cur] || cur || 'ยังไม่บันทึก'}" ได้` };
     }
     return { ok: true, to: t.to, editsFields: t.editsFields };
   }
