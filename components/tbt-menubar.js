@@ -1,6 +1,6 @@
 /**
  * @component tbt-menubar, tbt-menu-item, tbt-menu-group
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Top navigation bar with logo, flat menu items, and grouped dropdown menus.
@@ -19,6 +19,7 @@
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 /**
  * @fires tbt-menu-toggle - Fired when hamburger button clicked on mobile
@@ -184,7 +185,7 @@ class TbtMenuItem extends LitElement {
       ${tablerLink}
       <a href=${this.href || '#'}
          aria-current=${this.active ? 'page' : nothing}>
-        ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
+        ${this.icon ? html`<i class="ti ti-${ICON_ALIASES[this.icon] ?? this.icon} icon" aria-hidden="true"></i>` : ''}
         ${this.label}
       </a>
     `;
@@ -313,7 +314,7 @@ class TbtMenuGroup extends LitElement {
         aria-expanded=${this._open ? 'true' : 'false'}
         @click=${this._toggle}
         @keydown=${this._onTriggerKeydown}>
-        ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
+        ${this.icon ? html`<i class="ti ti-${ICON_ALIASES[this.icon] ?? this.icon} icon" aria-hidden="true"></i>` : ''}
         ${this.label}
         <span class="chevron" aria-hidden="true">▾</span>
       </button>

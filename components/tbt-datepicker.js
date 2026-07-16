@@ -1,6 +1,6 @@
 /**
  * @component tbt-datepicker
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Styled date input with label and validation. Uses native <input type="date">

@@ -28,9 +28,7 @@ define(['N/url'], (url) => {
     },
     {
       key: 'expense',
-      // ชื่อ Tabler จริง ไม่ใช่ alias — tbt-sidebar-item render ti ti-<name> ตรง ๆ
-      // โดยไม่ resolve ผ่าน ICON_ALIASES (pitfalls §23) alias-only จะได้กล่องเปล่า
-      icon: 'report-money',
+      icon: 'expense',
       label: 'เบิกค่าใช้จ่าย',
       scriptId: 'customscript_tbt_sl_expense_claim',
       deploymentId: 'customdeploy_tbt_sl_expense_claim',

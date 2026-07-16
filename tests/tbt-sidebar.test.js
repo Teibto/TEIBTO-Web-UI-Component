@@ -80,3 +80,18 @@ describe('tbt-sidebar-item a11y', () => {
     expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });
+
+describe('tbt-sidebar-item icon alias (#52)', () => {
+  it('resolves ERP alias icons through ICON_ALIASES (expense → report-money)', async () => {
+    const el = await fixture(html`<tbt-sidebar-item label="เบิกค่าใช้จ่าย" icon="expense"></tbt-sidebar-item>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('i.ti-report-money'), 'alias "expense" must map to a real Tabler glyph').to.exist;
+    expect(el.shadowRoot.querySelector('i.ti-expense')).to.be.null;
+  });
+
+  it('raw Tabler names still pass through unchanged', async () => {
+    const el = await fixture(html`<tbt-sidebar-item label="รับวางบิล" icon="file-invoice"></tbt-sidebar-item>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('i.ti-file-invoice')).to.exist;
+  });
+});

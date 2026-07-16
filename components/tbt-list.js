@@ -1,12 +1,13 @@
 /**
  * @component tbt-list + tbt-list-item
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Vertical data list with label/value rows, optional icons, and per-item action slot.
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 // ─── tbt-list-item ────────────────────────────────────────────────────────
 
@@ -83,7 +84,7 @@ class TbtListItem extends LitElement {
       <div class="item">
         ${this.icon ? html`
           <div class="icon-col" aria-hidden="true">
-            <i class="ti ti-${this.icon}"></i>
+            <i class="ti ti-${ICON_ALIASES[this.icon] ?? this.icon}"></i>
           </div>
         ` : nothing}
         <span class="label">${this.label}</span>

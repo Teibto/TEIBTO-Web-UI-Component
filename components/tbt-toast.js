@@ -1,6 +1,6 @@
 /**
  * @component tbt-toast
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Toast notification overlay. Use the imperative singleton or place the element directly.

@@ -1,6 +1,6 @@
 /**
  * @component tbt-section
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Collapsible card section. Container for grouped fields or content.
@@ -22,6 +22,7 @@
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 /**
  * @fires tbt-section-toggle - Fired when section collapsed/expanded; detail: { collapsed: boolean }
@@ -159,7 +160,7 @@ class TbtSection extends LitElement {
           aria-controls="section-body"
           aria-label=${this.title ? nothing : 'Toggle section'}>
           <span class="chevron" aria-hidden="true">▾</span>
-          ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
+          ${this.icon ? html`<i class="ti ti-${ICON_ALIASES[this.icon] ?? this.icon} icon" aria-hidden="true"></i>` : ''}
           <span class="title-text">${this.title}</span>
         </button>
         <div class="actions" @click=${e => e.stopPropagation()}>

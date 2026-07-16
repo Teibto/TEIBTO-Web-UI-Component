@@ -1,6 +1,6 @@
 /**
  * @component tbt-button
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Standard action button with brand variants.
@@ -17,6 +17,7 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 /**
  * @slot - Button label text
@@ -184,7 +185,7 @@ class TbtButton extends LitElement {
         @click=${this._handleClick}>
         ${this.loading
           ? html`<span class="spinner" aria-hidden="true"></span>`
-          : (this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : '')}
+          : (this.icon ? html`<i class="ti ti-${ICON_ALIASES[this.icon] ?? this.icon} icon" aria-hidden="true"></i>` : '')}
         <slot></slot>
       </button>
     `;

@@ -1,6 +1,6 @@
 /**
  * @component tbt-field-grid
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Responsive grid for displaying multiple tbt-field elements.

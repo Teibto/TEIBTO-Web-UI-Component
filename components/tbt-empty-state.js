@@ -1,12 +1,13 @@
 /**
  * @component tbt-empty-state
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Empty state display for tables, lists, and search results with no data.
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 class TbtEmptyState extends LitElement {
   static properties = {
@@ -82,7 +83,7 @@ class TbtEmptyState extends LitElement {
     return html`
       ${tablerLink}
       <div class="icon-wrap" aria-hidden="true">
-        <i class="ti ti-${this.icon || 'inbox'}"></i>
+        <i class="ti ti-${ICON_ALIASES[this.icon] ?? (this.icon || 'inbox')}"></i>
       </div>
       <p class="title">${this.title || 'No data'}</p>
       ${this.description ? html`<p class="description">${this.description}</p>` : nothing}

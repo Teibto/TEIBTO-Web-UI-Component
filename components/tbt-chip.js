@@ -1,12 +1,13 @@
 /**
  * @component tbt-chip
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Toggleable chip / filter tag with optional remove action.
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 class TbtChip extends LitElement {
   static properties = {
@@ -166,7 +167,7 @@ class TbtChip extends LitElement {
         tabindex=${this.disabled ? '-1' : '0'}
         @click=${this._toggle}
         @keydown=${this._onKeydown}>
-        ${this.icon ? html`<i class="ti ti-${this.icon}" aria-hidden="true"></i>` : nothing}
+        ${this.icon ? html`<i class="ti ti-${ICON_ALIASES[this.icon] ?? this.icon}" aria-hidden="true"></i>` : nothing}
         <slot></slot>
       </div>
       ${this.removable ? html`
