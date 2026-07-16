@@ -7,7 +7,6 @@
 <customrecordtype scriptid="customrecord_tbt_bill_receipt_line">
   <recordname>TBT Bill Receipt Line</recordname>
   <includename>F</includename>
-  <includenumber>T</includenumber>
   <showid>F</showid>
   <allowattachments>F</allowattachments>
   <allowinlineediting>F</allowinlineediting>
@@ -25,7 +24,7 @@
     </customrecordcustomfield>
     <customrecordcustomfield scriptid="custrecord_tbt_brl_invoice_no">
       <label>Invoice no.</label>
-      <fieldtype>FREEFORMTEXT</fieldtype>
+      <fieldtype>TEXT</fieldtype>
       <ismandatory>T</ismandatory>
       <displaytype>NORMAL</displaytype>
       <storevalue>T</storevalue>
@@ -41,7 +40,7 @@
     </customrecordcustomfield>
     <customrecordcustomfield scriptid="custrecord_tbt_brl_po_no">
       <label>PO reference</label>
-      <fieldtype>FREEFORMTEXT</fieldtype>
+      <fieldtype>TEXT</fieldtype>
       <ismandatory>F</ismandatory>
       <displaytype>NORMAL</displaytype>
       <storevalue>T</storevalue>
@@ -64,7 +63,7 @@
     </customrecordcustomfield>
     <customrecordcustomfield scriptid="custrecord_tbt_brl_memo">
       <label>Memo</label>
-      <fieldtype>FREEFORMTEXT</fieldtype>
+      <fieldtype>TEXT</fieldtype>
       <ismandatory>F</ismandatory>
       <displaytype>NORMAL</displaytype>
       <storevalue>T</storevalue>

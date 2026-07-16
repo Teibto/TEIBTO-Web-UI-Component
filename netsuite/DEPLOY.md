@@ -24,24 +24,32 @@ after deploying to a sandbox.
 ## Deploy steps (SuiteCloud CLI / SDF)
 
 1. **Copy sources into the SDF project** (`tbt-ds/` staging, per `sync:sdf`):
-   - `netsuite/objects/*.xml` → `src/Objects/`
+   - `netsuite/objects/customrecord_tbt_bill_receipt*.xml` and
+     `customscript_tbt_*.xml` → `src/Objects/`
    - `netsuite/bill_receipt_meta.js`, `bill_receipt_lib.js`, `rl_bill_receipt.js`,
      `tbt_page.js` → `src/FileCabinet/SuiteScripts/Teibto/`
    - `templates/sl_bill_receipt_*.js` + `bill-receipt-*.html` →
      `src/FileCabinet/SuiteScripts/Teibto/` (Suitelets `require` `./bill_receipt_lib`
      etc. as siblings — keep them in the same folder)
-2. **Create script + deployment objects** for the Suitelets and RESTlet with these
-   exact ids (the code resolves them by id):
-   - Suitelet `customscript_tbt_sl_bill_receipt_list` / `customdeploy_tbt_sl_bill_receipt_list`
-   - Suitelet `customscript_tbt_sl_bill_receipt_form` / `customdeploy_tbt_sl_bill_receipt_form`
-   - RESTlet  `customscript_tbt_rl_bill_receipt`      / `customdeploy_tbt_rl_bill_receipt`
-3. **RESTlet deployment**: set *Status* = Released, *Log Level* = Error, and
-   *Audience* to the roles that use the page (AP clerk + approver). The page calls
-   it with the logged-in session, so no token auth is needed.
+2. **Script + deployment objects are SDF XMLs** in `netsuite/objects/`
+   (`customscript_tbt_sl_bill_receipt_list/form.xml`, `customscript_tbt_rl_bill_receipt.xml`)
+   — the deploy creates script records + deployments with the exact ids the code
+   resolves by (`N/url.resolveScript`). No manual clicking in the UI.
+   The RESTlet deployment ships as *Status* = Released, *Log Level* = Error,
+   audience = all internal roles; tighten the audience per account if needed
+   (the page calls it with the logged-in session, so no token auth is needed).
+3. **Manifest features**: `src/manifest.xml` must declare
+   `SERVERSIDESCRIPTING` + `CUSTOMRECORDS` as required — SDF validation fails
+   without them.
 4. **Approver role**: edit `bill_receipt_lib.permissionError` — replace the
    stop-gap `APPROVER_ROLES = [3]` (Administrator) with your real approver role
    id(s), or switch to a custom permission and check it via `runtime`.
-5. `suitecloud project:deploy`.
+5. `suitecloud project:deploy --dryrun` (validate objects against the account)
+   then `suitecloud project:deploy`.
+
+> Deployed to `4089685_SB2` on 2026-07-16 — both Suitelet pages verified in a
+> real browser session: list renders the real-data path (`demo:false`), form
+> loads 693 vendors via SuiteQL, DS assets load from N/file-resolved URLs.
 
 ## Status state machine (enforced server-side in the RESTlet)
 

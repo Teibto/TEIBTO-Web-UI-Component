@@ -1,0 +1,21 @@
+<restlet scriptid="customscript_tbt_rl_bill_receipt">
+  <description>Vendor bill receipt (รับวางบิล) — RESTlet, the only writer. Re-reads status server-side and enforces permission → state machine → validation.</description>
+  <isinactive>F</isinactive>
+  <name>TBT RL Bill Receipt</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/Teibto/rl_bill_receipt.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_tbt_rl_bill_receipt">
+      <allemployees>F</allemployees>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>RELEASED</status>
+      <title>TBT Bill Receipt RESTlet</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</restlet>

@@ -1,0 +1,24 @@
+<suitelet scriptid="customscript_tbt_sl_bill_receipt_list">
+  <description>Vendor bill receipt (รับวางบิล) — list page. Serves the TBT-DS page via tbt_page.render.</description>
+  <isinactive>F</isinactive>
+  <name>TBT SL Bill Receipt List</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/Teibto/sl_bill_receipt_list.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_tbt_sl_bill_receipt_list">
+      <allemployees>F</allemployees>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <eventtype></eventtype>
+      <isdeployed>T</isdeployed>
+      <isonline>F</isonline>
+      <loglevel>ERROR</loglevel>
+      <runasrole></runasrole>
+      <status>RELEASED</status>
+      <title>TBT Bill Receipt List</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</suitelet>
