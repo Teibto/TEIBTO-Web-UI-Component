@@ -102,10 +102,19 @@ npm run build                       # bundle ต้องผ่าน (แต่
 `teibto-doc-standard` — 5 แกน: visual ทุก state · dark · responsive 375/768 · axe · flow จริง
 ตัวอย่างเต็ม: `qa/2026-07-16-bill-receipt-ux/`
 
-## 7. เรื่องที่ยังเปิดอยู่ (อย่าเผลอทำซ้ำก่อนตัดสินใจ)
+## 7. Sidebar production (`templates/tbt_nav.js`)
 
-- Sidebar production + โลโก้ — รอ decision (#28) · ตอนนี้ทุกหน้าได้ `DEFAULT_SIDEBAR` ลิงก์ตาย
-- วันที่ใน `tbt-datepicker` แสดงตาม locale browser (mm/dd/yyyy) ขัด R2 — รอ RFC (#29)
+หน้า Suitelet ทุกหน้าบน NetSuite ต้องใช้ `nav.sidebar()` — เมนูมีเฉพาะโมดูลที่ deploy จริง
+href resolve ผ่าน `N/url` ตอน request (ไม่มีทางเกิดลิงก์ตาย) เพิ่มโมดูลใหม่ = เพิ่ม entry
+เดียวใน `MODULES` ของ `tbt_nav.js` + `cp` เข้า staging ตอน deploy
+`DEFAULT_SIDEBAR` ใน `tbt_page.js` มีไว้สำหรับ demo บน dev server เท่านั้น
+โลโก้ brand: `netsuite/assets/teibtologo.png` (icon จัตุรัส) → File Cabinet
+`/SuiteScripts/Teibto/assets/` — `tbt_page` resolve เป็น optional asset เอง
+
+## 8. เรื่องที่ยังเปิดอยู่ (อย่าเผลอทำซ้ำก่อนตัดสินใจ)
+
+- วันที่ใน `tbt-datepicker` แสดงตาม locale browser (mm/dd/yyyy) ขัด R2 —
+  RFC 0006 สถานะ Proposed (#29) รอรีวิวก่อน implement
 
 ---
 เอกสารนี้ขัดกับความจริงเมื่อไหร่ → แก้ใน PR เดียวกับโค้ดที่ทำให้มันล้าสมัย · เจ้าของ: Wichit Wongta
