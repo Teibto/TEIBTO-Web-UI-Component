@@ -1,0 +1,21 @@
+<restlet scriptid="customscript_tbt_rl_expense">
+  <description>Employee expense claim (เบิกค่าใช้จ่าย) — RESTlet, the only writer. Re-reads status server-side and enforces permission → state machine → validation.</description>
+  <isinactive>F</isinactive>
+  <name>TBT RL Expense</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/Teibto/rl_expense.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_tbt_rl_expense">
+      <allemployees>F</allemployees>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>RELEASED</status>
+      <title>TBT Expense RESTlet</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</restlet>

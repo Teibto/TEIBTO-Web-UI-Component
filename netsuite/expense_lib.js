@@ -14,19 +14,24 @@ define(['N/record', 'N/query', 'N/runtime', './expense_meta'],
 
   /* ── Validation ────────────────────────────────────────────────────── */
 
+  // Messages are user-facing (shown verbatim in the form's error alert) —
+  // Thai, matching the UI language (UI-PLAYBOOK §3.3).
   function validate(claim, lines) {
     const errs = [];
-    if (!claim) { errs.push('Missing claim'); return errs; }
-    if (!claim.employee) errs.push('Employee is required');
-    if (!claim.period) errs.push('Period is required');
+    if (!claim) { errs.push('ไม่พบข้อมูลใบเบิกค่าใช้จ่าย'); return errs; }
+    if (!claim.employee) errs.push('กรุณาเลือกพนักงาน');
+    if (!claim.period) errs.push('กรุณาระบุงวดที่เบิก');
     const rows = lines || [];
-    if (!rows.length) errs.push('At least one expense line is required');
+    if (!rows.length) errs.push('ต้องมีรายการค่าใช้จ่ายอย่างน้อย 1 รายการ — กด "เพิ่มค่าใช้จ่าย" ก่อนบันทึก');
     rows.forEach((r, i) => {
       const n = i + 1;
-      if (!r.date) errs.push(`Line ${n}: date is required`);
-      if (!r.category) errs.push(`Line ${n}: category is required`);
-      if (!r.merchant) errs.push(`Line ${n}: merchant is required`);
-      if (!(Number(r.amount) > 0)) errs.push(`Line ${n}: amount must be greater than 0`);
+      if (!r.date) errs.push(`รายการที่ ${n}: กรุณาระบุวันที่`);
+      else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(r.date))) {
+        errs.push(`รายการที่ ${n}: วันที่ต้องอยู่ในรูปแบบ YYYY-MM-DD (ได้รับ "${r.date}")`);
+      }
+      if (!r.category) errs.push(`รายการที่ ${n}: กรุณาเลือกหมวดค่าใช้จ่าย`);
+      if (!r.merchant) errs.push(`รายการที่ ${n}: กรุณาระบุร้านค้า/ผู้ให้บริการ`);
+      if (!(Number(r.amount) > 0)) errs.push(`รายการที่ ${n}: จำนวนเงินต้องมากกว่า 0`);
     });
     return errs;
   }
@@ -35,7 +40,15 @@ define(['N/record', 'N/query', 'N/runtime', './expense_meta'],
 
   const p2 = (n) => String(n).padStart(2, '0');
   const toIso = (d) => d ? (d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate())) : '';
-  const fromIso = (s) => { if (!s) return null; const [y, m, d] = String(s).split('-').map(Number); return new Date(y, m - 1, d); };
+  // Strict: a non-ISO string must fail loudly here — passing an Invalid Date
+  // into record.setValue throws mid-write (same trap bill_receipt_lib hit on
+  // SB2 2026-07-16: replaceLines had already deleted the old lines).
+  const fromIso = (s) => {
+    if (!s) return null;
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s));
+    if (!m) throw new Error(`Invalid date "${s}" — expected YYYY-MM-DD`);
+    return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  };
 
   /* ── List ──────────────────────────────────────────────────────────── */
 
@@ -79,8 +92,11 @@ define(['N/record', 'N/query', 'N/runtime', './expense_meta'],
       period:     rec.getValue(F.period),
       status:     rec.getValue(F.status) || 'Draft',
     };
+    // TO_CHAR forces ISO regardless of the account's date format preference —
+    // raw SuiteQL dates come back as e.g. "16/7/2026", which breaks the
+    // load → edit → save round-trip (fromIso expects ISO).
     const lineSql = `
-      SELECT id, ${LF.date} AS dt, ${LF.category} AS category, ${LF.merchant} AS merchant,
+      SELECT id, TO_CHAR(${LF.date}, 'YYYY-MM-DD') AS dt, ${LF.category} AS category, ${LF.merchant} AS merchant,
              ${LF.amount} AS amount, ${LF.billable} AS billable, ${LF.receipt} AS receipt, ${LF.memo} AS memo
       FROM ${LINE_REC} WHERE ${LF.parent} = ? ORDER BY id`;
     const lines = query.runSuiteQL({ query: lineSql, params: [id] }).asMappedResults().map((r) => ({
@@ -110,7 +126,20 @@ define(['N/record', 'N/query', 'N/runtime', './expense_meta'],
   function save(claim, lines, nextStatus, editsFields) {
     const isNew = !claim.id;
     const rec = isNew ? record.create({ type: REC }) : record.load({ type: REC, id: claim.id });
-    if (isNew) rec.setValue(F.tranid, nextTranId());
+
+    // Returned to the client so the form can adopt the generated claim no.
+    // after the first save (without it the page stays in "new" state and a
+    // second save creates a duplicate — same bug as bill receipt QA F1).
+    let tranid = claim.tranid || '';
+    if (isNew) {
+      tranid = nextTranId();
+      rec.setValue(F.tranid, tranid);
+      // Custom records require the native Name field — mirror the tranid so
+      // NetSuite lists/search stay readable.
+      rec.setValue('name', tranid);
+    } else if (!tranid) {
+      tranid = String(rec.getValue(F.tranid) || '');
+    }
 
     if (editsFields) {
       rec.setValue(F.employee, Number(claim.employee) || claim.employee);
@@ -121,25 +150,41 @@ define(['N/record', 'N/query', 'N/runtime', './expense_meta'],
     const id = rec.save({ enableSourcing: true, ignoreMandatoryFields: false });
 
     if (editsFields) replaceLines(id, lines || []);
-    return id;
+    return { id, tranid };
   }
 
   function replaceLines(parentId, lines) {
+    // Convert every value BEFORE deleting anything — record writes are not
+    // transactional, so a conversion error after the delete pass would destroy
+    // the existing lines with nothing to replace them (bill receipt hit this
+    // on SB2 2026-07-16 via the non-ISO SuiteQL date round-trip).
+    const prepared = (lines || []).map((r) => ({
+      name: r.merchant || 'line', // native Name is mandatory
+      date: fromIso(r.date),
+      category: r.category || '',
+      merchant: r.merchant || '',
+      amount: Number(r.amount || 0),
+      billable: !!r.billable,
+      receipt: r.receipt || '',
+      memo: r.memo || '',
+    }));
+
     const existing = query.runSuiteQL({
       query: `SELECT id FROM ${LINE_REC} WHERE ${LF.parent} = ?`, params: [parentId],
     }).asMappedResults();
     existing.forEach((e) => record.delete({ type: LINE_REC, id: e.id }));
 
-    lines.forEach((r) => {
+    prepared.forEach((p) => {
       const lr = record.create({ type: LINE_REC });
+      lr.setValue('name', p.name);
       lr.setValue(LF.parent, parentId);
-      lr.setValue(LF.date, fromIso(r.date));
-      lr.setValue(LF.category, r.category || '');
-      lr.setValue(LF.merchant, r.merchant || '');
-      lr.setValue(LF.amount, Number(r.amount || 0));
-      lr.setValue(LF.billable, !!r.billable);
-      lr.setValue(LF.receipt, r.receipt || '');
-      lr.setValue(LF.memo, r.memo || '');
+      lr.setValue(LF.date, p.date);
+      lr.setValue(LF.category, p.category);
+      lr.setValue(LF.merchant, p.merchant);
+      lr.setValue(LF.amount, p.amount);
+      lr.setValue(LF.billable, p.billable);
+      lr.setValue(LF.receipt, p.receipt);
+      lr.setValue(LF.memo, p.memo);
       lr.save();
     });
   }
@@ -159,9 +204,10 @@ define(['N/record', 'N/query', 'N/runtime', './expense_meta'],
   function permissionError(action) {
     if (['approve', 'reject', 'pay'].indexOf(action) === -1) return '';
     const role = runtime.getCurrentUser().role;
-    const APPROVER_ROLES = [3]; // 3 = Administrator — replace at deploy time
+    const APPROVER_ROLES = [3]; // 3 = Administrator — replace at deploy time (#48)
+    const TH = { approve: 'อนุมัติ', reject: 'ตีกลับ', pay: 'บันทึกจ่ายคืน' };
     return APPROVER_ROLES.indexOf(role) === -1
-      ? 'You do not have permission to ' + action + ' an expense claim' : '';
+      ? 'คุณไม่มีสิทธิ์' + (TH[action] || action) + 'ใบเบิกค่าใช้จ่าย' : '';
   }
 
   return { validate, list, load, employees, save, permissionError, toIso, fromIso };

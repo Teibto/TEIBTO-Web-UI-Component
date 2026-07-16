@@ -37,8 +37,10 @@ define(['N/record', './expense_meta', './expense_lib'], (record, meta, lib) => {
         if (verrs.length) return err(verrs.join('; '));
       }
 
-      const id = lib.save(claim, lines, trans.to, trans.editsFields);
-      return { ok: true, id, status: trans.to, tranid: claim.tranid || undefined };
+      // save() returns the persisted identity — the client's tranid copy is
+      // empty on first save, so the generated one must come from the server.
+      const saved = lib.save(claim, lines, trans.to, trans.editsFields);
+      return { ok: true, id: saved.id, tranid: saved.tranid, status: trans.to };
 
     } catch (e) {
       log.error({ title: 'rl_expense', details: e.stack || e.message });

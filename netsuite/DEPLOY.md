@@ -105,6 +105,11 @@ only the ids differ.
 
 ## Script + deployment ids (resolved by code)
 
+Script + deployment objects are SDF XMLs in `objects/`
+(`customscript_tbt_sl_expense_claim.xml`, `customscript_tbt_rl_expense.xml`) —
+same pattern as bill receipt, deploy creates them with the exact ids the code
+resolves by:
+
 - Suitelet `customscript_tbt_sl_expense_claim` / `customdeploy_tbt_sl_expense_claim`
 - RESTlet  `customscript_tbt_rl_expense`        / `customdeploy_tbt_rl_expense`
 

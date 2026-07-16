@@ -51,12 +51,17 @@ define([], () => {
     pay:     { from: [STATUS.APPROVED],                     to: STATUS.PAID,      editsFields: false },
   };
 
+  // Thai action/status labels — checkTransition messages surface verbatim in the
+  // form's error alert, so they ARE user-facing copy (UI-PLAYBOOK §3.3).
+  const ACTION_TH = { save: 'บันทึก', submit: 'ส่งอนุมัติ', approve: 'อนุมัติ', reject: 'ตีกลับ', pay: 'บันทึกจ่ายคืน' };
+  const STATUS_TH = { Draft: 'ร่าง', Submitted: 'รออนุมัติ', Approved: 'อนุมัติแล้ว', Rejected: 'ตีกลับ', Paid: 'จ่ายแล้ว' };
+
   function checkTransition(action, currentStatus) {
     const t = TRANSITIONS[action];
-    if (!t) return { ok: false, message: 'Unknown action: ' + action };
+    if (!t) return { ok: false, message: 'ไม่รู้จักคำสั่ง: ' + action };
     const cur = currentStatus || null;
     if (t.from.indexOf(cur) === -1) {
-      return { ok: false, message: `Cannot ${action} a claim in status "${cur || 'new'}"` };
+      return { ok: false, message: `ไม่สามารถ${ACTION_TH[action] || action}ในสถานะ "${STATUS_TH[cur] || cur || 'ยังไม่บันทึก'}" ได้` };
     }
     return { ok: true, to: t.to, editsFields: t.editsFields };
   }
