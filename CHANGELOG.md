@@ -7,6 +7,10 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+_(nothing yet)_
+
+## [1.44.0] - 2026-07-16
+
 ### Added
 
 - **NetSuite-style list toolbar on the bill receipt list** (RFC 0007, #40 —
