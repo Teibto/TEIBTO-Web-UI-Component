@@ -42,4 +42,28 @@ describe('tbt-section', () => {
     const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
     expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
+
+  it('toggle button gets an aria-label fallback when title is empty (axe button-name)', async () => {
+    const el = await fixture(html`<tbt-section></tbt-section>`);
+    await el.updateComplete;
+    const btn = el.shadowRoot.querySelector('.toggle-btn');
+    expect(btn.getAttribute('aria-label')).to.equal('Toggle section');
+  });
+
+  it('toggle button has no aria-label override when title is present', async () => {
+    const el = await fixture(html`<tbt-section title="Info"></tbt-section>`);
+    await el.updateComplete;
+    const btn = el.shadowRoot.querySelector('.toggle-btn');
+    expect(btn.hasAttribute('aria-label')).to.be.false;
+  });
+
+  it('passes axe with empty title (chevron-only header)', async () => {
+    const el = await fixture(html`<tbt-section></tbt-section>`);
+    await el.updateComplete;
+    const results = await axe.run(el, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+    });
+    const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
+    expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
+  });
 });
