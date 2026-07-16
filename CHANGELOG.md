@@ -7,6 +7,13 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Fixed
+
+- **Approver roles are now the real ones** (#48) — `APPROVER_ROLES = [3, 1038]`
+  (Administrator + TT - Accountant, confirmed 2026-07-16) in both
+  `bill_receipt_lib` and `expense_lib`; the bill receipt permission message is
+  now Thai at the source like the rest of the validation copy.
+
 ### Added
 
 - **SDF objects for the expense claim module** (#47) — record XMLs fixed to

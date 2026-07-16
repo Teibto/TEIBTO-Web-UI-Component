@@ -41,9 +41,10 @@ after deploying to a sandbox.
 3. **Manifest features**: `src/manifest.xml` must declare
    `SERVERSIDESCRIPTING` + `CUSTOMRECORDS` as required — SDF validation fails
    without them.
-4. **Approver role**: edit `bill_receipt_lib.permissionError` — replace the
-   stop-gap `APPROVER_ROLES = [3]` (Administrator) with your real approver role
-   id(s), or switch to a custom permission and check it via `runtime`.
+4. **Approver role**: `APPROVER_ROLES = [3, 1038]` in `bill_receipt_lib` /
+   `expense_lib` (3 = Administrator, 1038 = TT - Accountant — confirmed
+   2026-07-16, #48). Deploying to another account: update the ids in both
+   libs' `permissionError`.
 5. `suitecloud project:deploy --dryrun` (validate objects against the account)
    then `suitecloud project:deploy`.
 
@@ -122,8 +123,9 @@ resolves by:
 
 `save`/`submit` may edit fields; `approve`/`reject`/`pay` change status only.
 Current status is re-read from the DB; an illegal transition is rejected.
-`approve`/`reject`/`pay` require an approver role — edit
-`expense_lib.permissionError` (`APPROVER_ROLES`) at deploy time.
+`approve`/`reject`/`pay` require an approver role — `APPROVER_ROLES = [3, 1038]`
+(same set as bill receipt, see step 4 above; update in `expense_lib.permissionError`
+when deploying to another account).
 
 ## Manual smoke checklist (sandbox)
 
