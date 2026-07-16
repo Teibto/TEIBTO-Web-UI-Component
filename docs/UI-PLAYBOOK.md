@@ -84,11 +84,17 @@ npm run build                       # bundle ต้องผ่าน (แต่
 1. bump `package.json` + ย้าย CHANGELOG `[Unreleased]` → `[X.Y.Z] - YYYY-MM-DD`
 2. `npm run build` → ได้ `dist/tbt-ds.min.js`, `dist/tbt-theme.css` (+ `tbt-page-runtime.js` hand-authored)
 3. แก้ `DS_VERSION` ใน `netsuite/tbt_page.js` ให้ตรง version ใหม่
-4. `npm run sync:sdf` → `suitecloud project:deploy` (authid `teibto-sb2`) — สร้างโฟลเดอร์
+4. `npm run sync:sdf` → **copy เฉพาะ `dist/` เข้า staging เท่านั้น** — ไฟล์ source ที่แก้
+   (`netsuite/*.js`, `templates/sl_*.js`, `templates/*.html`) ต้อง `cp` เข้า
+   `tbt-ds/src/FileCabinet/SuiteScripts/Teibto/` เอง ไม่งั้น deploy สำเร็จแต่ account
+   ยังรันโค้ดเก่า (เจอจริง 2026-07-16: icon fix ไม่ขึ้นเพราะ `tbt_page.js` บน account ยังเป็น
+   version เก่า)
+5. `suitecloud project:deploy` (authid `teibto-sb2`, รันจาก `tbt-ds/`) — สร้างโฟลเดอร์
    `/SuiteScripts/Teibto/ds/v<X.Y.Z>/dist/` ใหม่ (ห้ามเขียนทับโฟลเดอร์ version เก่า)
-5. Verify: เปิดหน้า Suitelet จริง — asset โหลดจาก URL ที่ resolve ผ่าน `N/file` +
+   ตรวจบรรทัด `Upload file --` ใน log ว่าไฟล์ที่แก้ขึ้นครบทุกตัว
+6. Verify: เปิดหน้า Suitelet จริง — asset โหลดจาก URL ที่ resolve ผ่าน `N/file` +
    hash เทียบไฟล์ local (สูตรอยู่ใน `netsuite/DEPLOY.md`)
-6. tag `vX.Y.Z` + GitHub release
+7. tag `vX.Y.Z` + GitHub release
 
 ## 6. QA รอบใหม่ (baseline/regression)
 
