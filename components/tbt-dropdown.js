@@ -232,7 +232,8 @@ class TbtDropdown extends LitElement {
       border-color: var(--tbt-primary-light);
       box-shadow: var(--tbt-shadow-focus);
     }
-    select.placeholder-selected { color: var(--tbt-text-muted); }
+    /* secondary (not muted): placeholder text must still meet 4.5:1 on card bg */
+    select.placeholder-selected { color: var(--tbt-text-secondary); }
     :host([error]) select { border-color: var(--tbt-danger); }
     :host([disabled]) select { background: var(--tbt-bg-hover); cursor: not-allowed; opacity: 0.65; }
     :host([readonly]) select { background: var(--tbt-bg-hover); cursor: default; pointer-events: none; }
@@ -272,7 +273,7 @@ class TbtDropdown extends LitElement {
       border-color: var(--tbt-primary-light);
       box-shadow: var(--tbt-shadow-focus);
     }
-    .trigger.is-placeholder { color: var(--tbt-text-muted); }
+    .trigger.is-placeholder { color: var(--tbt-text-secondary); }
     :host([error]) .trigger { border-color: var(--tbt-danger); }
     :host([disabled]) .trigger { background: var(--tbt-bg-hover); cursor: not-allowed; opacity: 0.65; }
     :host([readonly]) .trigger { background: var(--tbt-bg-hover); cursor: default; pointer-events: none; }

@@ -20,7 +20,7 @@
  *     <tbt-table ...></tbt-table>
  *   </tbt-section>
  */
-import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 
 /**
@@ -53,6 +53,11 @@ class TbtSection extends LitElement {
     header {
       display: flex;
       align-items: center;
+      /* Wrap on narrow containers: a long actions slot moves to its own row
+         instead of crushing the title into mid-word line breaks (375px bug). */
+      flex-wrap: wrap;
+      column-gap: var(--tbt-space-3);
+      row-gap: var(--tbt-space-2);
       padding: var(--tbt-space-4) var(--tbt-space-5);
       transition: background var(--tbt-transition-fast);
       /* Round only the top corners so hover background follows the host radius. */
@@ -65,7 +70,8 @@ class TbtSection extends LitElement {
       display: flex;
       align-items: center;
       gap: var(--tbt-space-2);
-      flex: 1;
+      /* basis 12rem: below that the actions slot wraps to the next row */
+      flex: 1 1 12rem;
       background: none;
       border: none;
       padding: 0;
@@ -107,6 +113,8 @@ class TbtSection extends LitElement {
       display: flex;
       align-items: center;
       gap: var(--tbt-space-2);
+      margin-left: auto;
+      min-width: 0;
     }
     .body {
       padding: var(--tbt-space-2) var(--tbt-space-5) var(--tbt-space-5);
@@ -138,7 +146,8 @@ class TbtSection extends LitElement {
       <header>
         <button class="toggle-btn" @click=${this.toggle}
           aria-expanded=${!this.collapsed}
-          aria-controls="section-body">
+          aria-controls="section-body"
+          aria-label=${this.title ? nothing : 'Toggle section'}>
           <span class="chevron" aria-hidden="true">▾</span>
           ${this.icon ? html`<i class="ti ti-${this.icon} icon" aria-hidden="true"></i>` : ''}
           <span class="title-text">${this.title}</span>

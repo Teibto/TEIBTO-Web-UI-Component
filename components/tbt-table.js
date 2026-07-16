@@ -259,7 +259,8 @@ class TbtTable extends LitElement {
       text-align: left;
       font-size: var(--tbt-size-xs);
       font-weight: var(--tbt-weight-semibold);
-      color: var(--tbt-text-secondary);
+      /* -strong: 11px uppercase on bg-hover needs 4.5:1 (plain secondary = 4.27) */
+      color: var(--tbt-text-secondary-strong, var(--tbt-text-secondary));
       letter-spacing: 0.06em;
       text-transform: uppercase;
       white-space: nowrap;
@@ -640,6 +641,7 @@ class TbtTable extends LitElement {
                         : 'none')
                     : nothing}
                   tabindex=${col.sortable ? '0' : nothing}
+                  aria-label=${col.label ? nothing : (col.key || 'actions')}
                   @click=${col.sortable ? () => this._setSort(col.key) : nothing}
                   @keydown=${col.sortable ? (e) => this._onSortKeydown(e, col.key) : nothing}
                   @contextmenu=${(e) => this._showStickyMenu(e, i)}

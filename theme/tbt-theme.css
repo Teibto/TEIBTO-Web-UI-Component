@@ -38,6 +38,8 @@
    * ============================================================ */
   --tbt-text-primary:   #0F172A;
   --tbt-text-secondary: #64748B;
+  /* strong = secondary that still meets 4.5:1 on tinted surfaces (table header on bg-hover) */
+  --tbt-text-secondary-strong: #475569;
   --tbt-text-muted:     #94A3B8;
   --tbt-text-required:  #EF4444;
   --tbt-text-link:      #0D1171;
@@ -173,6 +175,7 @@
     /* Text */
     --tbt-text-primary:   #E2E8F0;
     --tbt-text-secondary: #94A3B8;
+    --tbt-text-secondary-strong: #94A3B8;
     --tbt-text-muted:     #546280;
     --tbt-text-link:      #A5B4FC;
 
@@ -216,6 +219,7 @@
   --tbt-border-strong: #334070;
   --tbt-text-primary:   #E2E8F0;
   --tbt-text-secondary: #94A3B8;
+  --tbt-text-secondary-strong: #94A3B8;
   --tbt-text-muted:     #546280;
   --tbt-text-link:      #A5B4FC;
   --tbt-success-bg:    rgba(16, 185, 129, 0.14);
@@ -249,6 +253,7 @@
   --tbt-border-strong: #CBD5E1;
   --tbt-text-primary:   #0F172A;
   --tbt-text-secondary: #64748B;
+  --tbt-text-secondary-strong: #475569;
   --tbt-text-muted:     #94A3B8;
   --tbt-text-link:      #0D1171;
   --tbt-success-bg:   #ECFDF5;  --tbt-success-text: #065F46;
