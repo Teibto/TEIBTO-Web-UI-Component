@@ -13,7 +13,7 @@
  *   GET /document    sl_starter_document.js
  *   GET /list        sl_starter_list.js
  *   GET /dashboard   sl_starter_dashboard.js
- *   GET /sc/SuiteScripts/Teibto/ds/v1.43.1/dist/*  → dist/*
+ *   GET /sc/SuiteScripts/Teibto/ds/v<any>/dist/*  → dist/*
  *   GET /sc/SuiteScripts/Teibto/assets/teibtologo.png → 1x1 placeholder
  */
 

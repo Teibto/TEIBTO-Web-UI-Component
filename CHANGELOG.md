@@ -25,6 +25,11 @@ Format: [Semantic Versioning](https://semver.org)
 - `scripts/sync-version.js` now also rewrites `/ds/vX.Y.Z/` paths in
   `templates/*.html` and the `DS_VERSION` constant in `netsuite/tbt_page.js`,
   so template import paths can no longer drift on release (#62)
+- Hygiene sweep (#65): remove `console.log` debug leftovers from
+  `templates/document-page.html`, add the missing `@author`/`@version` header
+  to `components/tbt-icons-css.js`, un-pin the stale `v1.43.1` example in the
+  `scripts/dev-suitelet.mjs` doc comment, and add the `.env.example` template
+  that `.gitignore` already whitelists
 
 ## [1.45.1] - 2026-07-17
 
