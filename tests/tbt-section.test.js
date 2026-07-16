@@ -66,4 +66,18 @@ describe('tbt-section', () => {
     const violations = results.violations.filter(v => ['critical', 'serious'].includes(v.impact));
     expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
+
+  it('not-collapsible without title hides the empty header strip', async () => {
+    const el = await fixture(html`<tbt-section not-collapsible></tbt-section>`);
+    await el.updateComplete;
+    const header = el.shadowRoot.querySelector('header');
+    expect(getComputedStyle(header).display).to.equal('none');
+  });
+
+  it('not-collapsible WITH title keeps its header', async () => {
+    const el = await fixture(html`<tbt-section not-collapsible title="Info"></tbt-section>`);
+    await el.updateComplete;
+    const header = el.shadowRoot.querySelector('header');
+    expect(getComputedStyle(header).display).to.not.equal('none');
+  });
 });

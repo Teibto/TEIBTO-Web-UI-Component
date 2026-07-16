@@ -122,6 +122,16 @@ class TbtSection extends LitElement {
     :host([collapsed]) .body {
       display: none;
     }
+    /* Title-less non-collapsible section = pure surface (page header card,
+       Subtab container): drop the empty header strip entirely and give the
+       body symmetric padding — the leftover header padding was ~40px of dead
+       space at the top of every such card (#40 follow-up). Note: a section
+       relying on slot=actions must have a title for the header to render. */
+    :host([not-collapsible]:not([title])) header { display: none; }
+    :host([not-collapsible]:not([title])) .body {
+      padding: var(--tbt-space-4) var(--tbt-space-5);
+    }
+
     /* not-collapsible: hide chevron + neutralize toggle button cursor.
        Header still shows the title and slot=actions normally. */
     :host([not-collapsible]) .chevron     { display: none; }

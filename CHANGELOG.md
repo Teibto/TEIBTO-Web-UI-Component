@@ -9,6 +9,17 @@ Format: [Semantic Versioning](https://semver.org)
 
 _(nothing yet)_
 
+## [1.44.2] - 2026-07-16
+
+### Fixed
+
+- **Dead space at the top of title-less cards + list toolbar wrapping onto
+  two rows** (#40 follow-up, user-reported). `tbt-section` now drops the
+  empty header strip when `not-collapsible` and no title (the strip left
+  ~40px of dead space on the page-header and Subtab cards); `tbt-search`
+  inside `.tbt-page-toolbar` is capped at 280px so title, search, filter,
+  and the create button share one row.
+
 ## [1.44.1] - 2026-07-16
 
 ### Fixed
