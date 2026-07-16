@@ -8,10 +8,13 @@
  * Reads:
  *   dist/tbt-ds.min.js   (must exist — run npm run build first)
  *   dist/tbt-theme.css
+ *   dist/tbt-page-runtime.js   (hand-authored, tracked in git)
  *
- * Writes to:
- *   tbt-ds/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/tbt-ds.min.js
- *   tbt-ds/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/tbt-theme.css
+ * Writes to (the dist/ layer matches FC_BASE in netsuite/tbt_page.js and
+ * every template — decided in v1.42.1, see CHANGELOG):
+ *   tbt-ds/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/dist/tbt-ds.min.js
+ *   tbt-ds/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/dist/tbt-theme.css
+ *   tbt-ds/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/dist/tbt-page-runtime.js
  *
  * The tbt-ds/ folder is gitignored — it is a local SuiteCloud staging area
  * used by SuiteCloud CLI (suitecloud project:deploy).
@@ -31,9 +34,9 @@ const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
 const version = pkg.version;
 
 const DIST = path.join(ROOT, 'dist');
-const SDF_TARGET = path.join(ROOT, 'tbt-ds', 'src', 'FileCabinet', 'SuiteScripts', 'Teibto', 'ds', `v${version}`);
+const SDF_TARGET = path.join(ROOT, 'tbt-ds', 'src', 'FileCabinet', 'SuiteScripts', 'Teibto', 'ds', `v${version}`, 'dist');
 
-const FILES = ['tbt-ds.min.js', 'tbt-theme.css'];
+const FILES = ['tbt-ds.min.js', 'tbt-theme.css', 'tbt-page-runtime.js'];
 
 // Verify dist files exist
 for (const file of FILES) {
@@ -54,7 +57,7 @@ console.log();
 
 if (DRY_RUN) {
   for (const file of FILES) {
-    console.log(`  would copy: dist/${file} → ...ds/v${version}/${file}`);
+    console.log(`  would copy: dist/${file} → ...ds/v${version}/dist/${file}`);
   }
   console.log('\n[dry-run] no files written');
   process.exit(0);
