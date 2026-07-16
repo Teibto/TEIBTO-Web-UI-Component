@@ -7,7 +7,7 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
-## [1.43.1] — 2026-06-06
+## [1.43.1] — 2026-07-16
 
 ### Fixed
 
