@@ -26,7 +26,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT      = path.resolve(__dirname, '..');
 const PORT      = Number(process.env.PORT) || 8090;
 
-const FC_PREFIX     = '/sc/SuiteScripts/Teibto/ds/v1.43.1/dist/';
+// Version-agnostic serving: tbt_page emits the CURRENT DS_VERSION in asset
+// URLs — hardcoding one version here 404'd every DS asset after a release
+// bump (v1.43.2 broke the dashboard smoke, 2026-07-16). The static route
+// matches ANY version and serves local dist/; FC_PREFIX (for links this
+// server emits itself) follows package.json so it never drifts again.
+const PKG_VERSION   = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version;
+const FC_DIST_RE    = /^\/sc\/SuiteScripts\/Teibto\/ds\/v[^/]+\/dist\/(.+)$/;
+const FC_PREFIX     = `/sc/SuiteScripts/Teibto/ds/v${PKG_VERSION}/dist/`;
 const ASSETS_PREFIX = '/sc/SuiteScripts/Teibto/assets/';
 
 /* ── SuiteScript stubs ─────────────────────────────────────────────── */
@@ -278,9 +285,10 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = req.url.split('?')[0];
 
-    // Static: bundled DS files
-    if (url.startsWith(FC_PREFIX)) {
-      const rel = url.slice(FC_PREFIX.length);
+    // Static: bundled DS files — any DS version maps to local dist/
+    const distMatch = FC_DIST_RE.exec(url);
+    if (distMatch) {
+      const rel = distMatch[1];
       const full = path.join(ROOT, 'dist', rel);
       if (fs.existsSync(full) && fs.statSync(full).isFile()) {
         res.writeHead(200, { 'Content-Type': MIME[path.extname(full)] || 'application/octet-stream' });

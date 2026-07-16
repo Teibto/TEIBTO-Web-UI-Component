@@ -22,6 +22,15 @@ Format: [Semantic Versioning](https://semver.org)
   resolves it as an optional asset, so the sidebar brand now shows logo +
   text.
 
+### Fixed
+
+- **`scripts/dev-suitelet.mjs` hardcoded one DS version in its static route**
+  — after the v1.43.2 release bump every DS asset 404'd on the local preview
+  server and the page smoke suite failed (`shadowRoot` null on all
+  components). The dist route now matches any `/ds/v<X>/dist/` and the
+  server's own links follow `package.json`, so a release bump can't break it
+  again.
+
 ### Docs
 
 - RFC 0006 — `tbt-datepicker` display format `YYYY-MM-DD` / พ.ศ. (#29,
