@@ -7,7 +7,18 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
-_(nothing yet)_
+### Added
+
+- **SDF objects for the expense claim module** (#47) — record XMLs fixed to
+  pass SDF validation (`FREEFORMTEXT` → `TEXT`, dropped unsupported
+  `includenumber` / `iconbuiltin` / `icon`), plus script objects
+  (`customscript_tbt_sl_expense_claim.xml`, `customscript_tbt_rl_expense.xml`)
+  so `project:deploy` creates the script records + deployments with the ids
+  the code resolves. Backend brought to bill-receipt parity: `save` returns
+  `{ id, tranid }` and sets the native Name field, line dates round-trip as
+  ISO via `TO_CHAR`, `fromIso` fails loudly on non-ISO input, `replaceLines`
+  converts before deleting, and all validation / transition / permission
+  messages are Thai at the source.
 
 ## [1.44.2] - 2026-07-16
 
