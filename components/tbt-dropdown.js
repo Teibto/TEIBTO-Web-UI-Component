@@ -41,6 +41,11 @@ class TbtDropdown extends LitElement {
     readonly:    { type: Boolean, reflect: true },
     error:       { type: String, reflect: true },
     searchable:  { type: Boolean },
+    /* Size to the longest option instead of filling the container — for
+       compact filter usage in a section's actions slot (list pages), where
+       the default width:100% collapses to min-content and truncates the
+       placeholder ("ทุกสถ…"). */
+    autoWidth:   { type: Boolean, attribute: 'auto-width', reflect: true },
     _open:       { state: true },
     _query:      { state: true },
     _activeIdx:  { state: true },
@@ -234,6 +239,8 @@ class TbtDropdown extends LitElement {
     }
     /* secondary (not muted): placeholder text must still meet 4.5:1 on card bg */
     select.placeholder-selected { color: var(--tbt-text-secondary); }
+    :host([auto-width]) select,
+    :host([auto-width]) .trigger { width: max-content; }
     :host([error]) select { border-color: var(--tbt-danger); }
     :host([disabled]) select { background: var(--tbt-bg-hover); cursor: not-allowed; opacity: 0.65; }
     :host([readonly]) select { background: var(--tbt-bg-hover); cursor: default; pointer-events: none; }

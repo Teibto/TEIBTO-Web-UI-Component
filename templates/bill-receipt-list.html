@@ -32,7 +32,7 @@
 <tbt-section title="รายการใบวางบิล">
   <div slot="actions" style="display:flex;gap:var(--tbt-space-3)">
     <tbt-search id="search" placeholder="ค้นหาเลขที่ / ผู้จำหน่าย…" debounce="300"></tbt-search>
-    <tbt-dropdown id="f-status" name="status" placeholder="ทุกสถานะ"></tbt-dropdown>
+    <tbt-dropdown id="f-status" name="status" placeholder="ทุกสถานะ" auto-width></tbt-dropdown>
   </div>
   <tbt-table id="table" paginate page-size="50" responsive max-height="560px" empty-message="ยังไม่มีใบวางบิล"></tbt-table>
 </tbt-section>

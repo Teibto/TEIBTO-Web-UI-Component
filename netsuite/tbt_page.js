@@ -286,6 +286,9 @@ define([ 'N/error', 'N/file' ], (error, file) => {
     @media (max-width: 768px) {
       #tbt-mobile-menu { display: flex; }
     }
+    /* Hide the trigger while the drawer is open — the fixed button otherwise
+       sits on top of the drawer's brand ("Teibto ERP" read as "o ERP"). */
+    body:has(tbt-app-shell[drawer-open]) #tbt-mobile-menu { display: none; }
   </style>
 </head>
 <body>

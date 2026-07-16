@@ -70,6 +70,14 @@ describe('tbt-dropdown', () => {
     expect(detail.label).to.equal('Banana');
     expect(el._open).to.be.false;
   });
+
+  it('auto-width sizes the select to its content instead of collapsing', async () => {
+    const el = await fixture(html`<tbt-dropdown auto-width placeholder="ALL-STATUSES-LONG"></tbt-dropdown>`);
+    await el.updateComplete;
+    const select = el.shadowRoot.querySelector('select');
+    expect(getComputedStyle(select).width, 'auto-width rule must apply').to.not.equal('');
+    expect(select.offsetWidth, 'select must be wide enough for its placeholder').to.be.greaterThan(80);
+  });
 });
 
 describe('tbt-dropdown a11y (searchable)', () => {
@@ -227,4 +235,5 @@ describe('tbt-dropdown keyboard navigation (searchable)', () => {
     await el.updateComplete;
     expect(el._open).to.be.false;
   });
+
 });

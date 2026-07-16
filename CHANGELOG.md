@@ -7,8 +7,20 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Added
+
+- **`tbt-dropdown` `auto-width` attribute** (#27) — sizes the select to its
+  longest option instead of filling the container, for compact filter usage
+  in a section's actions slot where the default `width:100%` collapsed to
+  min-content and truncated the placeholder ("ทุกสถ…"). Applied to the bill
+  receipt list's status filter.
+
 ### Fixed
 
+- **Mobile hamburger overlapped the drawer's brand** (#27) — `tbt-app-shell`
+  now reflects a `drawer-open` attribute while the mobile drawer is open, and
+  `tbt_page.js` hides the floating ☰ trigger during that state ("Teibto ERP"
+  was read as "o ERP").
 - **Bill receipt form lost its record identity after the first save — a
   second "บันทึกร่าง" created a duplicate record** (#22). `save()` in
   `bill_receipt_lib.js` now returns `{ id, tranid }`, the RESTlet passes the

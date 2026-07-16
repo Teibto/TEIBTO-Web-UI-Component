@@ -78,6 +78,13 @@ class TbtAppShell extends LitElement {
     this._mobileOpen = false;
   }
 
+  updated(changed) {
+    // Reflect drawer state so page-level UI (the floating hamburger in
+    // tbt_page.js) can hide while the drawer is open — the fixed button
+    // otherwise overlaps the drawer's brand area.
+    if (changed.has('_mobileOpen')) this.toggleAttribute('drawer-open', this._mobileOpen);
+  }
+
   static styles = css`
     :host {
       display: flex;
