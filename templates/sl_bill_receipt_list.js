@@ -9,8 +9,8 @@
  * Suitelet URL via N/url. Falls back to demo data (data.demo=true) when the
  * custom record is not deployed yet, so a fresh account still renders.
  */
-define(['N/file', 'N/url', './tbt_page', './bill_receipt_lib'],
-(file, url, tbtPage, lib) => ({
+define(['N/file', 'N/url', './tbt_page', './tbt_nav', './bill_receipt_lib'],
+(file, url, tbtPage, nav, lib) => ({
 
   onRequest(ctx) {
     const body = file.load({ id: './bill-receipt-list.html' }).getContents();
@@ -42,7 +42,13 @@ define(['N/file', 'N/url', './tbt_page', './bill_receipt_lib'],
       data = { rows: mockRows(), statuses, formUrl: formUrl + '&id=', newUrl: formUrl, demo: true };
     }
 
-    ctx.response.write(tbtPage.render({ title: 'รับวางบิล', active: 'invoice', data, body }));
+    ctx.response.write(tbtPage.render({
+      title: 'รับวางบิล',
+      sidebar: nav.sidebar(),      // production nav — only deployed modules (#28)
+      active: 'bill-receipt',
+      data,
+      body,
+    }));
   },
 
 }));

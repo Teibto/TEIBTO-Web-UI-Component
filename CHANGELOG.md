@@ -7,7 +7,25 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
-_(nothing yet)_
+### Added
+
+- **Production sidebar (`templates/tbt_nav.js`)** (#28) — Suitelet pages now
+  render a nav of ONLY the modules deployed on the account, every href
+  resolved through `N/url` at request time (nothing can 404). Bill receipt
+  list/form pass `sidebar: nav.sidebar()` + `active: 'bill-receipt'` — the
+  dead-link `DEFAULT_SIDEBAR` (dev-server paths) no longer appears on
+  NetSuite, and the active item is the actual page, not "Invoices".
+  `DEFAULT_SIDEBAR` stays for dev-server demo pages.
+- **Brand logo icon** (#28) — square icon (the gradient "O" cut from the
+  Teibto wordmark, `netsuite/assets/teibtologo.png`, 256×256 RGBA) uploaded
+  to `/SuiteScripts/Teibto/assets/teibtologo.png`; `tbt_page.js` already
+  resolves it as an optional asset, so the sidebar brand now shows logo +
+  text.
+
+### Docs
+
+- RFC 0006 — `tbt-datepicker` display format `YYYY-MM-DD` / พ.ศ. (#29,
+  Proposed).
 
 ## [1.43.2] - 2026-07-16
 

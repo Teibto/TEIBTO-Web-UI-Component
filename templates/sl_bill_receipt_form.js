@@ -12,8 +12,8 @@
  * account / first install), load() throws — we fall back to mock data and set
  * data.demo=true so the page can show a "demo data" banner instead of erroring.
  */
-define(['N/file', 'N/url', './tbt_page', './bill_receipt_lib', './bill_receipt_meta'],
-(file, url, tbtPage, lib, meta) => ({
+define(['N/file', 'N/url', './tbt_page', './tbt_nav', './bill_receipt_lib', './bill_receipt_meta'],
+(file, url, tbtPage, nav, lib, meta) => ({
 
   onRequest(ctx) {
     const body = file.load({ id: './bill-receipt-form.html' }).getContents();
@@ -52,7 +52,8 @@ define(['N/file', 'N/url', './tbt_page', './bill_receipt_lib', './bill_receipt_m
 
     ctx.response.write(tbtPage.render({
       title:  data.voucher.tranid ? 'ใบวางบิล · ' + data.voucher.tranid : 'สร้างใบวางบิล',
-      active: 'invoice',
+      sidebar: nav.sidebar(),      // production nav — only deployed modules (#28)
+      active: 'bill-receipt',
       data,
       body,
     }));
