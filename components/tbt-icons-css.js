@@ -18,6 +18,10 @@
  * Tabler Icons pinned version: 3.44.0
  * Changelog: https://github.com/tabler/tabler-icons/releases
  * To upgrade: update TABLER_CSS_HREF and run npm run lint to verify.
+ *
+ * @author Wichit Wongta
+ * @since 2026-05-22
+ * @version 1.45.1
  */
 import { html } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 

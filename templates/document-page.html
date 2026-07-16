@@ -66,12 +66,11 @@
   const lines = document.getElementById('lines');
   lines.rows = d.lines || [];
   lines.addEventListener('tbt-change', (e) => {
-    console.log('lines changed:', e.detail.total);
+    // e.detail.total = ยอดรวมล่าสุด — อัปเดต summary/totals ของหน้าที่นี่
   });
 
   document.getElementById('save-btn').addEventListener('click', async () => {
     const payload = { tranId: d.tranId, lines: lines.rows };
     // POST payload to RESTlet here
-    console.log('save', payload);
   });
 </script>
