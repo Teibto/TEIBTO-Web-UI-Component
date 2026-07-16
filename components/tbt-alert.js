@@ -1,6 +1,6 @@
 /**
  * @component tbt-alert
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Alert banner for feedback messages. Inline (non-blocking) by default.
@@ -22,6 +22,7 @@
  */
 import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 const VARIANT_ICONS = {
   success: 'circle-check',
@@ -128,7 +129,7 @@ class TbtAlert extends LitElement {
     return html`
       ${tablerLink}
       <div class="alert" role="alert">
-        <i class="ti ti-${iconName} alert-icon" aria-hidden="true"></i>
+        <i class="ti ti-${ICON_ALIASES[iconName] ?? iconName} alert-icon" aria-hidden="true"></i>
         <div class="body">
           ${this.title ? html`<div class="title">${this.title}</div>` : ''}
           <slot></slot>

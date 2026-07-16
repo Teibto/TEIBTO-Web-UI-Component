@@ -1,6 +1,6 @@
 /**
  * @component tbt-split-button
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Split button — primary action + dropdown of secondary actions in one control.
@@ -28,6 +28,7 @@
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 /**
  * @fires tbt-click  - Fired when main button is clicked
@@ -262,7 +263,7 @@ class TbtSplitButton extends LitElement {
           @click=${this._onMainClick}>
           ${this.loading
             ? html`<span class="spinner" aria-hidden="true"></span>`
-            : (this.icon ? html`<i class="ti ti-${this.icon}" aria-hidden="true"></i>` : nothing)}
+            : (this.icon ? html`<i class="ti ti-${ICON_ALIASES[this.icon] ?? this.icon}" aria-hidden="true"></i>` : nothing)}
           ${label}
         </button>
         <button class="chev-btn" type="button"
@@ -282,7 +283,7 @@ class TbtSplitButton extends LitElement {
             @click=${() => this._pickAction(action)}
             @keydown=${this._onMenuKeydown}>
             ${action.icon
-              ? html`<i class="ti ti-${action.icon}" aria-hidden="true"></i>`
+              ? html`<i class="ti ti-${ICON_ALIASES[action.icon] ?? action.icon}" aria-hidden="true"></i>`
               : nothing}
             ${action.label}
           </button>`)}

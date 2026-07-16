@@ -1,6 +1,6 @@
 /**
  * @component tbt-timeline
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Vertical event timeline for document history, process flows, and audit trails.
@@ -23,6 +23,7 @@
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 class TbtTimeline extends LitElement {
   static properties = {
@@ -153,7 +154,7 @@ class TbtTimeline extends LitElement {
                 <div class="connector" aria-hidden="true">
                   <div class="dot dot--${variant}">
                     ${entry.icon
-                      ? html`<i class="ti ti-${entry.icon}"></i>`
+                      ? html`<i class="ti ti-${ICON_ALIASES[entry.icon] ?? entry.icon}"></i>`
                       : html`<span class="dot-inner"></span>`}
                   </div>
                   <div class="line"></div>

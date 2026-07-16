@@ -9,6 +9,21 @@ Format: [Semantic Versioning](https://semver.org)
 
 _(nothing yet)_
 
+## [1.45.1] - 2026-07-17
+
+### Fixed
+
+- **Every component that renders `ti ti-<name>` itself now resolves
+  `ICON_ALIASES` first** (#52) — alias-only names (`expense`, `money`,
+  `payment`, …) used to render an empty box with no error. Fixed in
+  `tbt-alert`, `tbt-button`, `tbt-chip`, `tbt-empty-state`, `tbt-list`,
+  `tbt-menubar`, `tbt-section`, `tbt-sidebar-item`, `tbt-split-button`, and
+  `tbt-timeline` (same idiom `tbt-stat` already used); internal fixed icon
+  maps (toast/modal/file-upload) are untouched — their names are raw Tabler.
+  `tbt_nav.js` rolls back the `report-money` workaround to the `expense`
+  alias. Note: an alias key that also exists as a raw Tabler name (e.g.
+  `edit`) now renders the DS glyph (`pencil`), consistent with `tbt-icon`.
+
 ## [1.45.0] - 2026-07-16
 
 ### Added

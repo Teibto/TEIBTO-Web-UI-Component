@@ -1,6 +1,6 @@
 /**
  * @component tbt-chart
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * SVG chart for ERP dashboards — bar, line, area, donut, pie, sparkline.

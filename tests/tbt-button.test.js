@@ -49,3 +49,12 @@ describe('tbt-button', () => {
     expect(violations, violations.map(v => v.description).join('\n')).to.be.empty;
   });
 });
+
+describe('tbt-button icon alias (#52)', () => {
+  it('resolves ERP alias icons through ICON_ALIASES (save → device-floppy)', async () => {
+    const el = await fixture(html`<tbt-button icon="save">บันทึก</tbt-button>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('i.ti-device-floppy'), 'alias "save" must map to a real Tabler glyph').to.exist;
+    expect(el.shadowRoot.querySelector('i.ti-save')).to.be.null;
+  });
+});

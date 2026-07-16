@@ -1,6 +1,6 @@
 /**
  * @component tbt-color-picker
- * @version 1.45.0
+ * @version 1.45.1
  * @author Wichit Wongta
  *
  * Color swatch picker for ERP category and tag coloring.
