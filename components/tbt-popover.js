@@ -6,6 +6,7 @@
  * Click-triggered floating panel for action menus, info cards, and quick forms.
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { watchOutsideClick } from './tbt-outside-click.js';
 
 class TbtPopover extends LitElement {
   static properties = {
@@ -76,7 +77,7 @@ class TbtPopover extends LitElement {
     super();
     this.open = false;
     this.placement = 'bottom';
-    this._docClickHandler = null;
+    this._stopOutside = null;
     this._docKeyHandler = null;
   }
 
@@ -90,23 +91,22 @@ class TbtPopover extends LitElement {
     if (!changedProps.has('open')) return;
     this._syncTriggerAria();
     if (this.open) {
-      this._docClickHandler = (e) => {
-        if (!e.composedPath().includes(this)) this._doClose();
-      };
+      this._stopOutside = watchOutsideClick(this, () => this._doClose());
       this._docKeyHandler = (e) => {
         if (e.key === 'Escape') this._doClose();
       };
-      document.addEventListener('click', this._docClickHandler);
       document.addEventListener('keydown', this._docKeyHandler);
     } else {
-      document.removeEventListener('click', this._docClickHandler);
+      this._stopOutside?.();
+      this._stopOutside = null;
       document.removeEventListener('keydown', this._docKeyHandler);
     }
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this._docClickHandler);
+    this._stopOutside?.();
+    this._stopOutside = null;
     document.removeEventListener('keydown', this._docKeyHandler);
   }
 

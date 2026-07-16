@@ -20,6 +20,7 @@
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
 import { ICON_ALIASES } from './tbt-icon.js';
+import { watchOutsideClick } from './tbt-outside-click.js';
 
 /**
  * @fires tbt-menu-toggle - Fired when hamburger button clicked on mobile
@@ -265,10 +266,7 @@ class TbtMenuGroup extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._onOutsideClick = (e) => {
-      if (!e.composedPath().includes(this)) this._open = false;
-    };
-    document.addEventListener('click', this._onOutsideClick);
+    this._stopOutside = watchOutsideClick(this, () => { this._open = false; });
     // Host-level so Escape closes the menu whether focus is on the trigger
     // or on a slotted menu item (keydown bubbles up to the host).
     this._onKeydown = (e) => {
@@ -283,7 +281,8 @@ class TbtMenuGroup extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this._onOutsideClick);
+    this._stopOutside?.();
+    this._stopOutside = null;
     this.removeEventListener('keydown', this._onKeydown);
   }
 

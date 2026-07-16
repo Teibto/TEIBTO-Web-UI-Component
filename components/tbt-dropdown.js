@@ -23,6 +23,7 @@
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { watchOutsideClick } from './tbt-outside-click.js';
 
 /**
  * @fires tbt-change - Fired when selected value changes; detail: { value: string }
@@ -65,15 +66,13 @@ class TbtDropdown extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._onOutside = (e) => {
-      if (!e.composedPath().includes(this)) this._open = false;
-    };
-    document.addEventListener('click', this._onOutside);
+    this._stopOutside = watchOutsideClick(this, () => { this._open = false; });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this._onOutside);
+    this._stopOutside?.();
+    this._stopOutside = null;
     if (this._repositionBound) {
       window.removeEventListener('scroll', this._repositionBound, true);
       window.removeEventListener('resize', this._repositionBound);
