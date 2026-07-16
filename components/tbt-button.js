@@ -103,7 +103,8 @@ class TbtButton extends LitElement {
     /* Ghost */
     :host([variant="ghost"]) button {
       background: transparent;
-      color: var(--tbt-text-secondary);
+      /* -strong: plain secondary is 4.43:1 on bg-page — just under WCAG 4.5 */
+      color: var(--tbt-text-secondary-strong, var(--tbt-text-secondary));
     }
     :host([variant="ghost"]) button:hover:not(:disabled) {
       background: var(--tbt-bg-hover);
