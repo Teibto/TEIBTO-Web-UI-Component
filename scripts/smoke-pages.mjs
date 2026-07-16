@@ -76,11 +76,11 @@ try {
 
   await check(browser, 'bill-receipt form', '/bill-receipt/form?id=1', () => {
     const lines = document.getElementById('lines-table');
-    const stat = document.getElementById('stat-total');
+    const stat = document.getElementById('hdr-stat-total');
     const af = document.getElementById('approval-flow');
     return {
       'invoice lines render': { val: lines?.rows?.length, ok: lines?.rows?.length === 3 },
-      'grand total computed':  { val: stat?.value, ok: !!stat?.value && stat.value.includes('฿') },
+      'grand total computed':  { val: stat?.textContent, ok: !!stat?.textContent && stat.textContent.includes('฿') },
       'approval flow has steps': { val: af?.steps?.length, ok: af?.steps?.length > 0 },
     };
   });

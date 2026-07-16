@@ -9,6 +9,12 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- **NetSuite-style form anatomy on the bill receipt form** (RFC 0007, #40 —
+  layer B). Action bar moved to the TOP (sticky while scrolling, new
+  `.tbt-action-bar--top` utility); the four KPI cards became a compact
+  summary strip inside the page header (`.tbt-page-header__stats`); line
+  items / approval / history are now Subtabs (`tbt-tabs`), with the add-line
+  button in a `.tbt-panel-toolbar` row inside the first tab.
 - **ERP density mode** (RFC 0007, #40 — layer A). `<html data-density="erp">`
   compacts the whole DS through tokens only: section padding 20→12px, content
   padding 24→16px, base text 14→13px, card radius 12→6px, subtler shadow, and

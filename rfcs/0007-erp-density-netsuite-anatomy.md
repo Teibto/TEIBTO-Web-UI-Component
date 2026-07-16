@@ -73,7 +73,8 @@
 ## เกณฑ์ตรวจรับ
 
 - [ ] วัดจริงบน SB2: row ตาราง ≤32px · section padding ≤12px · ปุ่มหลักเห็นโดยไม่ scroll
-- [ ] Subtab 3 แท็บทำงาน (สลับ, เพิ่มบรรทัดใน tab แรก, จำนวนแถวขึ้นบน tab label)
+- [ ] Subtab 3 แท็บทำงาน (สลับ + เพิ่มบรรทัดใน tab แรก) — จำนวนแถวบน tab label
+      ตัดออก: `tbt-tabs` อ่าน label เฉพาะตอน slotchange ไม่รองรับ dynamic update
 - [ ] Definition of done ตาม `docs/UI-PLAYBOOK.md` §4 ครบ (console, dark, 375/768, axe, real flow)
 - [ ] Screenshot เทียบก่อน/หลังเก็บใน `qa/`
 - [ ] หน้า/เดโมที่ไม่ opt-in หน้าตาเดิมทุก pixel (default token ไม่เปลี่ยนค่า)

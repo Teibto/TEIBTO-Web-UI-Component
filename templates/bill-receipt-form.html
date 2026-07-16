@@ -1,15 +1,12 @@
 <!--
   bill-receipt-form.html — Vendor bill receipt (รับวางบิล) document page body.
 
-  Layout (Teibto standard document):
-    Page header   — voucher no + vendor + status badge
+  Layout (Teibto ERP document — NetSuite-style anatomy, RFC 0007):
+    Page header   — voucher no + status badge + summary strip (count/net/VAT/total)
+    Action bar    — TOP, sticky: Submit / Save draft / Approve / Reject / Print / Back
     Alerts        — success / error banners
     Document info — vendor / receive date / due date / contact / reference (edit)
-    Summary stats — invoice count / pre-tax / VAT / grand total
-    Bill lines    — tbt-table of submitted vendor invoices (Add → modal)
-    Approval      — tbt-approval-flow
-    History       — tbt-audit-log
-    Action bar    — Save draft / Submit / Approve / Reject / Print / Back
+    Subtabs       — รายการใบแจ้งหนี้ (tbt-table + Add → modal) · การอนุมัติ · ประวัติ
 
   Edit vs view: editable only while status === 'Draft'. Submitted shows
   Approve / Reject; Approved / Paid are read-only.
@@ -24,16 +21,33 @@
     restletUrl    string
 -->
 
-<!-- ── 1. Page header ─────────────────────────────────────────── -->
-<tbt-section>
+<!-- ── 1. Page header: identity + status + summary strip (RFC 0007) ── -->
+<tbt-section not-collapsible>
   <div class="tbt-page-header">
     <div>
-      <div class="tbt-page-header__title">ใบวางบิล · <span id="hdr-tranid"></span></div>
+      <div class="tbt-page-header__title">ใบวางบิล · <span id="hdr-tranid"></span>
+        <tbt-badge id="hdr-status" variant="neutral">—</tbt-badge>
+      </div>
       <div class="tbt-page-header__subtitle" id="hdr-subtitle"></div>
     </div>
-    <tbt-badge id="hdr-status" variant="neutral">—</tbt-badge>
+    <div class="tbt-page-header__stats">
+      <span class="tbt-page-header__stat">ใบแจ้งหนี้<b id="hdr-stat-count">0 ใบ</b></span>
+      <span class="tbt-page-header__stat">ยอดก่อนภาษี<b id="hdr-stat-net">฿0.00</b></span>
+      <span class="tbt-page-header__stat">ภาษีมูลค่าเพิ่ม<b id="hdr-stat-vat">฿0.00</b></span>
+      <span class="tbt-page-header__stat">ยอดรวมสุทธิ<b id="hdr-stat-total">฿0.00</b></span>
+    </div>
   </div>
 </tbt-section>
+
+<!-- ── 2. Action bar — บนสุดแบบ NetSuite, sticky ระหว่าง scroll ── -->
+<div class="tbt-action-bar tbt-action-bar--top">
+  <tbt-button id="submit-btn"  variant="primary"   icon="submit">ส่งตรวจรับ</tbt-button>
+  <tbt-button id="save-btn"    variant="secondary" icon="save">บันทึกร่าง</tbt-button>
+  <tbt-button id="approve-btn" variant="primary"   icon="approve">อนุมัติ</tbt-button>
+  <tbt-button id="reject-btn"  variant="danger"    icon="reject">ตีกลับ</tbt-button>
+  <tbt-button id="print-btn"   variant="secondary" icon="print">พิมพ์</tbt-button>
+  <tbt-button id="back-btn"    variant="ghost"     icon="back">กลับ</tbt-button>
+</div>
 
 <div class="tbt-page-alerts">
   <tbt-alert id="demo-alert" variant="warning" hidden>กำลังแสดงข้อมูลตัวอย่าง — ยังไม่ได้ติดตั้ง custom record (ดู netsuite/DEPLOY.md)</tbt-alert>
@@ -41,7 +55,7 @@
   <tbt-alert id="err-alert" variant="danger"  dismissible hidden></tbt-alert>
 </div>
 
-<!-- ── 2. Document info ───────────────────────────────────────── -->
+<!-- ── 3. Document info ───────────────────────────────────────── -->
 <tbt-section title="ข้อมูลใบวางบิล">
   <tbt-field-grid columns="3">
     <tbt-dropdown   id="f-vendor"  name="vendor"    label="ผู้จำหน่าย" placeholder="เลือกผู้จำหน่าย…" required></tbt-dropdown>
@@ -52,43 +66,23 @@
   </tbt-field-grid>
 </tbt-section>
 
-<!-- ── 3. Summary stats ───────────────────────────────────────── -->
-<tbt-section title="สรุปยอด">
-  <div class="tbt-stats-grid">
-    <tbt-stat id="stat-count" label="จำนวนใบแจ้งหนี้" variant="primary" icon="invoice"></tbt-stat>
-    <tbt-stat id="stat-net"   label="ยอดก่อนภาษี"     variant="info"    icon="money"></tbt-stat>
-    <tbt-stat id="stat-vat"   label="ภาษีมูลค่าเพิ่ม"  variant="warning" icon="receipt"></tbt-stat>
-    <tbt-stat id="stat-total" label="ยอดรวมสุทธิ"      variant="success" icon="payment"></tbt-stat>
-  </div>
+<!-- ── 4. Subtabs: รายการใบแจ้งหนี้ / การอนุมัติ / ประวัติ (RFC 0007) ── -->
+<tbt-section not-collapsible>
+  <tbt-tabs active="0">
+    <tbt-tabs-panel label="รายการใบแจ้งหนี้">
+      <div class="tbt-panel-toolbar">
+        <tbt-button id="add-line" variant="primary" icon="add" size="sm">เพิ่มใบแจ้งหนี้</tbt-button>
+      </div>
+      <tbt-table id="lines-table" responsive max-height="380px" empty-message="ยังไม่มีใบแจ้งหนี้ — กด &quot;เพิ่มใบแจ้งหนี้&quot; เพื่อเริ่มรายการแรก"></tbt-table>
+    </tbt-tabs-panel>
+    <tbt-tabs-panel label="การอนุมัติ">
+      <tbt-approval-flow id="approval-flow" orientation="horizontal"></tbt-approval-flow>
+    </tbt-tabs-panel>
+    <tbt-tabs-panel label="ประวัติ">
+      <tbt-audit-log id="audit-log" max-height="320px" empty-message="ยังไม่มีประวัติการทำรายการ"></tbt-audit-log>
+    </tbt-tabs-panel>
+  </tbt-tabs>
 </tbt-section>
-
-<!-- ── 4. Bill lines ──────────────────────────────────────────── -->
-<tbt-section title="รายการใบแจ้งหนี้">
-  <tbt-button slot="actions" id="add-line" variant="primary" icon="add" size="sm">เพิ่มใบแจ้งหนี้</tbt-button>
-  <tbt-table id="lines-table" responsive max-height="380px" empty-message="ยังไม่มีใบแจ้งหนี้ — กด &quot;เพิ่มใบแจ้งหนี้&quot; เพื่อเริ่มรายการแรก"></tbt-table>
-</tbt-section>
-
-<!-- ── 5. Approval flow ───────────────────────────────────────── -->
-<tbt-section title="การอนุมัติ">
-  <tbt-approval-flow id="approval-flow" orientation="horizontal"></tbt-approval-flow>
-</tbt-section>
-
-<!-- ── 6. History ─────────────────────────────────────────────── -->
-<tbt-section title="ประวัติการทำรายการ">
-  <tbt-audit-log id="audit-log" max-height="320px" empty-message="ยังไม่มีประวัติการทำรายการ"></tbt-audit-log>
-</tbt-section>
-
-<!-- ── 7. Action bar ──────────────────────────────────────────── -->
-<div class="tbt-action-bar">
-  <!-- One primary per state: Draft → ส่งตรวจรับ (save is the secondary path);
-       Submitted → อนุมัติ. -->
-  <tbt-button id="submit-btn"  variant="primary"   icon="submit">ส่งตรวจรับ</tbt-button>
-  <tbt-button id="save-btn"    variant="secondary" icon="save">บันทึกร่าง</tbt-button>
-  <tbt-button id="approve-btn" variant="primary"   icon="approve">อนุมัติ</tbt-button>
-  <tbt-button id="reject-btn"  variant="danger"    icon="reject">ตีกลับ</tbt-button>
-  <tbt-button id="print-btn"   variant="secondary" icon="print">พิมพ์</tbt-button>
-  <tbt-button id="back-btn"    variant="ghost"     icon="back">กลับ</tbt-button>
-</div>
 
 <!-- ── 8. Add / edit invoice modal ────────────────────────────── -->
 <tbt-modal id="inv-modal" title="เพิ่มใบแจ้งหนี้" variant="default">
@@ -162,10 +156,10 @@
   function recomputeStats(rows) {
     const net = rt.sumBy(rows, 'amount');
     const vat = rt.sumBy(rows, 'vat');
-    document.getElementById('stat-count').value = String(rows.length) + ' ใบ';
-    document.getElementById('stat-net').value   = rt.currency(net);
-    document.getElementById('stat-vat').value   = rt.currency(vat);
-    document.getElementById('stat-total').value = rt.currency(net + vat);
+    document.getElementById('hdr-stat-count').textContent = String(rows.length) + ' ใบ';
+    document.getElementById('hdr-stat-net').textContent   = rt.currency(net);
+    document.getElementById('hdr-stat-vat').textContent   = rt.currency(vat);
+    document.getElementById('hdr-stat-total').textContent = rt.currency(net + vat);
   }
 
   /* ── Bill lines table ───────────────────────────────────── */

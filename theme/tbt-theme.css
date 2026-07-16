@@ -354,6 +354,47 @@ body.tbt-page {
   border-top: 1px solid var(--tbt-border);
 }
 
+/* Action bar — top variant (RFC 0007): NetSuite-style primary actions under
+   the page header, sticky while the form scrolls. */
+.tbt-action-bar--top {
+  margin-top: 0;
+  border-top: none;
+  position: sticky;
+  top: calc(-1 * var(--tbt-space-5));   /* flush with the scrollport edge */
+  z-index: 20;
+  background: var(--tbt-bg-page);
+  padding: var(--tbt-space-3) 0;
+  border-bottom: 1px solid var(--tbt-border);
+}
+
+/* Header summary strip (RFC 0007) — replaces full-width KPI cards on forms */
+.tbt-page-header__stats {
+  display: flex;
+  align-items: baseline;
+  gap: var(--tbt-space-5);
+  flex-wrap: wrap;
+  font-family: var(--tbt-font);
+}
+.tbt-page-header__stat {
+  font-size: var(--tbt-size-xs);
+  color: var(--tbt-text-secondary);
+  white-space: nowrap;
+}
+.tbt-page-header__stat b {
+  display: block;
+  font-size: var(--tbt-size-md);
+  font-weight: var(--tbt-weight-semibold);
+  color: var(--tbt-text-primary);
+}
+
+/* Right-aligned toolbar row inside a Subtab panel (e.g. "Add line") */
+.tbt-panel-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--tbt-space-3);
+  margin-bottom: var(--tbt-space-3);
+}
+
 /* Modal footer — right-aligned button row inside slot="footer" */
 .tbt-modal-actions {
   display: flex;
