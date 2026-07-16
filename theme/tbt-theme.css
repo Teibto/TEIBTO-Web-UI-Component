@@ -395,6 +395,12 @@ body.tbt-page {
   gap: var(--tbt-space-3);
   flex-wrap: wrap;
 }
+/* Cap the search width — its host defaults to width:100% (right inside a
+   field grid), which here stretched the toolbar onto two rows of dead space. */
+.tbt-page-toolbar tbt-search {
+  width: 280px;
+  min-width: 180px;
+}
 
 /* Right-aligned toolbar row inside a Subtab panel (e.g. "Add line") */
 .tbt-panel-toolbar {
