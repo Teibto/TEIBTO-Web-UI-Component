@@ -190,6 +190,7 @@ define([ 'N/error', 'N/file' ], (error, file) => {
    *   opts.active  string — sidebar item key to mark active (matches item.key)
    *   opts.data    object — injected as window.__DATA__ for the page script
    *   opts.lang    string — <html lang>; defaults to 'th'
+   *   opts.density string — 'erp' (default, NetSuite-like compact) | 'default' (airier)
    *   opts.menu    array  — menubar items; defaults to DEFAULT_MENU
    *   opts.sidebar array  — sidebar items; defaults to DEFAULT_SIDEBAR
    *
@@ -219,6 +220,9 @@ define([ 'N/error', 'N/file' ], (error, file) => {
     const sidebar = opts.sidebar || DEFAULT_SIDEBAR;
     const active  = opts.active  || '';
     const user    = opts.user    || { name: 'Wichit Wongta', role: 'Admin' };
+    // ERP density is the production default (RFC 0007) — pass density: 'default'
+    // to keep the airier dashboard spacing (e.g. a marketing/report page).
+    const density = opts.density || 'erp';
 
     // Resolve every DS asset up-front — fail fast with a deploy hint (#17).
     const dsUrls = {
@@ -237,7 +241,7 @@ define([ 'N/error', 'N/file' ], (error, file) => {
       : '';
 
     return `<!DOCTYPE html>
-<html lang="${esc(lang)}" data-theme="light">
+<html lang="${esc(lang)}" data-theme="light"${density !== 'default' ? ` data-density="${esc(density)}"` : ''}>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
