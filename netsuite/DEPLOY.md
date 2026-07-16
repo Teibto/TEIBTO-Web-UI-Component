@@ -14,6 +14,7 @@ after deploying to a sandbox.
 | `objects/customrecord_tbt_bill_receipt_line.xml` | line record (1 vendor invoice per row) |
 | `bill_receipt_meta.js` | record/field ids + status state machine — **single source of truth** |
 | `bill_receipt_lib.js` | validate / list / load / vendors / save (N/record + N/query) |
+| `objects/customrecord_tbt_doc_counter.xml` + `tbt_counter.js` | persistent doc-number counter (#49) — shared with expense |
 | `rl_bill_receipt.js` | RESTlet — the only place that mutates the record |
 | `../templates/sl_bill_receipt_list.js` + `bill-receipt-list.html` | list page |
 | `../templates/sl_bill_receipt_form.js` + `bill-receipt-form.html` | document page |
@@ -27,7 +28,7 @@ after deploying to a sandbox.
    - `netsuite/objects/customrecord_tbt_bill_receipt*.xml` and
      `customscript_tbt_*.xml` → `src/Objects/`
    - `netsuite/bill_receipt_meta.js`, `bill_receipt_lib.js`, `rl_bill_receipt.js`,
-     `tbt_page.js` → `src/FileCabinet/SuiteScripts/Teibto/`
+     `tbt_counter.js`, `tbt_page.js` → `src/FileCabinet/SuiteScripts/Teibto/`
    - `templates/sl_bill_receipt_*.js` + `bill-receipt-*.html` →
      `src/FileCabinet/SuiteScripts/Teibto/` (Suitelets `require` `./bill_receipt_lib`
      etc. as siblings — keep them in the same folder)

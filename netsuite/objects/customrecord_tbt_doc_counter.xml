@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Persistent document-number counter (#49). One row per prefix (the native
+  Name field holds the prefix, e.g. "BR-2569-"); custrecord_tbt_ctr_last is
+  the last number ISSUED — never decremented, so deleting a document record
+  can never cause its number to be reused. Consumed via netsuite/tbt_counter.js.
+-->
+<customrecordtype scriptid="customrecord_tbt_doc_counter">
+  <recordname>TBT Doc Counter</recordname>
+  <includename>T</includename>
+  <showid>F</showid>
+  <allowattachments>F</allowattachments>
+  <allowinlineediting>F</allowinlineediting>
+  <enablesystemnotes>T</enablesystemnotes>
+  <hierarchical>F</hierarchical>
+  <customrecordcustomfields>
+    <customrecordcustomfield scriptid="custrecord_tbt_ctr_last">
+      <label>Last number</label>
+      <fieldtype>INTEGER</fieldtype>
+      <ismandatory>T</ismandatory>
+      <displaytype>NORMAL</displaytype>
+      <storevalue>T</storevalue>
+      <showinlist>T</showinlist>
+    </customrecordcustomfield>
+  </customrecordcustomfields>
+</customrecordtype>
