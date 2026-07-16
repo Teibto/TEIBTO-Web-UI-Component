@@ -12,6 +12,10 @@ Format: [Semantic Versioning](https://semver.org)
 - `.gitleaks.toml`: allowlist local git-ignored `.env` so the R6 secret-scan
   gate no longer fails on every dev machine that has local credentials —
   tracked files and the staged-snapshot scan are still fully covered (#66)
+- `web-test-runner.config.js`: set `browserStartTimeout: 120000` and
+  `concurrency: 4` — the Unit tests workflow no longer exits 1 on slow CI
+  runners where the first test pages missed the default 30s start window
+  even though every test passed (#60)
 
 ## [1.45.1] - 2026-07-17
 

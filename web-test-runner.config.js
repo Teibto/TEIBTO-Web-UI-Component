@@ -18,6 +18,11 @@ const importMap = {
 export default {
   files: 'tests/**/*.test.js',
   nodeResolve: true,
+  // CI (ubuntu, 2-core) เปิด test page ชุดแรกไม่ทัน default 30s เมื่อ 60 ไฟล์
+  // แย่งกัน start → "browser was unable to create and start a test page" ทั้งที่
+  // ทุก test ผ่าน (#60) — เพิ่มเพดานเวลา start และจำกัดจำนวนไฟล์ที่รันพร้อมกัน
+  browserStartTimeout: 120000,
+  concurrency: 4,
   browsers: [
     chromeLauncher({ launchOptions: { args: ['--no-sandbox', '--disable-dev-shm-usage'] } }),
   ],
