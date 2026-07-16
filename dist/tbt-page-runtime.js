@@ -67,7 +67,9 @@
       body:    JSON.stringify(payload),
     });
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(body.message || ('HTTP ' + res.status));
+    // RESTlets report failures as HTTP 200 + {ok:false} — both paths must
+    // throw, or the page shows a false "success" while the server rejected it.
+    if (!res.ok || body.ok === false) throw new Error(body.message || ('HTTP ' + res.status));
     return body;
   }
 
