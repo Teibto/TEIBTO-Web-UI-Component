@@ -1,10 +1,9 @@
 <!--
   bill-receipt-list.html — Vendor bill receipt (รับวางบิล) list page body.
 
-  Layout (Teibto standard list):
-    Page header  — title + new button
-    Filters      — search + status dropdown (in section actions)
-    List table   — paginated tbt-table with status badge + row actions
+  Layout (Teibto ERP list — NetSuite-style, RFC 0007):
+    Toolbar      — title left · search + status filter + new button right (one row)
+    List table   — paginated tbt-table with status badge + row actions, directly below
 
   Required keys on window.__DATA__:
     rows      array of { id, tranid, vendor, receiveDate, dueDate, invoiceCount, total, status }
@@ -13,26 +12,23 @@
     newUrl    string — URL to open a blank form
 -->
 
-<!-- ── 1. Page header ─────────────────────────────────────────── -->
-<tbt-section>
+<!-- ── 1. Toolbar + list — แถบเดียวแบบ NetSuite list (RFC 0007):
+        title ซ้าย · search / filter / ปุ่มสร้าง ขวา · ตารางต่อทันที ── -->
+<div class="tbt-page-alerts">
+  <tbt-alert id="demo-alert" variant="warning" hidden>กำลังแสดงข้อมูลตัวอย่าง — ยังไม่ได้ติดตั้ง custom record (ดู netsuite/DEPLOY.md)</tbt-alert>
+</div>
+
+<tbt-section not-collapsible>
   <div class="tbt-page-header">
     <div>
       <div class="tbt-page-header__title">รับวางบิล</div>
       <div class="tbt-page-header__subtitle">ใบวางบิลจากผู้จำหน่ายที่รอตรวจรับและตั้งเบิก</div>
     </div>
-    <tbt-button id="new-btn" variant="primary" icon="add">สร้างใบวางบิล</tbt-button>
-  </div>
-</tbt-section>
-
-<div class="tbt-page-alerts">
-  <tbt-alert id="demo-alert" variant="warning" hidden>กำลังแสดงข้อมูลตัวอย่าง — ยังไม่ได้ติดตั้ง custom record (ดู netsuite/DEPLOY.md)</tbt-alert>
-</div>
-
-<!-- ── 2. List ────────────────────────────────────────────────── -->
-<tbt-section title="รายการใบวางบิล">
-  <div slot="actions" style="display:flex;gap:var(--tbt-space-3)">
-    <tbt-search id="search" placeholder="ค้นหาเลขที่ / ผู้จำหน่าย…" debounce="300"></tbt-search>
-    <tbt-dropdown id="f-status" name="status" placeholder="ทุกสถานะ" auto-width></tbt-dropdown>
+    <div class="tbt-page-toolbar">
+      <tbt-search id="search" placeholder="ค้นหาเลขที่ / ผู้จำหน่าย…" debounce="300"></tbt-search>
+      <tbt-dropdown id="f-status" name="status" placeholder="ทุกสถานะ" auto-width></tbt-dropdown>
+      <tbt-button id="new-btn" variant="primary" icon="add">สร้างใบวางบิล</tbt-button>
+    </div>
   </div>
   <tbt-table id="table" paginate page-size="50" responsive max-height="560px" empty-message="ยังไม่มีใบวางบิล"></tbt-table>
 </tbt-section>

@@ -387,6 +387,15 @@ body.tbt-page {
   color: var(--tbt-text-primary);
 }
 
+/* List-page toolbar (RFC 0007) — search / filter / primary action on the
+   same row as the page title, NetSuite-list style. */
+.tbt-page-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--tbt-space-3);
+  flex-wrap: wrap;
+}
+
 /* Right-aligned toolbar row inside a Subtab panel (e.g. "Add line") */
 .tbt-panel-toolbar {
   display: flex;
