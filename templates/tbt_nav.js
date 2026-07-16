@@ -26,8 +26,15 @@ define(['N/url'], (url) => {
       scriptId: 'customscript_tbt_sl_bill_receipt_list',
       deploymentId: 'customdeploy_tbt_sl_bill_receipt_list',
     },
-    // expense-claim: เพิ่มเมื่อ record XMLs ผ่าน SDF validation และ deploy จริง
-    // (ดู netsuite/DEPLOY.md — pattern เดียวกับ bill receipt)
+    {
+      key: 'expense',
+      // ชื่อ Tabler จริง ไม่ใช่ alias — tbt-sidebar-item render ti ti-<name> ตรง ๆ
+      // โดยไม่ resolve ผ่าน ICON_ALIASES (pitfalls §23) alias-only จะได้กล่องเปล่า
+      icon: 'report-money',
+      label: 'เบิกค่าใช้จ่าย',
+      scriptId: 'customscript_tbt_sl_expense_claim',
+      deploymentId: 'customdeploy_tbt_sl_expense_claim',
+    },
   ];
 
   function sidebar() {
