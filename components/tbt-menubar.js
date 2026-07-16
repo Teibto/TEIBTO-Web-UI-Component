@@ -1,6 +1,6 @@
 /**
  * @component tbt-menubar, tbt-menu-item, tbt-menu-group
- * @version 1.26.2
+ * @version 1.45.0
  * @author Wichit Wongta
  *
  * Top navigation bar with logo, flat menu items, and grouped dropdown menus.

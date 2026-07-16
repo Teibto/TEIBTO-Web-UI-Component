@@ -1,6 +1,6 @@
 /**
  * @component tbt-number-input
- * @version 1.32.0
+ * @version 1.45.0
  * @author Wichit Wongta
  *
  * Formatted number input with comma thousands separator, prefix/suffix,

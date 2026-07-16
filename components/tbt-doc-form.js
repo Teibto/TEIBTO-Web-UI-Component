@@ -1,6 +1,6 @@
 /**
  * @component tbt-doc-form
- * @version 1.26.2
+ * @version 1.45.0
  * @author Wichit Wongta
  *
  * Schema-driven document form scaffold. Renders sections (fields, line items,

@@ -7,6 +7,20 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+_(nothing yet)_
+
+## [1.45.0] - 2026-07-16
+
+### Added
+
+- **`tbt-datepicker` always displays `YYYY-MM-DD`** (RFC 0006, #29) — the
+  native date input stays as the editor, but a display layer masks its
+  browser-locale text while blurred, so form fields finally match the
+  header/list format per R2. New additive `era="be"` prop shows the Buddhist
+  year (`2569-07-16`) — display only, `value` and every round-trip stay ISO
+  ค.ศ. Empty fields show a muted `YYYY-MM-DD` hint instead of the locale
+  placeholder. Readonly/disabled render through the same layer.
+
 ### Fixed
 
 - **Document numbers are never reused after a delete** (#49) — new

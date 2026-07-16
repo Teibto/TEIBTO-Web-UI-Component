@@ -1,6 +1,6 @@
 /**
  * @component tbt-radio
- * @version 1.43.0
+ * @version 1.45.0
  * @author Wichit Wongta
  *
  * Radio group — choose one option from a small set with every choice visible.

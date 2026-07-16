@@ -1,6 +1,6 @@
 /**
  * @component tbt-icon
- * @version 1.26.2
+ * @version 1.45.0
  * @author Wichit Wongta
  *
  * Tabler icon wrapper with design-token sizing, semantic color, spin animation,

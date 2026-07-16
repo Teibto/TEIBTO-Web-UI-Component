@@ -1,6 +1,6 @@
 /**
  * @component tbt-drawer
- * @version 1.38.0
+ * @version 1.45.0
  * @author Wichit Wongta
  *
  * Slide-in drawer panel for filter panels, detail views, and side forms.

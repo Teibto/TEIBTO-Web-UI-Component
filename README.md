@@ -49,8 +49,8 @@ Client code `internal` · Repo Owner @wichtking · Data classification **Interna
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teibto · Page Name</title>
-  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.26.2/tbt-theme.css">
-  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.26.2/index.js"></script>
+  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.45.0/tbt-theme.css">
+  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.45.0/index.js"></script>
 </head>
 <body>
   <tbt-app-shell>
@@ -428,7 +428,7 @@ Step shape: `{ label, description?, error? }`. Steps before `active` show a chec
 Promise-based confirmation built on `tbt-modal`. No boilerplate HTML required.
 
 ```javascript
-import { confirm } from '/sc/SuiteScripts/Teibto/ds/v1.26.2/tbt-confirm.js';
+import { confirm } from '/sc/SuiteScripts/Teibto/ds/v1.45.0/tbt-confirm.js';
 
 const ok = await confirm({
   title: 'Delete document?',
@@ -560,7 +560,7 @@ Built-in names: `empty` · `search` · `success` · `error` · `warning` · `dra
 Transient notification — slides in, auto-dismisses, stacks if multiple. Trigger via the static `show()` helper from any script.
 
 ```javascript
-import { showToast } from '/sc/SuiteScripts/Teibto/ds/v1.26.2/tbt-toast.js';
+import { showToast } from '/sc/SuiteScripts/Teibto/ds/v1.45.0/tbt-toast.js';
 
 showToast({ variant: 'success', message: 'Saved.',          duration: 3000 });
 showToast({ variant: 'danger',  message: 'Network error.',  duration: 5000 });
@@ -1016,7 +1016,7 @@ For complete ERP document pages (PO, Customer, Sales Order, Invoice), use `tbt-d
 <tbt-doc-form id="po-form"></tbt-doc-form>
 
 <script type="module">
-  import { PO_SCHEMA } from '/sc/SuiteScripts/Teibto/ds/v1.26.2/tbt-doc-schemas.js';
+  import { PO_SCHEMA } from '/sc/SuiteScripts/Teibto/ds/v1.45.0/tbt-doc-schemas.js';
 
   const form = document.getElementById('po-form');
   form.schema = PO_SCHEMA;
@@ -1299,7 +1299,7 @@ CSS: `.screen { display: none; } .screen.active { display: block; }`. In a real 
 ### File Cabinet structure
 
 ```
-/SuiteScripts/Teibto/ds/v1.26.2/
+/SuiteScripts/Teibto/ds/v1.45.0/
   tbt-theme.css
   index.js
   tbt-icons-css.js
@@ -1316,8 +1316,8 @@ CSS: `.screen { display: none; } .screen.active { display: block; }`. In a real 
 ### Standard page `<head>` (manual — legacy)
 
 ```html
-<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.43.1/dist/tbt-theme.css">
-<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.43.1/dist/tbt-ds.min.js"></script>
+<link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.45.0/dist/tbt-theme.css">
+<script type="module"  src="/sc/SuiteScripts/Teibto/ds/v1.45.0/dist/tbt-ds.min.js"></script>
 ```
 
 > Always pin to an exact version. Never use `/latest/`.
@@ -1382,7 +1382,7 @@ Three copy-paste page bodies + matching thin Suitelets live under `templates/`:
 ```bash
 cd tbt-ds/tbt-ds               # SDF project folder
 suitecloud account:setup        # first-time auth (opens browser)
-suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.26.2/*"
+suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.45.0/*"
 ```
 
 ---
