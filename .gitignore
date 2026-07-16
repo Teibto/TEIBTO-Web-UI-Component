@@ -1,3 +1,10 @@
+# Secrets — R6 (teibto-dev-standards): no credentials in git, ever
+.env*
+!.env.example
+*.key
+*.pem
+.qa-profiles/
+
 # SDF project generated folder (staging area for NetSuite upload)
 tbt-ds/
 
