@@ -7,6 +7,10 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+_(nothing yet)_
+
+## [1.43.2] - 2026-07-16
+
 ### Added
 
 - **`tbt-dropdown` `auto-width` attribute** (#27) — sizes the select to its
