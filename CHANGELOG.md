@@ -9,6 +9,21 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Fixed
 
+- **`tbt_page.js`: resolve File Cabinet URLs via `N/file` instead of the
+  path-style `/sc/SuiteScripts/...` (#17).** NetSuite returns "Page Not Found"
+  for path-style File Cabinet URLs (verified on SB2) — every page rendered by
+  `tbt_page.render()` would 404 on all three DS assets. `render()` now loads
+  each asset via `file.load(path).url` at request time (carries the required
+  `h=` token, survives token rotation on re-upload) and fails fast with
+  `TBT_DS_ASSET_NOT_FOUND` + a deploy hint when the DS version is not on the
+  account. Path-style DS URLs inside template bodies (e.g. the module import
+  in `so-form.html`) are rewritten to the resolved URL too, so templates stay
+  readable and keep working in local dev. The sidebar logo is resolved the
+  same way but treated as optional (missing file drops the `<img>`, logged via
+  `log.debug`). `FC_BASE` export replaced by `resolveDsUrl(name)` (nothing
+  consumed `FC_BASE`). Dev parity: `dev-suitelet.mjs` `N/file` stub now handles
+  absolute `SuiteScripts/...` paths and returns `.url` mapping to the local
+  `/sc/` static route.
 - **`scripts/sync-sdf.js`: SDF staging path missed the `dist/` layer.** The
   v1.42.1 decision moved File Cabinet files under
   `/SuiteScripts/Teibto/ds/v<X.Y.Z>/dist/` and all runtime code (`tbt_page.js`

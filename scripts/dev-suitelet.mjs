@@ -36,9 +36,28 @@ const SS = {
     create: ({ name, message }) => Object.assign(new Error(message), { name }),
   },
   'N/file': {
-    // Resolve template files relative to templates/ folder.
+    // Two path forms, mirroring N/file on the account:
+    //   'SuiteScripts/...' (absolute File Cabinet path) — tbt_page resolves DS
+    //     asset URLs from file.url; locally the url maps to the /sc/ static
+    //     route below, which serves dist/. Missing dist file throws, same as
+    //     a missing File Cabinet file on the account.
+    //   './x.html' (relative) — template files, resolved against templates/.
     load({ id }) {
-      const rel = String(id).replace(/^\.\//, '');
+      const sid = String(id);
+      const fc = sid.replace(/^\//, '');
+      if (fc.startsWith('SuiteScripts/')) {
+        const dist = fc.match(/^SuiteScripts\/Teibto\/ds\/v[^/]+\/dist\/(.+)$/);
+        if (dist) {
+          const full = path.join(ROOT, 'dist', dist[1]);
+          if (!fs.existsSync(full)) {
+            throw new Error(`File not found (local dist/ mirror of File Cabinet): ${sid}`);
+          }
+          return { url: '/sc/' + fc, getContents: () => fs.readFileSync(full, 'utf8') };
+        }
+        // Other assets (logo) — the /sc/ assets route serves a placeholder.
+        return { url: '/sc/' + fc, getContents: () => '' };
+      }
+      const rel = sid.replace(/^\.\//, '');
       const full = path.join(ROOT, 'templates', rel);
       const contents = fs.readFileSync(full, 'utf8');
       return { getContents: () => contents };

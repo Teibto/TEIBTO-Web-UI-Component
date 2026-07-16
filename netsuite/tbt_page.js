@@ -30,16 +30,53 @@
  *   }));
  *
  * Bumping the DS = edit DS_VERSION once. Every emitted URL is derived from it.
+ *
+ * URL resolution: NetSuite does not serve File Cabinet files at a path-style
+ * URL (/sc/SuiteScripts/... returns "Page Not Found" — verified on SB2, see
+ * repo issue #17). render() resolves each asset via N/file at request time —
+ * file.url carries the required h= token and survives token rotation on
+ * re-upload. Path-style DS URLs inside opts.body (templates write them for
+ * readability + local dev) are rewritten to the resolved URL as well.
  */
-define([ 'N/error' ], (error) => {
+define([ 'N/error', 'N/file' ], (error, file) => {
 
   /* ── Single source of truth ──────────────────────────────────────── */
 
   const DS_VERSION = '1.43.1';
-  const FC_BASE    = `/sc/SuiteScripts/Teibto/ds/v${DS_VERSION}/dist`;
-  const LOGO_URL   = '/sc/SuiteScripts/Teibto/assets/teibtologo.png';
+  const FC_DIST_PATH = `SuiteScripts/Teibto/ds/v${DS_VERSION}/dist`;
+  const LOGO_PATH  = 'SuiteScripts/Teibto/assets/teibtologo.png';
   const BRAND      = 'Teibto ERP';
   const DEFAULT_LANG = 'th';
+
+  /* ── File Cabinet URL resolution ─────────────────────────────────── */
+
+  // Required DS asset → throws with a deploy hint when the file is absent.
+  const resolveDsUrl = (name) => {
+    const fcPath = `${FC_DIST_PATH}/${name}`;
+    try {
+      return file.load({ id: fcPath }).url;
+    } catch (e) {
+      throw error.create({
+        name: 'TBT_DS_ASSET_NOT_FOUND',
+        message: `tbt_page: cannot resolve File Cabinet URL for "${fcPath}" — `
+          + `deploy DS v${DS_VERSION} first (npm run sync:sdf && suitecloud project:deploy, `
+          + `see netsuite/DEPLOY.md). Root cause: ${e.message}`,
+      });
+    }
+  };
+
+  // Optional asset (logo): a missing file degrades the brand area, not the page.
+  const resolveOptionalUrl = (fcPath) => {
+    try {
+      return file.load({ id: fcPath }).url;
+    } catch (e) {
+      log.debug({ title: 'tbt_page: optional asset missing', details: `${fcPath} — ${e.message}` });
+      return null;
+    }
+  };
+
+  // Path-style DS URLs written inside template bodies (any pinned version).
+  const BODY_DS_URL_RE = /\/sc\/SuiteScripts\/Teibto\/ds\/v[\d.]+\/dist\/(tbt-ds\.min\.js|tbt-theme\.css|tbt-page-runtime\.js)/g;
 
   /* ── Default navigation (overridable per page via opts.menu / opts.sidebar) ── */
 
@@ -103,7 +140,7 @@ define([ 'N/error' ], (error) => {
     </tbt-menu-group>`;
   };
 
-  const renderSidebar = (items, active, user) => {
+  const renderSidebar = (items, active, user, logoUrl) => {
     const navBody = (items || []).map((it) => {
       const isActive = it.key && active && it.key === active;
       const activeAttr = isActive ? ' active' : '';
@@ -114,9 +151,12 @@ define([ 'N/error' ], (error) => {
     // when the sidebar collapses (220px → 52px), matching tbt-sidebar-item.
     const labelStyle = 'max-width:var(--_lbl-max-width);opacity:var(--_lbl-opacity);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--tbt-font);transition:max-width var(--tbt-transition-base),opacity var(--tbt-transition-base)';
 
+    const logoImg = logoUrl
+      ? `<img src="${esc(logoUrl)}" alt="" style="width:28px;height:28px;border-radius:var(--tbt-radius-sm);flex-shrink:0;object-fit:cover">
+      `
+      : '';
     const brand = `<div slot="brand" style="display:flex;align-items:center;gap:var(--tbt-space-3);min-width:0;flex:1">
-      <img src="${esc(LOGO_URL)}" alt="" style="width:28px;height:28px;border-radius:var(--tbt-radius-sm);flex-shrink:0;object-fit:cover">
-      <span style="font-size:var(--tbt-size-md);font-weight:var(--tbt-weight-semibold);color:var(--tbt-text-primary);${labelStyle}">${esc(BRAND)}</span>
+      ${logoImg}<span style="font-size:var(--tbt-size-md);font-weight:var(--tbt-weight-semibold);color:var(--tbt-text-primary);${labelStyle}">${esc(BRAND)}</span>
     </div>`;
 
     const u = user || {};
@@ -180,6 +220,18 @@ define([ 'N/error' ], (error) => {
     const active  = opts.active  || '';
     const user    = opts.user    || { name: 'Wichit Wongta', role: 'Admin' };
 
+    // Resolve every DS asset up-front — fail fast with a deploy hint (#17).
+    const dsUrls = {
+      'tbt-theme.css':       resolveDsUrl('tbt-theme.css'),
+      'tbt-ds.min.js':       resolveDsUrl('tbt-ds.min.js'),
+      'tbt-page-runtime.js': resolveDsUrl('tbt-page-runtime.js'),
+    };
+    const logoUrl = resolveOptionalUrl(LOGO_PATH);
+
+    // Templates keep the readable path-style URL in their own <script> imports;
+    // swap in the resolved URL so the served page never 404s (#17).
+    const body = opts.body.replace(BODY_DS_URL_RE, (m, name) => dsUrls[name]);
+
     const dataScript = opts.data !== undefined
       ? `<script>window.__DATA__ = ${safeJson(opts.data)};</script>`
       : '';
@@ -199,9 +251,9 @@ define([ 'N/error' ], (error) => {
       } catch (e) { /* localStorage blocked — keep default light */ }
     })();
   </script>
-  <link rel="stylesheet" href="${FC_BASE}/tbt-theme.css">
-  <script type="module" src="${FC_BASE}/tbt-ds.min.js"></script>
-  <script src="${FC_BASE}/tbt-page-runtime.js"></script>
+  <link rel="stylesheet" href="${esc(dsUrls['tbt-theme.css'])}">
+  <script type="module" src="${esc(dsUrls['tbt-ds.min.js'])}"></script>
+  <script src="${esc(dsUrls['tbt-page-runtime.js'])}"></script>
   <style>
     /* Minimal page reset — tbt-app-shell takes full viewport, so the body
        must not add its own margin (would push the shell past 100vh and
@@ -241,9 +293,9 @@ define([ 'N/error' ], (error) => {
   <i class="ti ti-menu-2" aria-hidden="true"></i>
 </button>
 <tbt-app-shell style="--tbt-menubar-height: 0px">
-  ${renderSidebar(sidebar, active, user)}
+  ${renderSidebar(sidebar, active, user, logoUrl)}
   <main slot="content">
-${opts.body}
+${body}
   </main>
 </tbt-app-shell>
 ${dataScript}
@@ -281,6 +333,6 @@ ${dataScript}
   return {
     render,
     DS_VERSION,
-    FC_BASE,
+    resolveDsUrl,
   };
 });
