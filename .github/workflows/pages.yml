@@ -1,6 +1,6 @@
 # Deploy TBT-DS demo pages to GitHub Pages
 # Trigger: every push to master
-# Result: https://kingcomen.github.io/tbt-ds/demo/specimen.html
+# Result: https://teibto.github.io/TEIBTO-Web-UI-Component/demo/specimen.html
 #
 # One-time repo setup (do once):
 #   Settings → Pages → Source → GitHub Actions
