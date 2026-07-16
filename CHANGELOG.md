@@ -9,6 +9,11 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- **NetSuite-style list toolbar on the bill receipt list** (RFC 0007, #40 —
+  layer C). Title, search, status filter, and the create button share one
+  toolbar row (`.tbt-page-toolbar`); the table follows directly — the
+  separate header card and section title are gone, and so is the last inline
+  `style=` on the page.
 - **NetSuite-style form anatomy on the bill receipt form** (RFC 0007, #40 —
   layer B). Action bar moved to the TOP (sticky while scrolling, new
   `.tbt-action-bar--top` utility); the four KPI cards became a compact
