@@ -36,6 +36,9 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
       const n = i + 1;
       if (!r.invoiceNo) errs.push(`Line ${n}: invoice no. is required`);
       if (!r.invoiceDate) errs.push(`Line ${n}: invoice date is required`);
+      else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(r.invoiceDate))) {
+        errs.push(`Line ${n}: invoice date must be YYYY-MM-DD (got "${r.invoiceDate}")`);
+      }
       if (!(Number(r.amount) > 0)) errs.push(`Line ${n}: amount must be greater than 0`);
       if (Number(r.vat) < 0) errs.push(`Line ${n}: VAT cannot be negative`);
     });
@@ -52,8 +55,12 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
   };
   const fromIso = (s) => {
     if (!s) return null;
-    const [y, m, d] = String(s).split('-').map(Number);
-    return new Date(y, m - 1, d);
+    // Strict: a non-ISO string must fail loudly here — passing an Invalid Date
+    // into record.setValue throws mid-write (replaceLines had already deleted
+    // the old lines when this bit us on SB2, 2026-07-16).
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s));
+    if (!m) throw new Error(`Invalid date "${s}" — expected YYYY-MM-DD`);
+    return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
   };
 
   /* ── Read: list (SuiteQL — one round-trip, header + line aggregate) ──── */
@@ -68,7 +75,8 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
     const sql = `
       SELECT h.id, h.${F.tranid} AS tranid, h.${F.vendor} AS vendorid,
              BUILTIN.DF(h.${F.vendor}) AS vendor,
-             h.${F.receiveDate} AS receivedate, h.${F.dueDate} AS duedate,
+             TO_CHAR(h.${F.receiveDate}, 'YYYY-MM-DD') AS receivedate,
+             TO_CHAR(h.${F.dueDate}, 'YYYY-MM-DD') AS duedate,
              h.${F.status} AS status, h.${F.total} AS total,
              (SELECT COUNT(*) FROM ${LINE_REC} l WHERE l.${LF.parent} = h.id) AS invoicecount
       FROM ${REC} h
@@ -105,8 +113,12 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
       status:      rec.getValue(F.status) || 'Draft',
     };
 
+    // TO_CHAR forces ISO regardless of the account's date format preference —
+    // raw SuiteQL dates come back as e.g. "16/7/2026", which breaks the
+    // load → edit → save round-trip (fromIso expects ISO).
     const lineSql = `
-      SELECT id, ${LF.invoiceNo} AS invoiceno, ${LF.invoiceDate} AS invoicedate,
+      SELECT id, ${LF.invoiceNo} AS invoiceno,
+             TO_CHAR(${LF.invoiceDate}, 'YYYY-MM-DD') AS invoicedate,
              ${LF.poNo} AS pono, ${LF.amount} AS amount, ${LF.vat} AS vat, ${LF.memo} AS memo
       FROM ${LINE_REC} WHERE ${LF.parent} = ? ORDER BY id`;
     const lines = query.runSuiteQL({ query: lineSql, params: [id] }).asMappedResults().map((r) => ({
@@ -170,21 +182,35 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
   // payload. Simpler + correct for a small line count (a voucher has a handful
   // of invoices, not thousands) and avoids diffing edge cases.
   function replaceLines(parentId, lines) {
+    // Convert every value BEFORE deleting anything — record writes are not
+    // transactional, so a conversion error after the delete pass would
+    // destroy the existing lines with nothing to replace them (happened on
+    // SB2 2026-07-16 via the non-ISO SuiteQL date round-trip).
+    const prepared = (lines || []).map((r) => ({
+      name: r.invoiceNo || 'line', // native Name is mandatory
+      invoiceNo: r.invoiceNo || '',
+      invoiceDate: fromIso(r.invoiceDate),
+      poNo: r.poNo || '',
+      amount: Number(r.amount || 0),
+      vat: Number(r.vat || 0),
+      memo: r.memo || '',
+    }));
+
     const existing = query.runSuiteQL({
       query: `SELECT id FROM ${LINE_REC} WHERE ${LF.parent} = ?`, params: [parentId],
     }).asMappedResults();
     existing.forEach((e) => record.delete({ type: LINE_REC, id: e.id }));
 
-    lines.forEach((r) => {
+    prepared.forEach((p) => {
       const lr = record.create({ type: LINE_REC });
-      lr.setValue('name', r.invoiceNo || 'line'); // native Name is mandatory
+      lr.setValue('name', p.name);
       lr.setValue(LF.parent, parentId);
-      lr.setValue(LF.invoiceNo, r.invoiceNo || '');
-      lr.setValue(LF.invoiceDate, fromIso(r.invoiceDate));
-      lr.setValue(LF.poNo, r.poNo || '');
-      lr.setValue(LF.amount, Number(r.amount || 0));
-      lr.setValue(LF.vat, Number(r.vat || 0));
-      lr.setValue(LF.memo, r.memo || '');
+      lr.setValue(LF.invoiceNo, p.invoiceNo);
+      lr.setValue(LF.invoiceDate, p.invoiceDate);
+      lr.setValue(LF.poNo, p.poNo);
+      lr.setValue(LF.amount, p.amount);
+      lr.setValue(LF.vat, p.vat);
+      lr.setValue(LF.memo, p.memo);
       lr.save();
     });
   }

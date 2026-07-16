@@ -7,6 +7,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Fixed
+
+- **Bill receipt line loss on submit: SuiteQL date round-trip + destructive
+  replace order** (found by the SB2 smoke run, 2026-07-16). `load()` returned
+  line dates in the account's date format (`16/7/2026`); submitting a reloaded
+  draft fed that into `fromIso()`, which produced an Invalid Date that threw
+  inside `replaceLines` — after the old lines were already deleted, so the
+  record lost all its lines while the header had already moved to Submitted.
+  Three-layer fix in `bill_receipt_lib.js`: (1) `TO_CHAR(..., 'YYYY-MM-DD')`
+  in the load/list SQL so dates leave the DB as ISO, (2) `replaceLines`
+  converts every value before deleting anything, (3) strict `fromIso` +
+  `validate()` reports a non-ISO line date as a validation error.
+
 ### Added
 
 - **SDF script objects for the bill receipt module** (2026-07-16) — Suitelet
