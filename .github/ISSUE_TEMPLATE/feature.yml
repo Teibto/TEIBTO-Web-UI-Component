@@ -1,0 +1,40 @@
+name: Feature request
+description: เสนอ component ใหม่ / prop ใหม่ / ปรับพฤติกรรมเดิม
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What — อยากได้อะไร
+      placeholder: "tbt-table รองรับ sticky column แรกบนมือถือ"
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why — แก้ปัญหาอะไร ใครใช้
+      description: อ้างหน้า/งานจริงที่ติดปัญหา
+    validations:
+      required: true
+  - type: input
+    id: scope
+    attributes:
+      label: จุดที่เกี่ยวข้อง
+      placeholder: "components/tbt-table.js · theme/tbt-theme.css"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: เกณฑ์ตรวจรับ
+      description: เช็คยังไงว่าเสร็จ — ระบุเป็นข้อ ๆ ที่ทดสอบได้จริง
+      placeholder: |
+        - [ ] เปิด demo/specimen.html จอ ≤ 480px แล้ว column แรกไม่เลื่อนตาม
+        - [ ] test ใหม่ใน tests/tbt-table.test.js ผ่าน
+        - [ ] npm run lint ผ่าน (ไม่มี hex color)
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        Component ใหม่ต้องมี RFC ใน `rfcs/` ก่อนเริ่มเขียนโค้ด — ดู [CONTRIBUTING.md](../../CONTRIBUTING.md)

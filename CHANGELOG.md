@@ -40,6 +40,14 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- **Governance retrofit per `teibto-dev-standards` v0.13.0** (2026-07-16) —
+  brought the repo up to the team playbook after moving into the Teibto org:
+  `CLAUDE.md`, `CODEOWNERS` (@wichtking), `CONTRIBUTING.md`, `SECURITY.md`,
+  `CODE_OF_CONDUCT.md`, `.gitattributes`, `.github/PULL_REQUEST_TEMPLATE.md`,
+  issue forms (bug / feature), `.github/workflows/quality-gate.yml` (variant B)
+  and canonical `scripts/secret-scan.sh`. `.gitignore` now blocks `.env*` /
+  `*.key` / `*.pem` / `.qa-profiles/`; LICENSE notes vendored third-party
+  libraries keep their licenses. Profile: `standard` · classification: `Internal`.
 - **Employee expense claim — production backend.** Second module on the
   bill-receipt reference pattern (header + 1:N lines + status state machine):
   `netsuite/expense_meta.js` (ids + state machine), `expense_lib.js`

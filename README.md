@@ -1,14 +1,18 @@
 # TEIBTO Web UI Component — Teibto Design System
 
+**[📋 Changelog](CHANGELOG.md)** · **[🚀 NetSuite deploy](netsuite/DEPLOY.md)** · **[🔁 Team playbook](https://github.com/Teibto/teibto-dev-standards)**
+
 Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitelet custom HTML pages.
+
+Client code `internal` · Repo Owner @wichtking · Data classification **Internal** · Governance profile **standard** (pinned to [teibto-dev-standards](https://github.com/Teibto/teibto-dev-standards) `v0.13.0`)
 
 <div align="center">
 
-[![Interactive Demo](https://img.shields.io/badge/🎮_Interactive_Demo-Purchase_Order_Page-FF6B35?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/demo.html)
+[![Interactive Demo](https://img.shields.io/badge/🎮_Interactive_Demo-Purchase_Order_Page-FF6B35?style=for-the-badge)](https://teibto.github.io/TEIBTO-Web-UI-Component/demo/demo.html)
 &nbsp;&nbsp;
-[![Icons & SVG](https://img.shields.io/badge/✨_Icons_%26_SVG-Gallery-10B981?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/icon-svg.html)
+[![Icons & SVG](https://img.shields.io/badge/✨_Icons_%26_SVG-Gallery-10B981?style=for-the-badge)](https://teibto.github.io/TEIBTO-Web-UI-Component/demo/icon-svg.html)
 &nbsp;&nbsp;
-[![Component Showcase](https://img.shields.io/badge/🚀_Component_Showcase-Specimen-0D1171?style=for-the-badge)](https://kingcomen.github.io/tbt-ds/demo/specimen.html)
+[![Component Showcase](https://img.shields.io/badge/🚀_Component_Showcase-Specimen-0D1171?style=for-the-badge)](https://teibto.github.io/TEIBTO-Web-UI-Component/demo/specimen.html)
 
 </div>
 
@@ -443,7 +447,7 @@ Resolves `true` on confirm, `false` on cancel / ESC / backdrop click / X button.
 ### Icons & Illustrations
 
 #### `tbt-icon`
-Tabler Icons wrapper with 80+ ERP semantic aliases. Browse all aliases interactively at **[icon-svg.html](https://kingcomen.github.io/tbt-ds/demo/icon-svg.html)**.
+Tabler Icons wrapper with 80+ ERP semantic aliases. Browse all aliases interactively at **[icon-svg.html](https://teibto.github.io/TEIBTO-Web-UI-Component/demo/icon-svg.html)**.
 
 | Prop | Values | Default |
 |---|---|---|
@@ -1225,7 +1229,7 @@ Use `tbt-line-items` for the standard ERP document line items pattern — no cus
 
 ### Sales process — full workflow
 
-The full sales workflow (Dashboard → Customer → Quotation → Sales Order → Item Fulfillment → Invoice → Receipt) lives at [demo/sales-process.html](https://kingcomen.github.io/tbt-ds/demo/sales-process.html). It demonstrates how to chain document forms with a workflow stepper at the top of each transaction screen and a dashboard at the entry point.
+The full sales workflow (Dashboard → Customer → Quotation → Sales Order → Item Fulfillment → Invoice → Receipt) lives at [demo/sales-process.html](https://teibto.github.io/TEIBTO-Web-UI-Component/demo/sales-process.html). It demonstrates how to chain document forms with a workflow stepper at the top of each transaction screen and a dashboard at the entry point.
 
 **Workflow stepper** — `tbt-stepper` rendered above each transaction form, with `active` set to that document's position in the chain:
 
