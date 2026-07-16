@@ -7,8 +7,8 @@
  * custom record. Shared by the Suitelet (read) and the RESTlet (write). Mirrors
  * bill_receipt_lib. Cannot be unit-tested outside NetSuite — see DEPLOY.md.
  */
-define(['N/record', 'N/query', 'N/runtime', './expense_meta'],
-(record, query, runtime, meta) => {
+define(['N/record', 'N/query', 'N/runtime', './expense_meta', './tbt_counter'],
+(record, query, runtime, meta, counter) => {
 
   const { REC, LINE_REC, F, LF } = meta;
 
@@ -189,13 +189,19 @@ define(['N/record', 'N/query', 'N/runtime', './expense_meta'],
     });
   }
 
+  // Persistent counter per prefix (#49) — deleting a record no longer reuses
+  // its number. The seed runs once per prefix and adopts the highest
+  // already-issued number (MAX works lexicographically: zero-padded suffix).
   function nextTranId() {
     const by = new Date().getFullYear() + 543;
     const prefix = 'EXP-' + by + '-';
-    const rs = query.runSuiteQL({
-      query: `SELECT COUNT(*) AS n FROM ${REC} WHERE ${F.tranid} LIKE ?`, params: [prefix + '%'],
-    }).asMappedResults();
-    const n = Number(rs[0] && rs[0].n || 0) + 1;
+    const n = counter.next(prefix, () => {
+      const rs = query.runSuiteQL({
+        query: `SELECT MAX(${F.tranid}) AS mx FROM ${REC} WHERE ${F.tranid} LIKE ?`, params: [prefix + '%'],
+      }).asMappedResults();
+      const mx = rs[0] && rs[0].mx;
+      return mx ? Number(String(mx).slice(prefix.length)) || 0 : 0;
+    });
     return prefix + String(n).padStart(4, '0');
   }
 

@@ -12,8 +12,8 @@
  * (the N/* modules only exist in the SuiteScript runtime), so it ships with
  * the deploy guide instead — see netsuite/DEPLOY.md.
  */
-define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
-(record, query, search, runtime, meta) => {
+define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta', './tbt_counter'],
+(record, query, search, runtime, meta, counter) => {
 
   const { REC, LINE_REC, F, LF } = meta;
 
@@ -223,16 +223,21 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
   }
 
   // BR-YYYY-#### running number. Uses the Buddhist year to match Teibto docs
-  // (2569 = 2026). Counts existing rows in the year; good enough for a voucher
-  // volume — swap for a NetSuite numbering plugin if true gap-free is required.
+  // (2569 = 2026). Persistent counter per prefix (#49) — deleting a record no
+  // longer reuses its number (the old COUNT(*) approach did). The seed runs
+  // once per prefix and adopts the highest already-issued number.
   function nextTranId() {
     const ce = new Date().getFullYear();
     const by = ce + 543;
     const prefix = 'BR-' + by + '-';
-    const rs = query.runSuiteQL({
-      query: `SELECT COUNT(*) AS n FROM ${REC} WHERE ${F.tranid} LIKE ?`, params: [prefix + '%'],
-    }).asMappedResults();
-    const n = Number(rs[0] && rs[0].n || 0) + 1;
+    const n = counter.next(prefix, () => {
+      // MAX works lexicographically because the suffix is zero-padded fixed width.
+      const rs = query.runSuiteQL({
+        query: `SELECT MAX(${F.tranid}) AS mx FROM ${REC} WHERE ${F.tranid} LIKE ?`, params: [prefix + '%'],
+      }).asMappedResults();
+      const mx = rs[0] && rs[0].mx;
+      return mx ? Number(String(mx).slice(prefix.length)) || 0 : 0;
+    });
     return prefix + String(n).padStart(4, '0');
   }
 

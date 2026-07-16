@@ -9,6 +9,12 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Fixed
 
+- **Document numbers are never reused after a delete** (#49) — new
+  `customrecord_tbt_doc_counter` (one row per prefix, stores the last number
+  ISSUED) consumed via the shared `netsuite/tbt_counter.js`; `nextTranId` in
+  both `bill_receipt_lib` and `expense_lib` switched from `COUNT(*)` to the
+  counter. First use per prefix seeds from `MAX(tranid)` so existing accounts
+  continue their sequence without renumbering.
 - **Approver roles are now the real ones** (#48) — `APPROVER_ROLES = [3, 1038]`
   (Administrator + TT - Accountant, confirmed 2026-07-16) in both
   `bill_receipt_lib` and `expense_lib`; the bill receipt permission message is
