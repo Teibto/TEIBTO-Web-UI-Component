@@ -1,6 +1,10 @@
 # TEIBTO Web UI Component — Teibto Design System
 
+**[📋 Changelog](CHANGELOG.md)** · **[🚀 NetSuite deploy](netsuite/DEPLOY.md)** · **[🔁 Team playbook](https://github.com/Teibto/teibto-dev-standards)**
+
 Lit 3 Web Components design system for Teibto ERP — built for NetSuite Suitelet custom HTML pages.
+
+Client code `internal` · Repo Owner @wichtking · Data classification **Internal** · Governance profile **standard** (pinned to [teibto-dev-standards](https://github.com/Teibto/teibto-dev-standards) `v0.13.0`)
 
 <div align="center">
 

@@ -5,6 +5,4 @@ property of Teibto Co., Ltd. Unauthorized copying, distribution, modification,
 or use of this software, in whole or in part, is strictly prohibited without
 the prior written permission of Teibto Co., Ltd.
 
-This repository is made public for demonstration and portfolio purposes only.
-Public availability does not grant any license to use, copy, modify, merge,
-publish, distribute, sublicense, or sell this software or its derivatives.
+Vendored third-party libraries, if any, retain their original licenses.
