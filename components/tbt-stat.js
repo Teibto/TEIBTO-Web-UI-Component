@@ -7,6 +7,7 @@
  */
 import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 import { tablerLink } from './tbt-icons-css.js';
+import { ICON_ALIASES } from './tbt-icon.js';
 
 class TbtStat extends LitElement {
   static properties = {
@@ -116,7 +117,7 @@ class TbtStat extends LitElement {
         <div class="label">${this.label}</div>
         ${this.icon ? html`
           <div class="icon-wrap" aria-hidden="true">
-            <i class="ti ti-${this.icon}"></i>
+            <i class="ti ti-${ICON_ALIASES[this.icon] ?? this.icon}"></i>
           </div>
         ` : nothing}
         <div class="value">${this.value ?? '—'}</div>

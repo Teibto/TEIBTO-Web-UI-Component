@@ -40,8 +40,10 @@ import { tablerLink } from './tbt-icons-css.js';
 
 /* ─── ERP Semantic Aliases ────────────────────────────────────────────────── */
 /* Maps ERP-friendly names → Tabler icon names.
-   Raw Tabler names (e.g. "device-floppy") still work as fallback. */
-const ICON_ALIASES = {
+   Raw Tabler names (e.g. "device-floppy") still work as fallback.
+   Exported so other components (tbt-stat) resolve through the SAME map —
+   rendering ti ti-<alias> directly produces a missing glyph. */
+export const ICON_ALIASES = {
   /* ── Document actions ── */
   save:           'device-floppy',
   print:          'printer',
