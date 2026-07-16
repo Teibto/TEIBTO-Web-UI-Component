@@ -136,7 +136,7 @@
     onView:   (id) => { location.href = `${d.formUrl}?id=${id}`; },
     onEdit:   (id) => { location.href = `${d.formUrl}?id=${id}&mode=edit`; },
     onDelete: async (id) => {
-      const ds = await import('/sc/SuiteScripts/Teibto/ds/v1.43.1/dist/tbt-ds.min.js');
+      const ds = await import('/sc/SuiteScripts/Teibto/ds/v1.45.1/dist/tbt-ds.min.js');
       const target = (d.orders || []).find(r => String(r.id) === String(id));
       const ok = await ds.confirm({
         title: 'Delete sales order?',
