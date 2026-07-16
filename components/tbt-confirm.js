@@ -1,6 +1,6 @@
 /**
  * @module tbt-confirm
- * @version 1.26.2
+ * @version 1.45.0
  * @author Wichit Wongta
  *
  * Promise-based confirmation dialog built on tbt-modal.

@@ -1,9 +1,9 @@
 # RFC 0006 — `tbt-datepicker` display format (YYYY-MM-DD / พ.ศ.)
 
-- Status: **Proposed**
+- Status: **Accepted** (2026-07-16 — Wichit review ผ่าน, implement ใน v1.45.0)
 - Author: Wichit Wongta
 - Issue: #29 (จาก UX QA baseline 2026-07-16, finding F10)
-- Target version: TBD (MINOR — additive prop, พฤติกรรม default เปลี่ยนเฉพาะ display)
+- Target version: v1.45.0 (MINOR — additive prop, พฤติกรรม default เปลี่ยนเฉพาะ display)
 
 ## Summary
 

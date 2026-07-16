@@ -59,6 +59,66 @@ describe('tbt-datepicker', () => {
   });
 });
 
+describe('tbt-datepicker display layer (RFC 0006)', () => {
+  it('shows ISO YYYY-MM-DD in the display span while blurred', async () => {
+    const el = await fixture(html`<tbt-datepicker value="2026-07-16"></tbt-datepicker>`);
+    await el.updateComplete;
+    const span = el.shadowRoot.querySelector('.display');
+    expect(span).to.exist;
+    expect(span.textContent.trim()).to.equal('2026-07-16');
+  });
+
+  it('era="be" displays the Buddhist year while value stays ISO ค.ศ.', async () => {
+    const el = await fixture(html`<tbt-datepicker era="be" value="2026-07-16"></tbt-datepicker>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.display').textContent.trim()).to.equal('2569-07-16');
+    expect(el.value).to.equal('2026-07-16');
+    expect(el.shadowRoot.querySelector('input').value).to.equal('2026-07-16');
+  });
+
+  it('hides the display span on focus and restores it on blur', async () => {
+    const el = await fixture(html`<tbt-datepicker value="2026-07-16"></tbt-datepicker>`);
+    await el.updateComplete;
+    const input = el.shadowRoot.querySelector('input');
+    input.dispatchEvent(new Event('focus'));
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.display')).to.not.exist;
+    input.dispatchEvent(new Event('blur'));
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.display')).to.exist;
+  });
+
+  it('updates the display after a change round-trip', async () => {
+    const el = await fixture(html`<tbt-datepicker value="2026-07-16"></tbt-datepicker>`);
+    await el.updateComplete;
+    const input = el.shadowRoot.querySelector('input');
+    input.value = '2026-12-31';
+    input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.display').textContent.trim()).to.equal('2026-12-31');
+  });
+
+  it('empty value shows the YYYY-MM-DD hint instead of the locale placeholder', async () => {
+    const el = await fixture(html`<tbt-datepicker></tbt-datepicker>`);
+    await el.updateComplete;
+    const span = el.shadowRoot.querySelector('.display');
+    expect(span.classList.contains('empty')).to.be.true;
+    expect(span.textContent.trim()).to.equal('YYYY-MM-DD');
+  });
+
+  it('readonly still shows the formatted display span', async () => {
+    const el = await fixture(html`<tbt-datepicker readonly era="be" value="2026-01-05"></tbt-datepicker>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.display').textContent.trim()).to.equal('2569-01-05');
+  });
+
+  it('display span is aria-hidden (input remains the accessible control)', async () => {
+    const el = await fixture(html`<tbt-datepicker value="2026-07-16"></tbt-datepicker>`);
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.display').getAttribute('aria-hidden')).to.equal('true');
+  });
+});
+
 describe('tbt-datepicker a11y', () => {
   it('label has for="dp-input" and input has matching id', async () => {
     const el = await fixture(html`<tbt-datepicker label="Document date"></tbt-datepicker>`);

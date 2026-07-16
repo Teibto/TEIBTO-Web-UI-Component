@@ -1,6 +1,6 @@
 /**
  * @component tbt-subtab, tbt-tab
- * @version 1.26.2
+ * @version 1.45.0
  * @author Wichit Wongta
  *
  * Horizontal tab navigation for subtabs within a page section.
