@@ -204,7 +204,8 @@ define(['N/record', 'N/query', 'N/runtime', './expense_meta'],
   function permissionError(action) {
     if (['approve', 'reject', 'pay'].indexOf(action) === -1) return '';
     const role = runtime.getCurrentUser().role;
-    const APPROVER_ROLES = [3]; // 3 = Administrator — replace at deploy time (#48)
+    // 3 = Administrator · 1038 = TT - Accountant (ผู้อนุมัติจริง, #48 — confirmed 2026-07-16)
+    const APPROVER_ROLES = [3, 1038];
     const TH = { approve: 'อนุมัติ', reject: 'ตีกลับ', pay: 'บันทึกจ่ายคืน' };
     return APPROVER_ROLES.indexOf(role) === -1
       ? 'คุณไม่มีสิทธิ์' + (TH[action] || action) + 'ใบเบิกค่าใช้จ่าย' : '';

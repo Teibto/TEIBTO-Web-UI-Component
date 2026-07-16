@@ -239,18 +239,16 @@ define(['N/record', 'N/query', 'N/search', 'N/runtime', './bill_receipt_meta'],
   /* ── Permission gate ───────────────────────────────────────────────── */
 
   // Returns '' if allowed, or a reason string. Approve/reject/pay require an
-  // approver permission (custom role driven via runtime). Tune the permission
-  // id to your account; the deploy guide documents how.
+  // approver role (#48 — role ids confirmed 2026-07-16).
   function permissionError(action) {
     const isApprovalAction = ['approve', 'reject', 'pay'].indexOf(action) !== -1;
     if (!isApprovalAction) return '';
-    // Example: gate on a deployment-time custom permission. Until that permission
-    // exists, gate on the Administrator/AP-manager role via runtime as a stopgap.
     const role = runtime.getCurrentUser().role;
-    // 3 = Administrator. Replace with your approver role id(s) at deploy time.
-    const APPROVER_ROLES = [3];
+    // 3 = Administrator · 1038 = TT - Accountant (ผู้อนุมัติจริง)
+    const APPROVER_ROLES = [3, 1038];
     if (APPROVER_ROLES.indexOf(role) === -1) {
-      return 'You do not have permission to ' + action + ' a bill receipt';
+      const TH = { approve: 'อนุมัติ', reject: 'ตีกลับ', pay: 'บันทึกชำระ' };
+      return 'คุณไม่มีสิทธิ์' + (TH[action] || action) + 'ใบวางบิล';
     }
     return '';
   }
