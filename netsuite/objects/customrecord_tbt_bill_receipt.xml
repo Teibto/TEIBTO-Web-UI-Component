@@ -8,11 +8,7 @@
 <customrecordtype scriptid="customrecord_tbt_bill_receipt">
   <recordname>TBT Bill Receipt</recordname>
   <includename>T</includename>
-  <includenumber>F</includenumber>
   <showid>F</showid>
-  <enablemailmerge>F</enablemailmerge>
-  <iconbuiltin>T</iconbuiltin>
-  <icon>RECEIPT</icon>
   <allowattachments>T</allowattachments>
   <allowinlineediting>F</allowinlineediting>
   <allowquickadd>F</allowquickadd>
@@ -26,7 +22,7 @@
   <customrecordcustomfields>
     <customrecordcustomfield scriptid="custrecord_tbt_br_tranid">
       <label>Document No.</label>
-      <fieldtype>FREEFORMTEXT</fieldtype>
+      <fieldtype>TEXT</fieldtype>
       <ismandatory>F</ismandatory>
       <isformula>F</isformula>
       <displaytype>NORMAL</displaytype>
@@ -60,21 +56,21 @@
     </customrecordcustomfield>
     <customrecordcustomfield scriptid="custrecord_tbt_br_contact">
       <label>Delivered by</label>
-      <fieldtype>FREEFORMTEXT</fieldtype>
+      <fieldtype>TEXT</fieldtype>
       <ismandatory>F</ismandatory>
       <displaytype>NORMAL</displaytype>
       <storevalue>T</storevalue>
     </customrecordcustomfield>
     <customrecordcustomfield scriptid="custrecord_tbt_br_reference">
       <label>Reference no.</label>
-      <fieldtype>FREEFORMTEXT</fieldtype>
+      <fieldtype>TEXT</fieldtype>
       <ismandatory>F</ismandatory>
       <displaytype>NORMAL</displaytype>
       <storevalue>T</storevalue>
     </customrecordcustomfield>
     <customrecordcustomfield scriptid="custrecord_tbt_br_status">
       <label>Status</label>
-      <fieldtype>FREEFORMTEXT</fieldtype>
+      <fieldtype>TEXT</fieldtype>
       <ismandatory>T</ismandatory>
       <defaultvalue>Draft</defaultvalue>
       <displaytype>NORMAL</displaytype>

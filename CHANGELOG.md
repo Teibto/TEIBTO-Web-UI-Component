@@ -7,6 +7,18 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Added
+
+- **SDF script objects for the bill receipt module** (2026-07-16) — Suitelet
+  list/form + RESTlet as `netsuite/objects/customscript_tbt_*.xml`, so
+  `suitecloud project:deploy` creates the script records + deployments with the
+  exact ids the code resolves (no manual UI setup; DEPLOY.md steps updated).
+  Record XMLs fixed to pass SDF validation: `FREEFORMTEXT` → `TEXT`, dropped
+  unsupported `includenumber` / `icon` / `enablemailmerge` fields. First real
+  deployment landed on `4089685_SB2` — both pages verified in-browser (list =
+  real-data path `demo:false`, form loads 693 live vendors, DS assets load from
+  N/file-resolved URLs per #17).
+
 ### Fixed
 
 - **`tbt_page.js`: resolve File Cabinet URLs via `N/file` instead of the
