@@ -16,6 +16,15 @@ Format: [Semantic Versioning](https://semver.org)
   `concurrency: 4` — the Unit tests workflow no longer exits 1 on slow CI
   runners where the first test pages missed the default 30s start window
   even though every test passed (#60)
+- Templates: bump hardcoded DS dynamic-import path `v1.43.1` → `v1.45.1` in 8 body
+  templates (list ×5, `erp-form`, `so-form`, `kit-doc`) — in-body `ds.*` imports
+  now match the released bundle (#62)
+
+### Changed
+
+- `scripts/sync-version.js` now also rewrites `/ds/vX.Y.Z/` paths in
+  `templates/*.html` and the `DS_VERSION` constant in `netsuite/tbt_page.js`,
+  so template import paths can no longer drift on release (#62)
 
 ## [1.45.1] - 2026-07-17
 

@@ -8,6 +8,8 @@
  *   - package.json       → version, tbt.ds-version, tbt.file-cabinet-path, tbt.skill-version
  *   - components/*.js    → @version X.Y.Z in JSDoc header
  *   - README.md          → every /vX.Y.Z/ occurrence in code blocks
+ *   - templates/*.html   → /ds/vX.Y.Z/ File Cabinet import paths
+ *   - netsuite/tbt_page.js → DS_VERSION constant
  */
 
 import fs from 'node:fs';
@@ -83,6 +85,36 @@ if (updatedReadme !== readme) {
   console.log(`✓ README.md → v${newVersion}`);
 } else {
   console.log(`  README.md already at v${newVersion}`);
+}
+
+// 4. templates/**/*.html — /ds/vX.Y.Z/ File Cabinet import paths
+const templatesDir = path.join(ROOT, 'templates');
+const htmlFiles = fs.readdirSync(templatesDir).filter(f => f.endsWith('.html'));
+let templateCount = 0;
+
+for (const file of htmlFiles) {
+  const filePath = path.join(templatesDir, file);
+  const src = fs.readFileSync(filePath, 'utf8');
+  const updated = src.replace(/\/ds\/v\d+\.\d+\.\d+\//g, `/ds/v${newVersion}/`);
+  if (updated !== src) {
+    write(filePath, updated);
+    templateCount++;
+  }
+}
+console.log(`✓ templates/ → v${newVersion} (${templateCount} files updated)`);
+
+// 5. netsuite/tbt_page.js — DS_VERSION constant
+const tbtPagePath = path.join(ROOT, 'netsuite', 'tbt_page.js');
+const tbtPage = fs.readFileSync(tbtPagePath, 'utf8');
+const updatedTbtPage = tbtPage.replace(
+  /(DS_VERSION\s*=\s*')\d+\.\d+\.\d+(')/,
+  `$1${newVersion}$2`
+);
+if (updatedTbtPage !== tbtPage) {
+  write(tbtPagePath, updatedTbtPage);
+  console.log(`✓ netsuite/tbt_page.js → ${newVersion}`);
+} else {
+  console.log(`  netsuite/tbt_page.js already at ${newVersion}`);
 }
 
 if (DRY_RUN) {
