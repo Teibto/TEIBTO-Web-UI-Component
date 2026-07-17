@@ -41,101 +41,43 @@
 </div>
 
 <script type="module">
-  const d  = window.__DATA__;
-  const rt = window.tbtPageRuntime;
-
-  const fCustomer = document.getElementById('f-customer');
-  const fStatus   = document.getElementById('f-status');
-  const fSearch   = document.getElementById('f-search');
-  fCustomer.options = [{ value: '', label: 'All customers' }, ...d.customers];
-  fStatus.options   = [{ value: '', label: 'All statuses' },  ...d.statuses];
-  fCustomer.value = fStatus.value = '';
-
-  const STATUS_VARIANT = { Draft: 'warning', 'Pending approval': 'info', Approved: 'success', Paid: 'success', Overdue: 'danger', Rejected: 'danger' };
-  const statusBadge = (s) => rt.badge(s, STATUS_VARIANT[s] || 'neutral');
+  import * as ds from '/sc/SuiteScripts/Teibto/ds/v1.45.1/dist/tbt-ds.min.js';
+  const d = window.__DATA__;
 
   const TODAY = '2026-05-30';
-  function recomputeStats(rows) {
-    const value   = rt.sumBy(rows, 'amount');
-    const paid    = rows.filter(r => r.status === 'Paid').length;
-    const overdue = rows.filter(r => r.status !== 'Paid' && r.duedate < TODAY).length;
-    document.getElementById('stat-total').value   = String(rows.length);
-    document.getElementById('stat-value').value   = rt.currency(value);
-    document.getElementById('stat-paid').value    = String(paid);
-    document.getElementById('stat-overdue').value = String(overdue);
-    document.getElementById('hdr-count').textContent = rows.length + ' invoices';
-  }
-
-  const table = document.getElementById('rec-table');
-  table.columns = [
-    { key: 'no',          label: 'No.',         align: 'right', resizable: false },
-    { key: 'tranid',      label: 'Invoice no.', sortable: true, mobileTitle: true,
-      href: row => `${d.formUrl}?id=${row.id}` },
-    { key: 'customer',    label: 'Customer',    sortable: true },
-    { key: 'date',        label: 'Date',        sortable: true },
-    { key: 'duedate',     label: 'Due date',    sortable: true },
-    { key: 'amountText',  label: 'Amount',      align: 'right', sortable: true },
-    { key: 'statusBadge', label: 'Status',      align: 'center', html: true },
-    { key: 'actions',     label: 'Actions',     align: 'center', html: true, resizable: false },
-  ];
-
-  function renderRows(rows) {
-    table.rows = rows.map((r, i) => ({
-      ...r,
-      no:          i + 1,
-      amountText:  rt.currency(r.amount),
-      statusBadge: statusBadge(r.status),
-      actions:     rt.rowActions(r.id),
-    }));
-    recomputeStats(rows);
-  }
-
-  function applyFilter() {
-    const c = fCustomer.value, st = fStatus.value;
-    const q = (fSearch.value || '').toLowerCase();
-    renderRows((d.records || []).filter(r =>
-      (!c  || r.customerId === c) &&
-      (!st || r.status     === st) &&
-      (!q  || r.tranid.toLowerCase().includes(q))
-    ));
-  }
-  [fCustomer, fStatus].forEach(el => el.addEventListener('tbt-change', applyFilter));
-  fSearch.addEventListener('tbt-search', applyFilter);
-  applyFilter();
-
-  table.addEventListener('tbt-row-click', (e) => {
-    location.href = `${d.formUrl}?id=${e.detail.row.id}`;
-  });
-  rt.wireRowActions(table, {
-    onView:   (id) => { location.href = `${d.formUrl}?id=${id}`; },
-    onEdit:   (id) => { location.href = `${d.formUrl}?id=${id}&mode=edit`; },
-    onDelete: async (id) => {
-      const ds = await import('/sc/SuiteScripts/Teibto/ds/v1.45.1/dist/tbt-ds.min.js');
-      const ok = await ds.confirm({
-        title: 'Delete invoice?',
-        message: `Permanently delete ${(d.records || []).find(r => String(r.id) === String(id))?.tranid || id}?`,
-        confirmLabel: 'Delete',
-        variant: 'danger',
-      });
-      if (!ok) return;
-      d.records = d.records.filter(r => String(r.id) !== String(id));
-      applyFilter();
+  ds.initListPage({
+    data: d,
+    countNoun: 'invoices',
+    filters: [
+      { id: 'f-customer', field: 'customerId', options: d.customers, allLabel: 'All customers' },
+      { id: 'f-status',   field: 'status',     options: d.statuses,  allLabel: 'All statuses' },
+    ],
+    searchText: (r) => r.tranid,
+    statusVariant: { Draft: 'warning', 'Pending approval': 'info', Approved: 'success', Paid: 'success', Overdue: 'danger', Rejected: 'danger' },
+    derive: (r, rt) => ({ amountText: rt.currency(r.amount) }),
+    columns: [
+      { key: 'no',          label: 'No.',         align: 'right', resizable: false },
+      { key: 'tranid',      label: 'Invoice no.', sortable: true, mobileTitle: true,
+        href: row => `${d.formUrl}?id=${row.id}` },
+      { key: 'customer',    label: 'Customer',    sortable: true },
+      { key: 'date',        label: 'Date',        sortable: true },
+      { key: 'duedate',     label: 'Due date',    sortable: true },
+      { key: 'amountText',  label: 'Amount',      align: 'right', sortable: true },
+      { key: 'statusBadge', label: 'Status',      align: 'center', html: true },
+      { key: 'actions',     label: 'Actions',     align: 'center', html: true, resizable: false },
+    ],
+    stats: [
+      { id: 'stat-total',   value: (rows) => String(rows.length) },
+      { id: 'stat-value',   value: (rows, rt) => rt.currency(rt.sumBy(rows, 'amount')) },
+      { id: 'stat-paid',    value: (rows) => String(rows.filter(r => r.status === 'Paid').length) },
+      { id: 'stat-overdue', value: (rows) => String(rows.filter(r => r.status !== 'Paid' && r.duedate < TODAY).length) },
+    ],
+    deleteNoun: 'invoice',
+    deleteLabel: (r) => r.tranid,
+    csv: {
+      header: 'Invoice no.,Customer,Date,Due,Amount,Status',
+      row: (r) => `"${r.tranid}","${r.customer}","${r.date}","${r.duedate}",${r.amount},"${r.status}"`,
+      filename: 'invoices',
     },
   });
-  document.getElementById('new-btn').addEventListener('click', () => {
-    location.href = `${d.formUrl}?id=new`;
-  });
-
-  document.getElementById('export-btn').addEventListener('click', () => {
-    const csv = ['Invoice no.,Customer,Date,Due,Amount,Status', ...d.records.map(r =>
-      `"${r.tranid}","${r.customer}","${r.date}","${r.duedate}",${r.amount},"${r.status}"`
-    )].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = 'invoices-' + new Date().toISOString().slice(0, 10) + '.csv';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
-  document.getElementById('print-btn').addEventListener('click', () => window.print());
 </script>

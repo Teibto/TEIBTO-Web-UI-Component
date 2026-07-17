@@ -41,100 +41,42 @@
 </div>
 
 <script type="module">
-  const d  = window.__DATA__;
-  const rt = window.tbtPageRuntime;
+  import * as ds from '/sc/SuiteScripts/Teibto/ds/v1.45.1/dist/tbt-ds.min.js';
+  const d = window.__DATA__;
 
-  const fCategory   = document.getElementById('f-category');
-  const fSubsidiary = document.getElementById('f-subsidiary');
-  const fSalesrep   = document.getElementById('f-salesrep');
-  const fSearch     = document.getElementById('f-search');
-  fCategory.options   = [{ value: '', label: 'All categories' }, ...d.categories];
-  fSubsidiary.options = [{ value: '', label: 'All subsidiaries' }, ...d.subsidiaries];
-  fSalesrep.options   = [{ value: '', label: 'All sales reps' }, ...d.salesreps];
-  fCategory.value = fSubsidiary.value = fSalesrep.value = '';
-
-  function recomputeStats(rows) {
-    const credit = rt.sumBy(rows, 'creditlimit');
-    const vip    = rows.filter(r => r.category === 'CAT_VIP').length;
-    const over   = rows.filter(r => r.outstanding > r.creditlimit).length;
-    document.getElementById('stat-total').value   = String(rows.length);
-    document.getElementById('stat-credit').value  = rt.currency(credit);
-    document.getElementById('stat-vip').value     = String(vip);
-    document.getElementById('stat-overdue').value = String(over);
-    document.getElementById('hdr-count').textContent = rows.length + ' customers';
-  }
-
-  const table = document.getElementById('rec-table');
-  table.columns = [
-    { key: 'no',           label: 'No.',         align: 'right', resizable: false },
-    { key: 'entityid',     label: 'Customer ID', sortable: true, mobileTitle: true,
-      href: row => `${d.formUrl}?id=${row.id}` },
-    { key: 'companyname',  label: 'Company',     sortable: true },
-    { key: 'taxid',        label: 'Tax ID' },
-    { key: 'categoryLabel',label: 'Category',    sortable: true },
-    { key: 'salesrepName', label: 'Sales rep' },
-    { key: 'creditText',   label: 'Credit',      align: 'right', sortable: true },
-    { key: 'actions',      label: 'Actions',     align: 'center', html: true, resizable: false },
-  ];
-
-  function renderRows(rows) {
-    table.rows = rows.map((r, i) => ({
-      ...r,
-      no:         i + 1,
-      creditText: rt.currency(r.creditlimit),
-      actions:    rt.rowActions(r.id),
-    }));
-    recomputeStats(rows);
-  }
-
-  function applyFilter() {
-    const c = fCategory.value, s = fSubsidiary.value, r = fSalesrep.value;
-    const q = (fSearch.value || '').toLowerCase();
-    renderRows((d.records || []).filter(x =>
-      (!c || x.category   === c) &&
-      (!s || x.subsidiary === s) &&
-      (!r || x.salesrep   === r) &&
-      (!q || (`${x.companyname} ${x.taxid}`).toLowerCase().includes(q))
-    ));
-  }
-  [fCategory, fSubsidiary, fSalesrep].forEach(el => el.addEventListener('tbt-change', applyFilter));
-  fSearch.addEventListener('tbt-search', applyFilter);
-  applyFilter();
-
-  table.addEventListener('tbt-row-click', (e) => {
-    location.href = `${d.formUrl}?id=${e.detail.row.id}`;
-  });
-  rt.wireRowActions(table, {
-    onView:   (id) => { location.href = `${d.formUrl}?id=${id}`; },
-    onEdit:   (id) => { location.href = `${d.formUrl}?id=${id}&mode=edit`; },
-    onDelete: async (id) => {
-      const ds = await import('/sc/SuiteScripts/Teibto/ds/v1.45.1/dist/tbt-ds.min.js');
-      const target = (d.records || []).find(r => String(r.id) === String(id));
-      const ok = await ds.confirm({
-        title: 'Delete customer?',
-        message: `Permanently delete ${target?.entityid || id}?`,
-        confirmLabel: 'Delete',
-        variant: 'danger',
-      });
-      if (!ok) return;
-      d.records = d.records.filter(r => String(r.id) !== String(id));
-      applyFilter();
+  ds.initListPage({
+    data: d,
+    countNoun: 'customers',
+    filters: [
+      { id: 'f-category',   field: 'category',   options: d.categories,   allLabel: 'All categories' },
+      { id: 'f-subsidiary', field: 'subsidiary', options: d.subsidiaries, allLabel: 'All subsidiaries' },
+      { id: 'f-salesrep',   field: 'salesrep',   options: d.salesreps,    allLabel: 'All sales reps' },
+    ],
+    searchText: (r) => `${r.companyname} ${r.taxid}`,
+    derive: (r, rt) => ({ creditText: rt.currency(r.creditlimit) }),
+    columns: [
+      { key: 'no',           label: 'No.',         align: 'right', resizable: false },
+      { key: 'entityid',     label: 'Customer ID', sortable: true, mobileTitle: true,
+        href: row => `${d.formUrl}?id=${row.id}` },
+      { key: 'companyname',  label: 'Company',     sortable: true },
+      { key: 'taxid',        label: 'Tax ID' },
+      { key: 'categoryLabel',label: 'Category',    sortable: true },
+      { key: 'salesrepName', label: 'Sales rep' },
+      { key: 'creditText',   label: 'Credit',      align: 'right', sortable: true },
+      { key: 'actions',      label: 'Actions',     align: 'center', html: true, resizable: false },
+    ],
+    stats: [
+      { id: 'stat-total',   value: (rows) => String(rows.length) },
+      { id: 'stat-credit',  value: (rows, rt) => rt.currency(rt.sumBy(rows, 'creditlimit')) },
+      { id: 'stat-vip',     value: (rows) => String(rows.filter(r => r.category === 'CAT_VIP').length) },
+      { id: 'stat-overdue', value: (rows) => String(rows.filter(r => r.outstanding > r.creditlimit).length) },
+    ],
+    deleteNoun: 'customer',
+    deleteLabel: (r) => r.entityid,
+    csv: {
+      header: 'ID,Company,Tax ID,Category,Sales rep,Credit',
+      row: (r) => `"${r.entityid}","${r.companyname}","${r.taxid}","${r.categoryLabel}","${r.salesrepName}",${r.creditlimit}`,
+      filename: 'customers',
     },
   });
-  document.getElementById('new-btn').addEventListener('click', () => {
-    location.href = `${d.formUrl}?id=new`;
-  });
-
-  document.getElementById('export-btn').addEventListener('click', () => {
-    const csv = ['ID,Company,Tax ID,Category,Sales rep,Credit', ...d.records.map(r =>
-      `"${r.entityid}","${r.companyname}","${r.taxid}","${r.categoryLabel}","${r.salesrepName}",${r.creditlimit}`
-    )].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = 'customers-' + new Date().toISOString().slice(0, 10) + '.csv';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
-  document.getElementById('print-btn').addEventListener('click', () => window.print());
 </script>

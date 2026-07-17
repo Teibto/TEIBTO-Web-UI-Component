@@ -83,3 +83,4 @@ export * from './tbt-date-range.js';
 export * from './tbt-file-upload.js';
 export * from './tbt-doc-form.js';
 export * from './tbt-doc-schemas.js';
+export * from './tbt-list-page.js';
