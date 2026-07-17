@@ -1,6 +1,6 @@
 /**
  * @component tbt-tree
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * Hierarchical tree view — expand/collapse nested nodes and select one.

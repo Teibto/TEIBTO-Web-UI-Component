@@ -7,6 +7,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+_(nothing yet)_
+
+## [1.46.0] - 2026-07-17
+
+Release rollup of the 2026-07-17 code-review sweep (#60–#66) plus the shared
+`initListPage` controller (#64). Production impact on the deployed bill-receipt
+and expense pages is limited to the `watchOutsideClick` refactor (#63) — the
+popup close-on-outside-click path on their dropdowns/popovers; `initListPage`
+ships in the bundle but is dormant there (the list templates that consume it are
+dev/demo only, not in the deployed File Cabinet). First release deployed via
+SuiteCloud SDF (`suitecloud project:deploy`) instead of manual File Cabinet
+upload — see `netsuite/DEPLOY.md`.
+
 ### Fixed
 
 - `.gitleaks.toml`: allowlist local git-ignored `.env` so the R6 secret-scan

@@ -1,6 +1,6 @@
 /**
  * @component tbt-avatar
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * User avatar — image with an automatic initials fallback (colour derived from

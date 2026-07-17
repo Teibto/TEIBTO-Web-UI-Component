@@ -25,7 +25,7 @@
  *
  * @author Wichit Wongta
  * @since 2026-07-17
- * @version 1.45.1
+ * @version 1.46.0
  */
 
 /**

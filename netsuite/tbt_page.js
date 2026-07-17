@@ -42,7 +42,7 @@ define([ 'N/error', 'N/file' ], (error, file) => {
 
   /* ── Single source of truth ──────────────────────────────────────── */
 
-  const DS_VERSION = '1.45.1';
+  const DS_VERSION = '1.46.0';
   const FC_DIST_PATH = `SuiteScripts/Teibto/ds/v${DS_VERSION}/dist`;
   const LOGO_PATH  = 'SuiteScripts/Teibto/assets/teibtologo.png';
   const BRAND      = 'Teibto ERP';

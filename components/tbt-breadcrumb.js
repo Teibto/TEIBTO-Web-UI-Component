@@ -1,6 +1,6 @@
 /**
  * @component tbt-breadcrumb
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * Navigation breadcrumb trail for ERP page hierarchy.

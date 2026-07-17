@@ -1,6 +1,6 @@
 /**
  * @component tbt-popover
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * Click-triggered floating panel for action menus, info cards, and quick forms.

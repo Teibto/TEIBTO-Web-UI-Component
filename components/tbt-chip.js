@@ -1,6 +1,6 @@
 /**
  * @component tbt-chip
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * Toggleable chip / filter tag with optional remove action.
