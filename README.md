@@ -1407,7 +1407,7 @@ suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.46.0/*"
 
 ```bash
 cd tbt-ds
-npm run serve   # Dev server → http://localhost:8080
+npm run serve   # Dev server → http://localhost:8081
 ```
 
 Demo pages:
