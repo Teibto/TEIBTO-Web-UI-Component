@@ -7,6 +7,8 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+## [1.46.1] - 2026-07-17
+
 ### Changed
 
 - SDF staging folder renamed `tbt-ds/` → `sdf/` (it shared the repo's own name);

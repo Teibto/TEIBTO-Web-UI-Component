@@ -1,6 +1,6 @@
 /**
  * @component tbt-address
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Composite address field. Renders a small grid of inputs:

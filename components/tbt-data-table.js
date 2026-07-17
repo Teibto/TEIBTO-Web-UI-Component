@@ -1,6 +1,6 @@
 /**
  * @component tbt-data-table
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Server-side data table wrapper around tbt-table.

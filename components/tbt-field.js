@@ -1,6 +1,6 @@
 /**
  * @component tbt-field
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Label + value pair for displaying record data.

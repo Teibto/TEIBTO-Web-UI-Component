@@ -1,6 +1,6 @@
 /**
  * @component tbt-progress
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Horizontal progress bar for upload, import batch, and processing feedback.
