@@ -20,7 +20,7 @@ Client code `internal` · Repo Owner @wichtking · Data classification **Interna
 
 ---
 
-- **43 components** — layout, navigation, forms, data display, feedback, and illustrations
+- **65 components** — layout, navigation, forms, data display, feedback, and illustrations
 - **No build step** in development — Lit 3 loads from CDN as ES modules
 - **Design tokens** via `--tbt-*` CSS custom properties — automatic dark mode
 - **Mobile-first** — sidebar drawer, responsive table card view, touch-friendly inputs
@@ -74,7 +74,7 @@ Client code `internal` · Repo Owner @wichtking · Data classification **Interna
 ```
 tbt-ds/
 ├── components/
-│   ├── index.js                # Barrel — imports all 43 tbt-* components
+│   ├── index.js                # Barrel — imports all 65 tbt-* components
 │   ├── tbt-icons-css.js        # Shared Tabler CSS injector for shadow DOM
 │   │
 │   ├── tbt-app-shell.js        # Page wrapper (menubar + sidebar + content)
@@ -129,7 +129,7 @@ tbt-ds/
 ├── demo/
 │   ├── demo.html               # Interactive Purchase Order page (fully editable form)
 │   ├── icon-svg.html           # Icon gallery + SVG illustration browser
-│   └── specimen.html           # Component showcase (all 43 components)
+│   └── specimen.html           # Component showcase (all 65 components)
 │
 ├── CHANGELOG.md
 └── package.json
@@ -1416,7 +1416,7 @@ Demo pages:
 |---|---|---|
 | Interactive demo | `/demo/demo.html` | Full Purchase Order page — editable form, inline line items, approval flow |
 | Icons & SVG | `/demo/icon-svg.html` | All 80+ icon aliases + SVG illustrations with live search and copy |
-| Component showcase | `/demo/specimen.html` | All 43 components in one page |
+| Component showcase | `/demo/specimen.html` | All 65 components in one page |
 
 No build step needed in development — components import Lit 3 from CDN.
 
