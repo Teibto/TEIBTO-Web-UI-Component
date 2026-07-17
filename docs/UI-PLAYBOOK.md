@@ -79,22 +79,35 @@ npm run build                       # bundle ต้องผ่าน (แต่
 - [ ] axe-core: 0 critical/serious (inject จาก CDN แล้ว `axe.run(document)`)
 - [ ] เดิน flow จริงจนจบ: save → เลขเอกสารขึ้น + URL มี id → refresh แล้วได้หน้าเดิม → save ซ้ำไม่สร้าง record ใหม่
 
-## 5. Release + deploy ไป NetSuite
+## 5. Release + deploy ไป NetSuite (SuiteCloud SDF — canonical ตั้งแต่ v1.46.0)
 
-1. bump `package.json` + ย้าย CHANGELOG `[Unreleased]` → `[X.Y.Z] - YYYY-MM-DD`
-2. `npm run build` → ได้ `dist/tbt-ds.min.js`, `dist/tbt-theme.css` (+ `tbt-page-runtime.js` hand-authored)
-3. แก้ `DS_VERSION` ใน `netsuite/tbt_page.js` ให้ตรง version ใหม่
-4. `npm run sync:sdf` → **copy เฉพาะ `dist/` เข้า staging เท่านั้น** — ไฟล์ source ที่แก้
-   (`netsuite/*.js`, `templates/sl_*.js`, `templates/*.html`) ต้อง `cp` เข้า
-   `tbt-ds/src/FileCabinet/SuiteScripts/Teibto/` เอง ไม่งั้น deploy สำเร็จแต่ account
-   ยังรันโค้ดเก่า (เจอจริง 2026-07-16: icon fix ไม่ขึ้นเพราะ `tbt_page.js` บน account ยังเป็น
-   version เก่า)
-5. `suitecloud project:deploy` (authid `teibto-sb2`, รันจาก `tbt-ds/`) — สร้างโฟลเดอร์
-   `/SuiteScripts/Teibto/ds/v<X.Y.Z>/dist/` ใหม่ (ห้ามเขียนทับโฟลเดอร์ version เก่า)
-   ตรวจบรรทัด `Upload file --` ใน log ว่าไฟล์ที่แก้ขึ้นครบทุกตัว
-6. Verify: เปิดหน้า Suitelet จริง — asset โหลดจาก URL ที่ resolve ผ่าน `N/file` +
-   hash เทียบไฟล์ local (สูตรอยู่ใน `netsuite/DEPLOY.md`)
-7. tag `vX.Y.Z` + GitHub release
+เลิก File Cabinet upload มือแล้ว — deploy ผ่าน SDF project (`tbt-ds/` staging, gitignored,
+`defaultAuthId: teibto-sb2`). ทำจริง v1.46.0 (2026-07-17). รายละเอียด `netsuite/DEPLOY.md`.
+
+1. `node scripts/sync-version.js X.Y.Z` — อัปเดต `package.json` + `components/*.js @version`
+   + `README.md` + `templates/*.html` (`/ds/vX.Y.Z/`) + `netsuite/tbt_page.js` `DS_VERSION`
+   ให้อัตโนมัติ (#62 ครอบให้แล้ว — ไม่ต้องแก้มือ) · ย้าย CHANGELOG `[Unreleased]` → `[X.Y.Z] - YYYY-MM-DD` เอง
+2. `npm run build` → `dist/tbt-ds.min.js` + `tbt-theme.css` (+ `tbt-page-runtime.js` hand-authored)
+3. `npm run sync:sdf` → **copy เฉพาะ `dist/` เข้า staging** — ⚠️ ไม่ copy `tbt_page.js`/backend
+   ให้ `cp netsuite/tbt_page.js tbt-ds/src/FileCabinet/SuiteScripts/Teibto/` เอง (+ source อื่นที่แก้:
+   `netsuite/*.js`, `templates/sl_*.js`, `*.html`) ไม่งั้น deploy สำเร็จแต่ DS_VERSION บน account ยัง
+   stale (เจอจริง 2026-07-16). เช็คด้วย `diff` ก่อน deploy
+4. `cd tbt-ds` → `suitecloud project:validate --server` → `suitecloud project:deploy --dryrun`
+5. **อ่าน dryrun ก่อน deploy เสมอ (footgun).** bundle-only release ต้องเห็นแค่ `Create folder` +
+   `Upload file` ใต้ `~/FileCabinet/.../ds/vX.Y.Z/` (+ `tbt_page.js`). ถ้าโชว์ `Update object` ของ
+   record/field/script/deployment (bill-receipt/expense) = `deploy.xml` เต็มมี `~/Objects/*` จะ
+   re-push ทับ Object ทั้ง 40+ ตัว เสี่ยง drift → **scope `deploy.xml` เหลือ**
+   `<deploy><files><path>~/FileCabinet/*</path></files></deploy>` (backup ตัวเต็มไว้ คืนหลัง deploy)
+   แล้ว dryrun ซ้ำให้เหลือแค่ file ops (ทำจริง v1.46.0 → deploy 2 วินาที)
+6. `suitecloud project:deploy` — สร้างโฟลเดอร์ version ใหม่ (ห้ามทับ version เก่า — pages ที่ pin
+   version เดิมต้องยังโหลดได้)
+7. Verify (ไม่ต้อง browser): `MSYS_NO_PATHCONV=1 suitecloud file:import --paths "/SuiteScripts/Teibto/tbt_page.js"`
+   แล้ว `diff` `DS_VERSION` กับ source (git-bash แปลง path ต้อง `MSYS_NO_PATHCONV=1`)
+8. Browser smoke (ยืนยัน consumer จริง) — ดู skill `netsuite-qa-browser` §SB2. จุดสำคัญ: บน SB2
+   bundle โหลดผ่าน `media.nl?id=..` (N/file.url) ไม่ใช่ path `/ds/vX.Y.Z/` → **ตรวจ version ด้วย
+   dynamic-import**: `import(<media.nl js url>)` แล้วเช็ค export ที่มีเฉพาะ version นั้น (เช่น
+   `m.initListPage` = v1.46.0/#64) + `demoBanner === none` (backend จริง ไม่ fallback)
+9. tag `vX.Y.Z` + GitHub release
 
 ## 6. QA รอบใหม่ (baseline/regression)
 
