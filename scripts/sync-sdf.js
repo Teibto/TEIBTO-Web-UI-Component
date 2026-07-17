@@ -12,11 +12,11 @@
  *
  * Writes to (the dist/ layer matches FC_BASE in netsuite/tbt_page.js and
  * every template — decided in v1.42.1, see CHANGELOG):
- *   tbt-ds/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/dist/tbt-ds.min.js
- *   tbt-ds/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/dist/tbt-theme.css
- *   tbt-ds/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/dist/tbt-page-runtime.js
+ *   sdf/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/dist/tbt-ds.min.js
+ *   sdf/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/dist/tbt-theme.css
+ *   sdf/src/FileCabinet/SuiteScripts/Teibto/ds/v{VERSION}/dist/tbt-page-runtime.js
  *
- * The tbt-ds/ folder is gitignored — it is a local SuiteCloud staging area
+ * The sdf/ folder is gitignored — it is a local SuiteCloud staging area
  * used by SuiteCloud CLI (suitecloud project:deploy).
  */
 
@@ -34,7 +34,7 @@ const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
 const version = pkg.version;
 
 const DIST = path.join(ROOT, 'dist');
-const SDF_TARGET = path.join(ROOT, 'tbt-ds', 'src', 'FileCabinet', 'SuiteScripts', 'Teibto', 'ds', `v${version}`, 'dist');
+const SDF_TARGET = path.join(ROOT, 'sdf', 'src', 'FileCabinet', 'SuiteScripts', 'Teibto', 'ds', `v${version}`, 'dist');
 
 const FILES = ['tbt-ds.min.js', 'tbt-theme.css', 'tbt-page-runtime.js'];
 
@@ -73,4 +73,4 @@ for (const file of FILES) {
 }
 
 console.log(`\n✓ SDF staging updated → v${version}`);
-console.log('  Next step: suitecloud project:deploy (from tbt-ds/ directory)');
+console.log('  Next step: suitecloud project:deploy (from sdf/ directory)');

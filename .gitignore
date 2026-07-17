@@ -5,8 +5,8 @@
 *.pem
 .qa-profiles/
 
-# SDF project generated folder (staging area for NetSuite upload)
-tbt-ds/
+# SDF project folder (local SuiteCloud staging area for NetSuite upload)
+sdf/
 
 # OS
 .DS_Store
