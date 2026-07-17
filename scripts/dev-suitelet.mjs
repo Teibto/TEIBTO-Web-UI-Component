@@ -144,6 +144,7 @@ const ENTRIES = {
   '/kit/customer':       'templates/sl_kit_customer.js',
   '/kit/sales-order':    'templates/sl_kit_sales_order.js',
   '/kit/purchase-order': 'templates/sl_kit_purchase_order.js',
+  '/kit/doc':            'templates/sl_tbt_doc_kit.js',
   '/time/entry':         'templates/sl_tt_entry.js',
   '/time/approval':      'templates/sl_tt_approval.js',
   '/time/report':        'templates/sl_tt_report.js',
@@ -161,6 +162,13 @@ const ENTRIES = {
   '/quotation/form':     'templates/sl_quotation_form.js',
   '/bill-receipt/list':  'templates/sl_bill_receipt_list.js',
   '/bill-receipt/form':  'templates/sl_bill_receipt_form.js',
+};
+
+// RESTlets — dispatched by ?script= on POST to the resolved scriptlet.nl URL
+// (N/url.resolveScript below returns that form). Lets the kit save round-trip
+// be exercised locally; the RESTlet module's post(bodyString) runs verbatim.
+const RESTLETS = {
+  customscript_tbt_rl_doc_kit: 'netsuite/rl_doc_kit.js',
 };
 
 const INDEX_HTML = `<!DOCTYPE html>
@@ -187,6 +195,8 @@ const INDEX_HTML = `<!DOCTYPE html>
           <tbt-button href="/kit/customer?id=C001"        variant="ghost"     icon="edit">Edit customer (C001)</tbt-button>
           <tbt-button href="/kit/sales-order"             variant="primary"   icon="sales-order">New sales order</tbt-button>
           <tbt-button href="/kit/sales-order?id=SO-0042"  variant="ghost"     icon="edit">Edit sales order (SO-0042)</tbt-button>
+          <tbt-button href="/kit/doc?schema=SALES_ORDER_SCHEMA"           variant="accent" icon="sales-order">Generic kit · new SO</tbt-button>
+          <tbt-button href="/kit/doc?schema=SALES_ORDER_SCHEMA&id=SO-1"   variant="ghost"  icon="edit">Generic kit · edit SO</tbt-button>
           <tbt-button href="/kit/purchase-order"          variant="primary"   icon="purchase-order">New purchase order</tbt-button>
           <tbt-button href="/kit/purchase-order?id=PO-0042" variant="ghost"   icon="edit">Edit purchase order (PO-0042)</tbt-button>
         </div>
@@ -310,6 +320,30 @@ const server = http.createServer(async (req, res) => {
     if (url === '/' || url === '/index.html') {
       res.writeHead(200, { 'Content-Type': MIME['.html'] });
       res.end(INDEX_HTML);
+      return;
+    }
+
+    // RESTlet POST — resolveScript returns /app/site/hosting/scriptlet.nl?script=<id>
+    if (req.method === 'POST' && url === '/app/site/hosting/scriptlet.nl') {
+      const scriptId = new URL(req.url, 'http://localhost').searchParams.get('script');
+      const relFile  = RESTLETS[scriptId];
+      if (relFile) {
+        const chunks = [];
+        for await (const c of req) chunks.push(c);
+        const mod = loadAmd(path.join(ROOT, relFile));
+        const JSON_H = { 'Content-Type': 'application/json; charset=utf-8' };
+        try {
+          const result = mod.post(Buffer.concat(chunks).toString('utf8'));
+          res.writeHead(200, JSON_H);
+          res.end(JSON.stringify(result));
+        } catch (e) {
+          // A RESTlet throw → non-2xx; the page reads body.message for its alert.
+          res.writeHead(400, JSON_H);
+          res.end(JSON.stringify({ message: e.message }));
+        }
+        return;
+      }
+      res.writeHead(404, { 'Content-Type': 'text/plain' }).end('No RESTlet: ' + scriptId);
       return;
     }
 

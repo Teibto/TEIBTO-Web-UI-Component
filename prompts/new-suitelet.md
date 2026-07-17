@@ -2,6 +2,9 @@
 
 Copy template ที่เหมาะกับ scope แล้ว fill in spec → ส่งให้ Claude.
 
+> วิธีทำงานเต็มวงจร (request → UI + Backend, control pipeline 9 ด่าน) อยู่ที่
+> [`docs/FORM-KIT-PLAYBOOK.md`](../docs/FORM-KIT-PLAYBOOK.md) · skill `teibto-form-kit`
+
 ---
 
 ## ⚡ ระดับ 1 — Quick (1 บรรทัด, ใช้กับ Module ที่มี schema สำเร็จรูป)

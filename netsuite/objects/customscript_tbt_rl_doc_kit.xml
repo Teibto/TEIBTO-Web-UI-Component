@@ -1,0 +1,21 @@
+<restlet scriptid="customscript_tbt_rl_doc_kit">
+  <description>Document form kit — save endpoint (stub writer). Validates the posted payload and echoes a document id; no record persisted. Replace with a real writer per topic.</description>
+  <isinactive>F</isinactive>
+  <name>TBT RL Doc Kit</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/Teibto/rl_doc_kit.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_tbt_rl_doc_kit">
+      <allemployees>F</allemployees>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>RELEASED</status>
+      <title>TBT Doc Kit RESTlet</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</restlet>

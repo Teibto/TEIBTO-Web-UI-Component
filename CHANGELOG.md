@@ -15,6 +15,13 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Added
 
+- Form Kit — a "request → whole page" workflow: `docs/FORM-KIT-PLAYBOOK.md` (3-plane
+  model + 9-stage gated control pipeline, UI/Backend split) and skill `teibto-form-kit`.
+  Reference kit: `templates/sl_tbt_doc_kit.js` (generic `?schema=&id=` Suitelet serving
+  `kit-doc.html`) + `netsuite/rl_doc_kit.js` (stub writer) + their SDF Objects; `/kit/doc`
+  route in the dev harness; RESTlet dispatch added to `dev-suitelet.mjs` for local save
+  round-trips. `UI-PLAYBOOK.md` + `prompts/new-suitelet.md` cross-link the kit. (#89)
+
 - Governance lint Rule 7: README `<N> components` claims must match the tagName
   count in `custom-elements.json`, so the figure fails CI instead of drifting. (#85)
 

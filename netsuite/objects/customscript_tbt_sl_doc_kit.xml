@@ -1,0 +1,24 @@
+<suitelet scriptid="customscript_tbt_sl_doc_kit">
+  <description>Generic schema-driven document form kit — serves kit-doc.html for any tbt-doc-schemas schema via ?schema=&amp;id= (tbt_page.render).</description>
+  <isinactive>F</isinactive>
+  <name>TBT SL Doc Kit</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/Teibto/sl_tbt_doc_kit.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_tbt_sl_doc_kit">
+      <allemployees>F</allemployees>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <eventtype></eventtype>
+      <isdeployed>T</isdeployed>
+      <isonline>F</isonline>
+      <loglevel>ERROR</loglevel>
+      <runasrole></runasrole>
+      <status>RELEASED</status>
+      <title>TBT Doc Kit Form</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</suitelet>
