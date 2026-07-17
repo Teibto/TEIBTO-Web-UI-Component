@@ -8,6 +8,8 @@ Client code `internal` · Repo Owner @wichtking · Data classification **Interna
 
 <div align="center">
 
+[![Version](https://img.shields.io/badge/version-v1.46.0-0D1171?style=for-the-badge)](CHANGELOG.md)
+
 [![Interactive Demo](https://img.shields.io/badge/🎮_Interactive_Demo-Purchase_Order_Page-FF6B35?style=for-the-badge)](https://teibto.github.io/TEIBTO-Web-UI-Component/demo/demo.html)
 &nbsp;&nbsp;
 [![Icons & SVG](https://img.shields.io/badge/✨_Icons_%26_SVG-Gallery-10B981?style=for-the-badge)](https://teibto.github.io/TEIBTO-Web-UI-Component/demo/icon-svg.html)
@@ -1433,7 +1435,7 @@ npm run build   # Bundles to tbt-ds.min.js for File Cabinet upload
 | New component, new prop | MINOR `1.x.0` |
 | Removed/renamed prop, breaking change | MAJOR `x.0.0` + migration guide |
 
-Update `package.json`, `CHANGELOG.md`, and File Cabinet path on every version bump.
+Update `package.json`, `CHANGELOG.md`, the README version badge, and File Cabinet path on every version bump.
 
 ---
 
