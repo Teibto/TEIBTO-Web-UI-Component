@@ -1382,7 +1382,7 @@ Three copy-paste page bodies + matching thin Suitelets live under `templates/`:
 ### Upload with SuiteCloud CLI
 
 ```bash
-cd tbt-ds/tbt-ds               # SDF project folder
+cd tbt-ds/sdf                 # SDF project folder (local, gitignored)
 suitecloud account:setup        # first-time auth (opens browser)
 suitecloud file:upload --paths "/SuiteScripts/Teibto/ds/v1.46.0/*"
 ```

@@ -89,10 +89,10 @@ npm run build                       # bundle ต้องผ่าน (แต่
    ให้อัตโนมัติ (#62 ครอบให้แล้ว — ไม่ต้องแก้มือ) · ย้าย CHANGELOG `[Unreleased]` → `[X.Y.Z] - YYYY-MM-DD` เอง
 2. `npm run build` → `dist/tbt-ds.min.js` + `tbt-theme.css` (+ `tbt-page-runtime.js` hand-authored)
 3. `npm run sync:sdf` → **copy เฉพาะ `dist/` เข้า staging** — ⚠️ ไม่ copy `tbt_page.js`/backend
-   ให้ `cp netsuite/tbt_page.js tbt-ds/src/FileCabinet/SuiteScripts/Teibto/` เอง (+ source อื่นที่แก้:
+   ให้ `cp netsuite/tbt_page.js sdf/src/FileCabinet/SuiteScripts/Teibto/` เอง (+ source อื่นที่แก้:
    `netsuite/*.js`, `templates/sl_*.js`, `*.html`) ไม่งั้น deploy สำเร็จแต่ DS_VERSION บน account ยัง
    stale (เจอจริง 2026-07-16). เช็คด้วย `diff` ก่อน deploy
-4. `cd tbt-ds` → `suitecloud project:validate --server` → `suitecloud project:deploy --dryrun`
+4. `cd sdf` → `suitecloud project:validate --server` → `suitecloud project:deploy --dryrun`
 5. **อ่าน dryrun ก่อน deploy เสมอ (footgun).** bundle-only release ต้องเห็นแค่ `Create folder` +
    `Upload file` ใต้ `~/FileCabinet/.../ds/vX.Y.Z/` (+ `tbt_page.js`). ถ้าโชว์ `Update object` ของ
    record/field/script/deployment (bill-receipt/expense) = `deploy.xml` เต็มมี `~/Objects/*` จะ

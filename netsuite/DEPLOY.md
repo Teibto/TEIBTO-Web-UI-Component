@@ -1,6 +1,6 @@
 # Deploy method — SuiteCloud SDF (canonical since v1.46.0)
 
-Everything below deploys through one SDF project (the gitignored `tbt-ds/`
+Everything below deploys through one SDF project (the gitignored `sdf/`
 staging folder, `defaultAuthId: teibto-sb2`). This replaced manual File Cabinet
 uploads at v1.46.0 — SDF ships the bundle, `tbt_page.js`, backends, and objects
 atomically, so a version bump can't leave the page requesting a `ds/vX.Y.Z/`
@@ -11,8 +11,8 @@ bundle that isn't on the account yet.
 ```sh
 node scripts/sync-version.js <X.Y.Z>   # bump pkg + components + templates + tbt_page DS_VERSION
 npm run build                          # dist/tbt-ds.min.js + tbt-theme.css
-npm run sync:sdf                       # copy dist/ → tbt-ds/src/FileCabinet/.../ds/v<X.Y.Z>/dist/
-cd tbt-ds
+npm run sync:sdf                       # copy dist/ → sdf/src/FileCabinet/.../ds/v<X.Y.Z>/dist/
+cd sdf
 suitecloud project:validate --authid teibto-sb2
 suitecloud project:deploy   --dryrun --authid teibto-sb2   # READ the diff first
 suitecloud project:deploy            --authid teibto-sb2
@@ -57,7 +57,7 @@ after deploying to a sandbox.
 
 ## Deploy steps (SuiteCloud CLI / SDF)
 
-1. **Copy sources into the SDF project** (`tbt-ds/` staging, per `sync:sdf`):
+1. **Copy sources into the SDF project** (`sdf/` staging, per `sync:sdf`):
    - `netsuite/objects/customrecord_tbt_bill_receipt*.xml` and
      `customscript_tbt_*.xml` → `src/Objects/`
    - `netsuite/bill_receipt_meta.js`, `bill_receipt_lib.js`, `rl_bill_receipt.js`,
