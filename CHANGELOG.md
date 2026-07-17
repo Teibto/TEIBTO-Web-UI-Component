@@ -7,6 +7,12 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Changed
+
+- SDF staging folder renamed `tbt-ds/` → `sdf/` (it shared the repo's own name);
+  all tracked references updated. The folder is gitignored, so `sync:sdf`
+  recreates it on next run. (#84)
+
 ### Added
 
 - Governance lint Rule 7: README `<N> components` claims must match the tagName
