@@ -1,6 +1,6 @@
 /**
  * @component tbt-tooltip
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Tooltip that appears on hover / focus above the slotted trigger element.

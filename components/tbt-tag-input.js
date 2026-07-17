@@ -1,6 +1,6 @@
 /**
  * @component tbt-tag-input
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Tag / chip input — type and press Enter to add tags; × button or Backspace to remove.

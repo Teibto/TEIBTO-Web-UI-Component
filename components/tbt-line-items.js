@@ -1,6 +1,6 @@
 /**
  * @component tbt-line-items
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Self-contained inline-editable line items table with automatic totals.

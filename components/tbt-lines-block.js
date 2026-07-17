@@ -1,6 +1,6 @@
 /**
  * @component tbt-lines-block
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Compound component: section wrapper + inline-editable line items + Add button + totals.

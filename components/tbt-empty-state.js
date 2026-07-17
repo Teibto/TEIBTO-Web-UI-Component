@@ -1,6 +1,6 @@
 /**
  * @component tbt-empty-state
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Empty state display for tables, lists, and search results with no data.

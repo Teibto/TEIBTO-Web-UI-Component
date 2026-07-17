@@ -21,7 +21,7 @@
  *
  * @author Wichit Wongta
  * @since 2026-05-22
- * @version 1.46.0
+ * @version 1.46.1
  */
 import { html } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 

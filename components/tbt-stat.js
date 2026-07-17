@@ -1,6 +1,6 @@
 /**
  * @component tbt-stat
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Stat / KPI card for dashboard metrics with optional trend indicator and icon.

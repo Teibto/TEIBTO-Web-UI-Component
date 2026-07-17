@@ -1,6 +1,6 @@
 /**
  * @component tbt-split-button
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Split button — primary action + dropdown of secondary actions in one control.

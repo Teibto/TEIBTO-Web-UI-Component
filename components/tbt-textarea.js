@@ -1,6 +1,6 @@
 /**
  * @component tbt-textarea
- * @version 1.46.0
+ * @version 1.46.1
  * @author Wichit Wongta
  *
  * Multiline text input sibling of tbt-input. Form-associated.
