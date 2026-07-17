@@ -1,6 +1,6 @@
 /**
  * @component tbt-timeline
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * Vertical event timeline for document history, process flows, and audit trails.

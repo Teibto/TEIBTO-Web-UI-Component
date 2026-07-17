@@ -1,6 +1,6 @@
 /**
  * @component tbt-badge
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * Status pill for showing document state, category, or count.

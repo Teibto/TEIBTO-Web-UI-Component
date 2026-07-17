@@ -1,6 +1,6 @@
 /**
  * @component tbt-section
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * Collapsible card section. Container for grouped fields or content.

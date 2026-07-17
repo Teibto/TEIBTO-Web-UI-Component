@@ -1,6 +1,6 @@
 /**
  * @component tbt-toggle
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * Sliding toggle switch for boolean on/off settings.

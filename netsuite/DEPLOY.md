@@ -1,3 +1,36 @@
+# Deploy method — SuiteCloud SDF (canonical since v1.46.0)
+
+Everything below deploys through one SDF project (the gitignored `tbt-ds/`
+staging folder, `defaultAuthId: teibto-sb2`). This replaced manual File Cabinet
+uploads at v1.46.0 — SDF ships the bundle, `tbt_page.js`, backends, and objects
+atomically, so a version bump can't leave the page requesting a `ds/vX.Y.Z/`
+bundle that isn't on the account yet.
+
+## Release a new DS bundle version
+
+```sh
+node scripts/sync-version.js <X.Y.Z>   # bump pkg + components + templates + tbt_page DS_VERSION
+npm run build                          # dist/tbt-ds.min.js + tbt-theme.css
+npm run sync:sdf                       # copy dist/ → tbt-ds/src/FileCabinet/.../ds/v<X.Y.Z>/dist/
+cd tbt-ds
+suitecloud project:validate --authid teibto-sb2
+suitecloud project:deploy   --dryrun --authid teibto-sb2   # READ the diff first
+suitecloud project:deploy            --authid teibto-sb2
+```
+
+**Read the dryrun before deploying.** A bundle-only bump must show up as
+*additions* under `FileCabinet/.../ds/v<X.Y.Z>/` (plus the updated `tbt_page.js`).
+If SDF proposes *modifying* existing Objects (bill-receipt / expense custom
+records, script deployments) or `AccountConfiguration`, **stop** — the project
+XML has drifted from what is live and a blind full-project deploy could alter the
+running apps. Reconcile first (`suitecloud object:import` / diff), then deploy.
+
+Old bundle folders (`ds/v1.42.1/` … `ds/v1.45.1/`) stay in the File Cabinet so
+pages pinned to an exact prior version keep working; never delete a shipped
+version folder.
+
+---
+
 # Deploy guide — Vendor bill receipt (รับวางบิล) backend
 
 This is the production backend for the bill-receipt module: two custom records,

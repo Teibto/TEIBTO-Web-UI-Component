@@ -1,6 +1,6 @@
 /**
  * @component tbt-list + tbt-list-item
- * @version 1.45.1
+ * @version 1.46.0
  * @author Wichit Wongta
  *
  * Vertical data list with label/value rows, optional icons, and per-item action slot.

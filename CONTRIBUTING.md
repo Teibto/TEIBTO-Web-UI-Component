@@ -13,7 +13,7 @@
 | 4. QA | `npm run lint` + `npm test` เขียว · component ใหม่/แก้ visual เปิด `demo/specimen.html` ตรวจ light + dark | เขียวครบก่อนเปิด PR |
 | 5. PR | เปิดเข้า `main` ตาม template · doc ที่กระทบไปกับ PR เดียวกัน (README / CHANGELOG / rfcs) | reviewer ≥ 1 · quality-gate ผ่าน |
 | 6. Squash | merge แบบ squash เท่านั้น (ระบบปิด merge commit/rebase ไว้แล้ว) | head branch ถูกลบอัตโนมัติ |
-| 7. Deploy | อัปโหลด `dist/` ขึ้น File Cabinet `/SuiteScripts/Teibto/ds/v<X.Y.Z>/` ตาม [netsuite/DEPLOY.md](netsuite/DEPLOY.md) | hash-verify ไฟล์บนปลายทาง |
+| 7. Deploy | `npm run build && npm run sync:sdf` แล้ว `suitecloud project:deploy` (SDF) ตาม [netsuite/DEPLOY.md](netsuite/DEPLOY.md) — **ห้าม dryrun ไม่ผ่าน** | `project:validate` + `project:deploy --dryrun` เขียว · dryrun ต้องเป็น File Cabinet additions เท่านั้น (ถ้าจะแก้ Objects เดิม ให้หยุดตรวจก่อน) |
 | 8. Release | ย้าย `[Unreleased]` ใน CHANGELOG เป็น version · bump `package.json` (`npm run version:sync`) · tag `v<X.Y.Z>` | tag message มีวันที่ `YYYY-MM-DD` |
 
 ## กติกากันงานซ้อน
