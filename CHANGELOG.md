@@ -22,6 +22,13 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Changed
 
+- Shared list-page controller `initListPage()` (`components/tbt-list-page.js`,
+  exported from the DS bundle) — the five ERP list pages (customer, PO,
+  invoice, quotation, SO) no longer copy-paste the same ~120-line module
+  script; each page keeps its markup and passes a declarative config
+  (filters, columns, stats, CSV). 733 → 431 lines across the five templates;
+  behavior verified per page in a real browser (#64)
+
 - Extract shared `watchOutsideClick()` helper (`components/tbt-outside-click.js`)
   — `tbt-dropdown`, `tbt-multiselect`, `tbt-menu-group`, `tbt-color-picker`,
   `tbt-split-button`, and `tbt-popover` no longer hand-roll the same document

@@ -23,6 +23,11 @@ export default {
   // ทุก test ผ่าน (#60) — เพิ่มเพดานเวลา start และจำกัดจำนวนไฟล์ที่รันพร้อมกัน
   browserStartTimeout: 120000,
   concurrency: 4,
+  // PITFALL: never `fixture()` a template whose ROOT is a plain element
+  // (e.g. <div> wrapping components) — open-wc waits for nextFrame →
+  // requestAnimationFrame, and concurrent wtr pages are hidden tabs where
+  // headless Chrome never fires rAF → the test hangs until mocha timeout.
+  // Fixture a single Lit component, or build DOM manually + updateComplete.
   browsers: [
     chromeLauncher({ launchOptions: { args: ['--no-sandbox', '--disable-dev-shm-usage'] } }),
   ],
