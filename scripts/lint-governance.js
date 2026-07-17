@@ -11,6 +11,7 @@
  *   4. Every components/tbt-*.js has @version X.Y.Z JSDoc
  *   5. Lit import URL is exactly the approved CDN string (no drift)
  *   6. No hardcoded color values in style="" attributes in demo/**\/*.html
+ *   7. README "<N> components" claims match tagName count in custom-elements.json
  */
 
 import fs from 'node:fs';
@@ -169,6 +170,41 @@ for (const filePath of demoFiles) {
   }
 }
 if (rule6Violations === 0) pass('No hardcoded colors in demo inline styles');
+
+// ─── Rule 7: README component count matches custom-elements.json ────────────
+// Every "<N> components" (or "<N> tbt-* components") claim in README.md must
+// equal the number of unique tagNames declared in the CEM manifest, so the
+// figure can't silently drift when components are added or removed.
+function collectTagNames(node, acc) {
+  if (Array.isArray(node)) {
+    for (const item of node) collectTagNames(item, acc);
+  } else if (node && typeof node === 'object') {
+    if (typeof node.tagName === 'string') acc.add(node.tagName);
+    for (const key of Object.keys(node)) collectTagNames(node[key], acc);
+  }
+  return acc;
+}
+
+const manifestPath = path.join(ROOT, 'custom-elements.json');
+const readmePath = path.join(ROOT, 'README.md');
+let rule7Violations = 0;
+if (fs.existsSync(manifestPath) && fs.existsSync(readmePath)) {
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  const expected = collectTagNames(manifest, new Set()).size;
+  const readmeLines = getLines(fs.readFileSync(readmePath, 'utf8'));
+  const COUNT_RE = /(\d+)\s+(?:tbt-\*\s+)?components\b/gi;
+  for (let i = 0; i < readmeLines.length; i++) {
+    for (const m of readmeLines[i].matchAll(COUNT_RE)) {
+      if (Number(m[1]) !== expected) {
+        fail(readmePath, i + 1, `component count ${m[1]} != ${expected} in custom-elements.json`);
+        rule7Violations++;
+      }
+    }
+  }
+  if (rule7Violations === 0) pass(`README component count matches manifest (${expected})`);
+} else {
+  pass('README component count check skipped (manifest or README missing)');
+}
 
 // ─── Summary ────────────────────────────────────────────────────────────────
 console.log('');
