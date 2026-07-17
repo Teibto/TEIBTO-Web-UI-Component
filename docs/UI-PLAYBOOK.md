@@ -7,6 +7,9 @@
 Canonical: ไฟล์นี้คือแหล่งเดียวของ workflow UI — skill `teibto-ui-component` (API reference)
 และ `tbt-ds-pitfalls` (กับดักเชิงเทคนิค) ลิงก์กลับมาที่นี่
 
+> สำหรับงานแบบ "รับโจทย์ → ประกอบ component → ได้หน้า form (UI + Backend)" ด้วย schema-driven
+> kit ดู [`FORM-KIT-PLAYBOOK.md`](./FORM-KIT-PLAYBOOK.md) · skill `teibto-form-kit` (ต่อยอดจากไฟล์นี้)
+
 ## 1. ภาพรวม flow
 
 ```
