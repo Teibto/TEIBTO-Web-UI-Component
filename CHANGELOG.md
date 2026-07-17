@@ -7,6 +7,11 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Added
+
+- Governance lint Rule 7: README `<N> components` claims must match the tagName
+  count in `custom-elements.json`, so the figure fails CI instead of drifting. (#85)
+
 ### Fixed
 
 - Docs: README now matches reality — dev-server port (8081, not 8080), a single
