@@ -7,7 +7,11 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
-_(nothing yet)_
+### Fixed
+
+- Docs: README now matches reality — dev-server port (8081, not 8080), a single
+  File Cabinet path convention (`/dist/` bundle, per `netsuite/tbt_page.js`), and
+  the component count (65, per `custom-elements.json`). (#79, #80, #81)
 
 ## [1.46.0] - 2026-07-17
 
