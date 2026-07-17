@@ -79,8 +79,12 @@ class TbtLinesBlock extends LitElement {
 
   set rows(val) {
     const li = this._li();
-    if (li) li.rows = val;
-    else this.updateComplete.then(() => { this._li().rows = val; });
+    // Sync our summary totals from the inner component. tbt-line-items.set rows
+    // recalcs its own totals but doesn't emit tbt-change, so _onLiChange never
+    // fires on a programmatic rows set — without this the readonly summary would
+    // stay at {0,0,0} on initial load (e.g. viewing a saved document).
+    if (li) { li.rows = val; this._totals = li.getTotal(); }
+    else this.updateComplete.then(() => { const el = this._li(); el.rows = val; this._totals = el.getTotal(); });
   }
 
   getTotal() {

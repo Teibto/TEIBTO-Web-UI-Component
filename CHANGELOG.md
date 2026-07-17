@@ -20,6 +20,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ### Fixed
 
+- `tbt-summary`: slotted `tbt-summary-item` children were never displayed — the
+  component fell back to its props-based auto-summary (showing ฿0.00). `_hasItems()`
+  queried the shadow-DOM `<slot>` during `render()`, but the slot only exists after a
+  render that emits it, so the check always failed. Now the default slot is always
+  rendered and a `slotchange` flips reactive state, so the documented "slot items for
+  full control" API works. Fixes the ฿0.00 totals on every document view / edit that
+  uses `tbt-lines-block` (sales order, and the other document forms). (#88)
+
+- `tbt-lines-block`: companion fix — `tbt-line-items.set rows` recalcs its own totals
+  but does not emit `tbt-change`, so the wrapper's `_totals` stayed `{0,0,0}` on a
+  programmatic `rows` set. It now reads the inner total on `set rows`, so the (now
+  visible) summary is correct on initial load, not just after the first edit. (#88)
+
 - Docs: README now matches reality — dev-server port (8081, not 8080), a single
   File Cabinet path convention (`/dist/` bundle, per `netsuite/tbt_page.js`), and
   the component count (65, per `custom-elements.json`). (#79, #80, #81)

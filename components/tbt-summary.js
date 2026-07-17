@@ -17,7 +17,7 @@
  *     <tbt-summary-item label="Total" value="107,000" highlight></tbt-summary-item>
  *   </tbt-summary>
  */
-import { LitElement, html, css } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
+import { LitElement, html, css, nothing } from 'https://cdn.jsdelivr.net/npm/lit@3/+esm';
 
 /**
  * @slot - tbt-summary-item elements
@@ -29,7 +29,8 @@ class TbtSummary extends LitElement {
     vat:             { type: Number },
     vatRate:         { type: Number, attribute: 'vat-rate' },
     currency:        { type: String },
-    grandTotalLabel: { type: String, attribute: 'grand-total-label' }
+    grandTotalLabel: { type: String, attribute: 'grand-total-label' },
+    _hasSlotItems:   { state: true }
   };
 
   constructor() {
@@ -39,6 +40,7 @@ class TbtSummary extends LitElement {
     this.vatRate = 7;
     this.currency = '฿';
     this.grandTotalLabel = 'Grand total';
+    this._hasSlotItems = false;
   }
 
   static styles = css`
@@ -110,37 +112,39 @@ class TbtSummary extends LitElement {
   }
 
   render() {
-    const hasSlot = this._hasItems();
-    if (hasSlot) {
-      return html`<slot></slot>`;
-    }
     const sub = Number(this.subtotal || 0);
     const vat = Number(this.vat || 0);
     const total = sub + vat;
+    // The default slot is always rendered so its slotchange can fire — reading
+    // shadowRoot for the slot during render() was a chicken-and-egg race (the
+    // slot only exists after a render that emits it), so slotted items never
+    // displayed and the auto-summary always won. Now a slotchange flips
+    // _hasSlotItems and the auto-summary yields to the slotted items.
     return html`
-      <div class="auto-summary">
-        <div class="row">
-          <span>Subtotal (pre-VAT)</span>
-          <span class="val">${this._fmt(sub)}</span>
+      <slot @slotchange=${this._onSlotChange}></slot>
+      ${this._hasSlotItems ? nothing : html`
+        <div class="auto-summary">
+          <div class="row">
+            <span>Subtotal (pre-VAT)</span>
+            <span class="val">${this._fmt(sub)}</span>
+          </div>
+          <div class="row">
+            <span>VAT ${this.vatRate}%</span>
+            <span class="val">${this._fmt(vat)}</span>
+          </div>
+          <slot name="extra-rows"></slot>
+          <hr class="divider">
+          <div class="grand-row">
+            <span class="grand-label">${this.grandTotalLabel}</span>
+            <span class="grand-val">${this._fmt(total)}</span>
+          </div>
         </div>
-        <div class="row">
-          <span>VAT ${this.vatRate}%</span>
-          <span class="val">${this._fmt(vat)}</span>
-        </div>
-        <slot name="extra-rows"></slot>
-        <hr class="divider">
-        <div class="grand-row">
-          <span class="grand-label">${this.grandTotalLabel}</span>
-          <span class="grand-val">${this._fmt(total)}</span>
-        </div>
-      </div>
+      `}
     `;
   }
 
-  _hasItems() {
-    const slot = this.shadowRoot?.querySelector('slot:not([name])');
-    if (!slot) return false;
-    return slot.assignedElements().length > 0;
+  _onSlotChange(e) {
+    this._hasSlotItems = e.target.assignedElements().length > 0;
   }
 }
 
