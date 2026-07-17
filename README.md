@@ -51,8 +51,8 @@ Client code `internal` · Repo Owner @wichtking · Data classification **Interna
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teibto · Page Name</title>
-  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.46.0/tbt-theme.css">
-  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.46.0/index.js"></script>
+  <link rel="stylesheet" href="/sc/SuiteScripts/Teibto/ds/v1.46.0/dist/tbt-theme.css">
+  <script type="module" src="/sc/SuiteScripts/Teibto/ds/v1.46.0/dist/tbt-ds.min.js"></script>
 </head>
 <body>
   <tbt-app-shell>
