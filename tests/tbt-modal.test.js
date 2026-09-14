@@ -78,6 +78,88 @@ describe('tbt-modal', () => {
     expect(el.shadowRoot.querySelector('dialog').getAttribute('aria-modal')).to.equal('true');
   });
 
+
+  // ── backdrop close (#96) ────────────────────────────────────────────────────
+  //
+  // `click` is dispatched on the nearest common ancestor of pointerdown and pointerup, so a
+  // drag that starts inside the form and ends past the dialog's edge reaches the dialog with
+  // `target === dialog` — indistinguishable from a backdrop click on the click event alone.
+  // These cases drive the pointer sequence rather than calling .click(), because the sequence
+  // is the whole bug.
+
+  const down = (node) => node.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true }));
+  const up   = (node) => node.dispatchEvent(new PointerEvent('pointerup',   { bubbles: true, composed: true }));
+  const clickOn = (node) => node.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }));
+
+  async function openModal() {
+    const el = await fixture(html`<tbt-modal title="Test" open><div slot="content">body</div></tbt-modal>`);
+    await el.updateComplete;
+    return { el, dialog: el.shadowRoot.querySelector('dialog'), body: el.shadowRoot.querySelector('.modal-body') };
+  }
+
+  it('closes when the backdrop is both pressed and released', async () => {
+    const { el, dialog } = await openModal();
+    let fired = false;
+    el.addEventListener('tbt-cancel', () => { fired = true; });
+    down(dialog); up(dialog); clickOn(dialog);
+    expect(fired).to.be.true;
+    expect(el.open).to.be.false;
+  });
+
+  it('stays open when a drag starts inside the content and ends on the backdrop', async () => {
+    const { el, dialog, body } = await openModal();
+    let fired = false;
+    el.addEventListener('tbt-cancel', () => { fired = true; });
+    down(body); up(dialog); clickOn(dialog);
+    expect(fired).to.be.false;
+    expect(el.open).to.be.true;
+  });
+
+  it('stays open when a drag starts on the backdrop and ends inside the content', async () => {
+    const { el, dialog, body } = await openModal();
+    let fired = false;
+    el.addEventListener('tbt-cancel', () => { fired = true; });
+    down(dialog); up(body); clickOn(dialog);
+    expect(fired).to.be.false;
+    expect(el.open).to.be.true;
+  });
+
+  it('no-backdrop-close keeps a real backdrop click from closing it', async () => {
+    const el = await fixture(html`<tbt-modal title="Test" open no-backdrop-close><div slot="content">body</div></tbt-modal>`);
+    await el.updateComplete;
+    const dialog = el.shadowRoot.querySelector('dialog');
+    let fired = false;
+    el.addEventListener('tbt-cancel', () => { fired = true; });
+    down(dialog); up(dialog); clickOn(dialog);
+    expect(fired).to.be.false;
+    expect(el.open).to.be.true;
+  });
+
+  it('no-backdrop-close still closes from the X button', async () => {
+    const el = await fixture(html`<tbt-modal title="Test" open no-backdrop-close></tbt-modal>`);
+    await el.updateComplete;
+    let fired = false;
+    el.addEventListener('tbt-close', () => { fired = true; });
+    el.shadowRoot.querySelector('.close-btn').click();
+    expect(fired).to.be.true;
+    expect(el.open).to.be.false;
+  });
+
+  it('no-backdrop-close still closes from ESC (native cancel)', async () => {
+    const el = await fixture(html`<tbt-modal title="Test" open no-backdrop-close></tbt-modal>`);
+    await el.updateComplete;
+    let fired = false;
+    el.addEventListener('tbt-cancel', () => { fired = true; });
+    el.shadowRoot.querySelector('dialog').dispatchEvent(new Event('cancel', { cancelable: true }));
+    expect(fired).to.be.true;
+    expect(el.open).to.be.false;
+  });
+
+  it('defaults to no-backdrop-close being off', async () => {
+    const el = await fixture(html`<tbt-modal title="Test"></tbt-modal>`);
+    expect(el.noBackdropClose).to.be.false;
+  });
+
   it('passes axe (open)', async () => {
     const el = await fixture(html`<tbt-modal title="Confirm action" open></tbt-modal>`);
     await el.updateComplete;
