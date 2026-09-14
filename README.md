@@ -403,9 +403,14 @@ Step shape: `{ label, description?, error? }`. Steps before `active` show a chec
 | `variant` | `default` `confirm` `danger` | `default` |
 | `title` | String | — |
 | `open` | Boolean | — |
+| `no-backdrop-close` | Boolean | `false` |
 
 **Slots:** default (body) · `footer`  
-**Events:** `tbt-close`
+**Events:** `tbt-close` · `tbt-cancel` · `tbt-confirm`
+
+Clicking the backdrop closes the dialog and fires `tbt-cancel`. A dialog holding a form the
+user typed into should set `no-backdrop-close` so a stray click cannot discard that work —
+the X button, the Cancel button and ESC still close it.
 
 ```html
 <tbt-modal id="del-modal" title="Delete document" variant="danger">

@@ -478,6 +478,14 @@
             "name": "*",
             "module": "components/tbt-doc-schemas.js"
           }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "components/tbt-list-page.js"
+          }
         }
       ]
     },
@@ -3616,6 +3624,10 @@
               ]
             },
             {
+              "kind": "method",
+              "name": "_formatDisplay"
+            },
+            {
               "kind": "field",
               "name": "value",
               "privacy": "public",
@@ -3624,6 +3636,26 @@
               },
               "default": "''",
               "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "era",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'ce'",
+              "attribute": "era"
+            },
+            {
+              "kind": "field",
+              "name": "_focused",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "_focused"
             },
             {
               "kind": "field",
@@ -3791,6 +3823,22 @@
                 "text": "string"
               },
               "fieldName": "helper"
+            },
+            {
+              "name": "era",
+              "type": {
+                "text": "string"
+              },
+              "default": "'ce'",
+              "fieldName": "era"
+            },
+            {
+              "name": "_focused",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "_focused"
             }
           ],
           "superclass": {
@@ -4564,6 +4612,16 @@
                 "text": "boolean"
               },
               "attribute": "searchable"
+            },
+            {
+              "kind": "field",
+              "name": "autoWidth",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "auto-width",
+              "reflects": true
             }
           ],
           "events": [
@@ -4648,6 +4706,13 @@
                 "text": "boolean"
               },
               "fieldName": "searchable"
+            },
+            {
+              "name": "auto-width",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "autoWidth"
             },
             {
               "name": "_open",
@@ -5412,6 +5477,14 @@
       "path": "components/tbt-icon.js",
       "declarations": [
         {
+          "kind": "variable",
+          "name": "ICON_ALIASES",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ /* ── Document actions ── */ save: 'device-floppy', print: 'printer', email: 'mail', attach: 'paperclip', export: 'file-export', import: 'file-import', download: 'download', upload: 'upload', share: 'share', /* ── CRUD ── */ add: 'plus', new: 'plus', edit: 'pencil', delete: 'trash', remove: 'trash', copy: 'copy', duplicate: 'copy', view: 'eye', hide: 'eye-off', search: 'search', filter: 'filter', sort: 'arrows-sort', refresh: 'refresh', reload: 'reload', clear: 'eraser', reset: 'rotate-2', more: 'dots', 'more-vertical': 'dots-vertical', /* ── Approval / Workflow ── */ approve: 'circle-check', reject: 'circle-x', submit: 'send', cancel: 'ban', void: 'ban', pending: 'clock', draft: 'file-text', review: 'eye-check', lock: 'lock', unlock: 'lock-open', sign: 'signature', /* ── Navigation ── */ back: 'arrow-left', forward: 'arrow-right', up: 'arrow-up', down: 'arrow-down', home: 'home', menu: 'menu-2', close: 'x', expand: 'chevron-down', collapse: 'chevron-up', 'expand-right': 'chevron-right', external: 'external-link', /* ── User & Auth ── */ user: 'user', users: 'users', logout: 'logout', login: 'login', settings: 'settings', profile: 'user-circle', role: 'shield', permission: 'shield-check', password: 'key', /* ── Document types ── */ invoice: 'file-invoice', receipt: 'receipt', quotation: 'file-description', 'purchase-order': 'shopping-cart', 'sales-order': 'shopping-bag', payment: 'credit-card', expense: 'report-money', report: 'report', contract: 'file-certificate', document: 'file', folder: 'folder', /* ── Finance ── */ money: 'currency-baht', bank: 'building-bank', tax: 'receipt-tax', discount: 'tag-minus', price: 'tag', total: 'sigma', /* ── Inventory ── */ product: 'box', warehouse: 'building-warehouse', stock: 'packages', barcode: 'barcode', qrcode: 'qrcode', /* ── Communication ── */ comment: 'message', note: 'note', notification: 'bell', alert: 'alert-circle', info: 'info-circle', warning: 'alert-triangle', success: 'circle-check', error: 'alert-circle', /* ── Time & Schedule ── */ calendar: 'calendar', date: 'calendar-event', time: 'clock', history: 'history', schedule: 'calendar-time', deadline: 'calendar-due', /* ── Misc ── */ chart: 'chart-bar', dashboard: 'layout-dashboard', map: 'map-pin', phone: 'phone', link: 'link', image: 'photo', check: 'check', loader: 'loader-2', spin: 'loader-2', star: 'star', bookmark: 'bookmark', tag: 'tag', category: 'category', company: 'building', branch: 'building-skyscraper', employee: 'id-badge-2', department: 'sitemap', }"
+        },
+        {
           "kind": "class",
           "description": "",
           "name": "TbtIcon",
@@ -5517,6 +5590,14 @@
         }
       ],
       "exports": [
+        {
+          "kind": "js",
+          "name": "ICON_ALIASES",
+          "declaration": {
+            "name": "ICON_ALIASES",
+            "module": "components/tbt-icon.js"
+          }
+        },
         {
           "kind": "custom-element-definition",
           "name": "tbt-icon",
@@ -6649,6 +6730,31 @@
     },
     {
       "kind": "javascript-module",
+      "path": "components/tbt-list-page.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "initListPage",
+          "parameters": [
+            {
+              "name": "cfg"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "initListPage",
+          "declaration": {
+            "name": "initListPage",
+            "module": "components/tbt-list-page.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "components/tbt-list.js",
       "declarations": [
         {
@@ -7119,6 +7225,25 @@
             },
             {
               "kind": "method",
+              "name": "_onDialogPointerDown",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ],
+              "description": "A backdrop click is a press *and* a release on the dialog itself.\n\n`click` fires on the nearest common ancestor of pointerdown and pointerup, not on the\nelement the pointer was over when it came up. So a drag that starts inside the content —\nresizing a `<textarea>` by its grip is the one people actually hit — and ends past the\ndialog's edge arrives here with `target === <dialog>`, which used to read as a backdrop\nclick. The dialog closed and whatever was typed into the form went with it (#96).\n\nBoth ends are recorded because either one alone still misreads a drag: watching only\npointerdown would let a drag that begins on the backdrop and ends inside the form close it."
+            },
+            {
+              "kind": "method",
+              "name": "_onDialogPointerUp",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
               "name": "_onBackdropClick",
               "parameters": [
                 {
@@ -7186,6 +7311,17 @@
             },
             {
               "kind": "field",
+              "name": "noBackdropClose",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "no-backdrop-close",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "_hasCustomFooter",
               "privacy": "public",
               "type": {
@@ -7201,6 +7337,22 @@
                 "text": "null"
               },
               "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "_pressedBackdrop",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "_releasedBackdrop",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
             },
             {
               "kind": "field",
@@ -7236,6 +7388,15 @@
             }
           ],
           "attributes": [
+            {
+              "description": "Clicking the backdrop does not close the dialog; Cancel, the X button and ESC still do",
+              "name": "no-backdrop-close",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "noBackdropClose"
+            },
             {
               "name": "open",
               "type": {
@@ -8041,6 +8202,35 @@
     },
     {
       "kind": "javascript-module",
+      "path": "components/tbt-outside-click.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "watchOutsideClick",
+          "parameters": [
+            {
+              "name": "host"
+            },
+            {
+              "name": "close"
+            }
+          ],
+          "description": "Listen for document clicks outside `host` and call `close` on each one.\nReturns an unwatch function that removes the listener."
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "watchOutsideClick",
+          "declaration": {
+            "name": "watchOutsideClick",
+            "module": "components/tbt-outside-click.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "components/tbt-pagination.js",
       "declarations": [
         {
@@ -8337,7 +8527,7 @@
             },
             {
               "kind": "field",
-              "name": "_docClickHandler",
+              "name": "_stopOutside",
               "type": {
                 "text": "null"
               },
@@ -9980,7 +10170,12 @@
             },
             {
               "kind": "method",
-              "name": "_hasItems"
+              "name": "_onSlotChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
             },
             {
               "kind": "field",
@@ -10031,6 +10226,16 @@
               },
               "default": "'Grand total'",
               "attribute": "grand-total-label"
+            },
+            {
+              "kind": "field",
+              "name": "_hasSlotItems",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "_hasSlotItems"
             }
           ],
           "attributes": [
@@ -10073,6 +10278,14 @@
               },
               "default": "'Grand total'",
               "fieldName": "grandTotalLabel"
+            },
+            {
+              "name": "_hasSlotItems",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "_hasSlotItems"
             }
           ],
           "superclass": {

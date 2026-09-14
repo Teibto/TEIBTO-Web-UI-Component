@@ -7,7 +7,19 @@ Format: [Semantic Versioning](https://semver.org)
 
 ## [Unreleased]
 
+### Fixed
+
+- `tbt-modal` no longer closes when a drag that starts inside the dialog ends past its edge.
+  `click` fires on the nearest common ancestor of pointerdown and pointerup, so resizing a
+  `<textarea>` by its grip and releasing outside arrived as `target === <dialog>` and read as a
+  backdrop click — the dialog closed and anything typed into the form went with it. A backdrop
+  click is now a press **and** a release on the dialog itself. (#96)
+
 ### Added
+
+- `tbt-modal` attribute `no-backdrop-close`: the backdrop stops closing the dialog entirely,
+  while the X button, the Cancel button and ESC still do. For dialogs holding a form whose
+  contents must not be lost to a stray click. (#96)
 
 - Claude Code project skill `tbt-ds-pitfalls` at `.claude/skills/tbt-ds-pitfalls/`
   (`SKILL.md` + `references/notes.md`), moved in from the private `king-skill-chain`
