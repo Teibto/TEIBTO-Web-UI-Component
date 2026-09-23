@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+@AGENTS.md
+
 Context for Claude Code when working in this repository.
 
 ## What this repo is
